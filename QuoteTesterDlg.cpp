@@ -109,9 +109,10 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	Wait_ProductsReady_Event = CreateEvent(NULL, TRUE, FALSE, NULL);		
 	//mKline_stream.Push_KLine_Data(CString("1402"), CString("5+2+3"));
 	//mpKline_stream = NULL;
-	mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
-	mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
-	mKline_stream.Push_KLine_Data("1402", "06/07/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	mKline_stream.load_KLine_from_archive( "TX00" );
+	//mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	//mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	//mKline_stream.Push_KLine_Data("1402", "06/07/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
