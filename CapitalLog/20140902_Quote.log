@@ -12,3 +12,79 @@
 [4228] 2014/09/02 12:11:53.218 API InitInstance 
 [7752] 2014/09/02 12:39:00.781 API InitInstance 
 [9604] 2014/09/02 13:56:38.375 API InitInstance 
+[4092] 2014/09/02 21:11:28.453 API InitInstance 
+[5344] 2014/09/02 21:21:57.578 API InitInstance 
+[5848] 2014/09/02 21:23:29.390 API InitInstance 
+[5560] 2014/09/02 21:35:07.437 API InitInstance 
+[5080] 2014/09/02 22:05:01.343 API InitInstance 
+[4892] 2014/09/02 22:07:59.656 API InitInstance 
+[2180] 2014/09/02 22:23:52.937 API InitInstance 
+[3208] 2014/09/02 22:24:49.171 API InitInstance 
+[2092] 2014/09/02 22:27:22.500 API InitInstance 
+[5012] 2014/09/02 22:29:38.687 API InitInstance 
+[5840] 2014/09/02 22:30:59.609 API InitInstance 
+[4712] 2014/09/02 22:37:41.531 API InitInstance 
+[4000] 2014/09/02 22:40:56.750 API InitInstance 
+[4000] 2014/09/02 22:46:53.031 API ExitInstance 
+[5808] 2014/09/02 22:47:30.140 API InitInstance 
+[5808] 2014/09/02 22:47:33.796 API ExitInstance 
+[5552] 2014/09/02 22:48:20.203 API InitInstance 
+[5552] 2014/09/02 22:48:44.265 API ExitInstance 
+[4216] 2014/09/02 22:50:40.250 API InitInstance 
+[4216] 2014/09/02 22:50:53.265 API ExitInstance 
+[4868] 2014/09/02 23:03:34.984 API InitInstance 
+[1976] 2014/09/02 23:04:03.203 API InitInstance 
+[2952] 2014/09/02 23:07:23.921 API InitInstance 
+[3316] 2014/09/02 23:09:17.734 API InitInstance 
+[3140] 2014/09/02 23:10:13.515 API InitInstance 
+[3140] 2014/09/02 23:12:11.468 API ExitInstance 
+[3540] 2014/09/02 23:13:01.109 API InitInstance 
+[3540] 2014/09/02 23:20:27.281 API ExitInstance 
+[5288] 2014/09/02 23:20:35.093 API InitInstance 
+[1052] 2014/09/02 23:23:26.843 API InitInstance 
+[4276] 2014/09/02 23:30:41.156 API InitInstance 
+[4276] 2014/09/02 23:30:57.281 API ExitInstance 
+[4300] 2014/09/02 23:31:15.265 API InitInstance 
+[4300] 2014/09/02 23:32:32.734 API ExitInstance 
+[5508] 2014/09/02 23:32:59.390 API InitInstance 
+[3896] 2014/09/02 23:37:13.968 API InitInstance 
+[3896] 2014/09/02 23:37:27.390 API ExitInstance 
+[2576] 2014/09/02 23:37:41.562 API InitInstance 
+[2288] 2014/09/02 23:37:57.750 API InitInstance 
+[2288] 2014/09/02 23:38:14.500 API ExitInstance 
+[2728] 2014/09/02 23:40:47.890 API InitInstance 
+[4512] 2014/09/02 23:41:12.265 API InitInstance 
+[4512] 2014/09/02 23:41:28.375 API ExitInstance 
+[5116] 2014/09/02 23:42:01.578 API InitInstance 
+[5116] 2014/09/02 23:46:25.796 API ExitInstance 
+[5800] 2014/09/02 23:47:35.093 API InitInstance 
+[5800] 2014/09/02 23:48:53.140 API ExitInstance 
+[5880] 2014/09/02 23:51:32.812 API InitInstance 
+[5880] 2014/09/02 23:52:38.062 API ExitInstance 
+[3660] 2014/09/02 23:53:18.218 API InitInstance 
+[3660] 2014/09/02 23:53:40.671 SKQuoteLib_Initialize ¡GS122811334
+[3660] 2014/09/02 23:53:40.671 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_Initialize  SUCCESS 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachConnectionCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachQuoteCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachBest5CallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachTicksGetCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachKLineDataCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachMarketTotCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachMarketBuySellCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachMarketHighLowCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachStrikePricesCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttchServerTimeCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[3660] 2014/09/02 23:53:41.562 SKQuoteLib_AttachProductsReadyCallBack 
+[3660] 2014/09/02 23:53:43.250 SKQuoteLib_EnterMonitor IP¡Ginfo8.capital.com.tw
+[3660] 2014/09/02 23:53:43.296 SocketConnect Type¡G100  ErrorCode¡G0
+[3660] 2014/09/02 23:53:59.421 Stocks Ready
+[3660] 2014/09/02 23:54:07.203 SKQuoteLib_RequestTicks (1,TX00)
+[3660] 2014/09/02 23:54:52.718 Check Link Status 
+[3660] 2014/09/02 23:55:43.296 Check Link Status 
+[3660] 2014/09/02 23:56:43.296 Check Link Status 
+[3660] 2014/09/02 23:57:43.296 Check Link Status 
+[3660] 2014/09/02 23:58:21.031 SKQuoteLib_LeaveMonitor 
+[3660] 2014/09/02 23:58:21.031 SocketClose Type¡G101  ErrorCode¡G0
+[3660] 2014/09/02 23:58:21.078 API ExitInstance 

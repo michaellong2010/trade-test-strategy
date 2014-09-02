@@ -52,13 +52,13 @@ private:
 	static map<int, string> init_timeframe_map() {
 		map<int, string> timeframe_name_map;
 
-		timeframe_name_map[0] = "1分鐘線";
-		timeframe_name_map[1] = "5分鐘線";
-		timeframe_name_map[2] = "30分鐘線";
-		timeframe_name_map[3] = "日線228天";
-		timeframe_name_map[4] = "完整日線";
-		timeframe_name_map[5] = "週線";
-		timeframe_name_map[6] = "月線";
+		timeframe_name_map[0] = "1min";
+		timeframe_name_map[1] = "5min";
+		timeframe_name_map[2] = "30min";
+		timeframe_name_map[3] = "day";
+		timeframe_name_map[4] = "full_day";
+		timeframe_name_map[5] = "week";
+		timeframe_name_map[6] = "month";
 
 		return timeframe_name_map;
 	}

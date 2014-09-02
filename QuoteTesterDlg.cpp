@@ -109,10 +109,10 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	Wait_ProductsReady_Event = CreateEvent(NULL, TRUE, FALSE, NULL);		
 	//mKline_stream.Push_KLine_Data(CString("1402"), CString("5+2+3"));
 	//mpKline_stream = NULL;
-	mKline_stream.load_KLine_from_archive( "TX00" );
-	//mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
-	//mKline_stream.Push_KLine_Data("1402", "06/06/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
-	//mKline_stream.Push_KLine_Data("1402", "06/07/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	mKline_stream.load_KLine_from_archive( "1402" );
+	mKline_stream.Push_KLine_Data("1402", "06/03/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	mKline_stream.Push_KLine_Data("1402", "06/05/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
@@ -652,8 +652,8 @@ void CQuoteTesterDlg::OnBnClickedButton5()
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
 	
 	//SKQuoteLib_RequestTicks(&sPageNo,caText);
-	//SKQuoteLib_RequestTicks(&sPageNo, "1402");
-	SKQuoteLib_RequestTicks(&sPageNo, "TX00");
+	SKQuoteLib_RequestTicks(&sPageNo, "1402");
+	//SKQuoteLib_RequestTicks(&sPageNo, "TX00");
 }
 
 
@@ -847,7 +847,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		TRACE("Run in thread: %x\n", GetCurrentThreadId());
 		TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 		//pDialog->mpKline_stream = new CKLineStream();
-		pDialog->OnBnClickedButton6();
+		//pDialog->OnBnClickedButton6();
 		//pDialog->OnBnClickedButton5();
 	}
 
