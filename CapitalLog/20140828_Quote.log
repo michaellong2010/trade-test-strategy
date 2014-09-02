@@ -1,0 +1,144 @@
+[6240] 2014/08/28 09:51:17.203 API InitInstance 
+[6240] 2014/08/28 09:51:22.781 SKQuoteLib_Initialize ¡GS122811334
+[6240] 2014/08/28 09:51:22.781 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_Initialize  SUCCESS 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachConnectionCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachQuoteCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachBest5CallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachTicksGetCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachKLineDataCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachMarketTotCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachMarketBuySellCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachMarketHighLowCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachStrikePricesCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttchServerTimeCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6240] 2014/08/28 09:51:23.859 SKQuoteLib_AttachProductsReadyCallBack 
+[6240] 2014/08/28 09:51:25.281 SKQuoteLib_EnterMonitor IP¡Ginfo10.capital.com.tw
+[6240] 2014/08/28 09:51:25.281 SocketConnect Type¡G100  ErrorCode¡G0
+[6240] 2014/08/28 09:51:36.859 Stocks Ready
+[6240] 2014/08/28 09:51:47.937 SKQuoteLib_GetKLine(TX00,1)
+[6240] 2014/08/28 09:52:25.281 Check Link Status 
+[6240] 2014/08/28 09:53:25.281 Check Link Status 
+[6240] 2014/08/28 09:54:25.281 Check Link Status 
+[6240] 2014/08/28 09:55:25.281 Check Link Status 
+[6240] 2014/08/28 09:56:25.281 Check Link Status 
+[6240] 2014/08/28 09:57:25.281 Check Link Status 
+[6240] 2014/08/28 09:58:25.281 Check Link Status 
+[6240] 2014/08/28 09:59:25.281 Check Link Status 
+[6240] 2014/08/28 10:00:25.281 Check Link Status 
+[6240] 2014/08/28 10:01:25.281 Check Link Status 
+[6240] 2014/08/28 10:02:25.281 Check Link Status 
+[6240] 2014/08/28 10:03:25.281 Check Link Status 
+[6240] 2014/08/28 10:04:25.281 Check Link Status 
+[6240] 2014/08/28 10:05:25.281 Check Link Status 
+[6240] 2014/08/28 10:06:25.281 Check Link Status 
+[6240] 2014/08/28 10:07:25.281 Check Link Status 
+[6240] 2014/08/28 10:08:25.281 Check Link Status 
+[6240] 2014/08/28 10:09:25.281 Check Link Status 
+[6240] 2014/08/28 10:10:25.281 Check Link Status 
+[6240] 2014/08/28 10:11:25.281 Check Link Status 
+[6240] 2014/08/28 10:12:25.281 Check Link Status 
+[6240] 2014/08/28 10:13:25.281 Check Link Status 
+[6240] 2014/08/28 10:14:25.281 Check Link Status 
+[6240] 2014/08/28 10:15:25.281 Check Link Status 
+[6240] 2014/08/28 10:16:25.281 Check Link Status 
+[6240] 2014/08/28 10:17:25.281 Check Link Status 
+[6240] 2014/08/28 10:18:25.281 Check Link Status 
+[6240] 2014/08/28 10:19:25.281 Check Link Status 
+[6240] 2014/08/28 10:20:25.281 Check Link Status 
+[6240] 2014/08/28 10:21:25.281 Check Link Status 
+[6240] 2014/08/28 10:22:25.281 Check Link Status 
+[6240] 2014/08/28 10:23:25.281 Check Link Status 
+[6240] 2014/08/28 10:24:25.281 Check Link Status 
+[6240] 2014/08/28 10:25:25.281 Check Link Status 
+[6240] 2014/08/28 10:26:25.281 Check Link Status 
+[6240] 2014/08/28 10:27:25.281 Check Link Status 
+[6240] 2014/08/28 10:28:25.281 Check Link Status 
+[6240] 2014/08/28 10:29:25.281 Check Link Status 
+[6240] 2014/08/28 10:30:25.281 Check Link Status 
+[6240] 2014/08/28 10:31:25.281 Check Link Status 
+[6240] 2014/08/28 10:32:25.281 Check Link Status 
+[6240] 2014/08/28 10:33:25.281 Check Link Status 
+[6240] 2014/08/28 10:34:25.281 Check Link Status 
+[6240] 2014/08/28 10:35:25.281 Check Link Status 
+[6240] 2014/08/28 10:36:25.281 Check Link Status 
+[6240] 2014/08/28 10:37:25.281 Check Link Status 
+[6240] 2014/08/28 10:38:25.281 Check Link Status 
+[6240] 2014/08/28 10:39:25.281 Check Link Status 
+[6240] 2014/08/28 10:40:25.281 Check Link Status 
+[6240] 2014/08/28 10:41:25.281 Check Link Status 
+[6240] 2014/08/28 10:42:25.281 Check Link Status 
+[6240] 2014/08/28 10:43:25.281 Check Link Status 
+[6240] 2014/08/28 10:44:25.281 Check Link Status 
+[6240] 2014/08/28 10:45:25.281 Check Link Status 
+[6240] 2014/08/28 10:46:25.281 Check Link Status 
+[6240] 2014/08/28 10:47:25.281 Check Link Status 
+[6240] 2014/08/28 10:48:25.281 Check Link Status 
+[6240] 2014/08/28 10:49:25.281 Check Link Status 
+[6240] 2014/08/28 10:50:25.281 Check Link Status 
+[6240] 2014/08/28 10:51:25.281 Check Link Status 
+[6240] 2014/08/28 10:52:25.281 Check Link Status 
+[6240] 2014/08/28 10:53:25.281 Check Link Status 
+[6240] 2014/08/28 10:54:25.281 Check Link Status 
+[6240] 2014/08/28 10:55:25.281 Check Link Status 
+[6240] 2014/08/28 10:56:25.281 Check Link Status 
+[6240] 2014/08/28 10:57:25.281 Check Link Status 
+[6240] 2014/08/28 10:58:25.281 Check Link Status 
+[6240] 2014/08/28 10:59:25.281 Check Link Status 
+[6240] 2014/08/28 11:00:25.281 Check Link Status 
+[6240] 2014/08/28 11:01:25.281 Check Link Status 
+[6240] 2014/08/28 11:02:25.281 Check Link Status 
+[6240] 2014/08/28 11:03:25.281 Check Link Status 
+[6240] 2014/08/28 11:04:25.281 Check Link Status 
+[6240] 2014/08/28 11:05:25.281 Check Link Status 
+[6240] 2014/08/28 11:06:25.281 Check Link Status 
+[6240] 2014/08/28 11:07:25.281 Check Link Status 
+[6240] 2014/08/28 11:08:25.281 Check Link Status 
+[6240] 2014/08/28 11:09:25.281 Check Link Status 
+[6240] 2014/08/28 11:10:25.281 Check Link Status 
+[6240] 2014/08/28 11:11:25.281 Check Link Status 
+[6240] 2014/08/28 11:12:25.281 Check Link Status 
+[6240] 2014/08/28 11:13:25.281 Check Link Status 
+[6240] 2014/08/28 11:14:25.281 Check Link Status 
+[6240] 2014/08/28 11:15:25.281 Check Link Status 
+[6240] 2014/08/28 11:16:25.281 Check Link Status 
+[6240] 2014/08/28 11:17:25.281 Check Link Status 
+[6240] 2014/08/28 11:18:25.281 Check Link Status 
+[6240] 2014/08/28 11:19:25.281 Check Link Status 
+[6240] 2014/08/28 11:20:25.281 Check Link Status 
+[6240] 2014/08/28 11:21:25.281 Check Link Status 
+[6240] 2014/08/28 11:22:25.281 Check Link Status 
+[6240] 2014/08/28 11:23:25.281 Check Link Status 
+[6240] 2014/08/28 11:24:25.281 Check Link Status 
+[6240] 2014/08/28 11:25:25.281 Check Link Status 
+[6240] 2014/08/28 11:26:25.281 Check Link Status 
+[6240] 2014/08/28 11:27:25.281 Check Link Status 
+[6240] 2014/08/28 11:28:25.281 Check Link Status 
+[6240] 2014/08/28 11:29:25.281 Check Link Status 
+[6240] 2014/08/28 11:30:25.281 Check Link Status 
+[6240] 2014/08/28 11:31:25.281 Check Link Status 
+[6240] 2014/08/28 11:32:25.281 Check Link Status 
+[6240] 2014/08/28 11:33:25.281 Check Link Status 
+[6240] 2014/08/28 11:34:25.281 Check Link Status 
+[6240] 2014/08/28 11:35:25.281 Check Link Status 
+[6240] 2014/08/28 11:36:25.281 Check Link Status 
+[6240] 2014/08/28 11:37:25.281 Check Link Status 
+[6240] 2014/08/28 11:38:25.281 Check Link Status 
+[6240] 2014/08/28 11:39:25.281 Check Link Status 
+[6240] 2014/08/28 11:40:25.281 Check Link Status 
+[6240] 2014/08/28 11:41:25.281 Check Link Status 
+[6240] 2014/08/28 11:42:25.281 Check Link Status 
+[6240] 2014/08/28 11:43:25.281 Check Link Status 
+[6240] 2014/08/28 11:44:25.281 Check Link Status 
+[6240] 2014/08/28 11:45:25.281 Check Link Status 
+[6240] 2014/08/28 11:46:25.281 Check Link Status 
+[6240] 2014/08/28 11:47:25.281 Check Link Status 
+[6240] 2014/08/28 11:48:25.281 Check Link Status 
+[6240] 2014/08/28 11:49:25.281 Check Link Status 
+[6240] 2014/08/28 11:50:25.281 Check Link Status 
+[6240] 2014/08/28 11:51:25.281 Check Link Status 
+[6240] 2014/08/28 11:52:25.281 Check Link Status 
+[6240] 2014/08/28 11:52:26.625 SKQuoteLib_LeaveMonitor 
+[6240] 2014/08/28 11:52:26.625 SocketClose Type¡G101  ErrorCode¡G0
+[6240] 2014/08/28 11:52:26.718 API ExitInstance 
