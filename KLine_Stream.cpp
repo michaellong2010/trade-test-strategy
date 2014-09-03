@@ -165,7 +165,8 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	if ( dup_itr == pList_KLineData->end() ) {
 		//pList_KLineData->push_back(m_candlestick);
 		/*sync list<TCandleStick> with KLine data file stream*/
-		m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		if ( !file_stream_info.count( m_str_filename ) ) {
 			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 			pKLine_file_info = new TKLineData_FileInfo();
@@ -228,20 +229,33 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 							break;
 						}
 			}
-			pList_KLineData->insert ( itr1, m_candlestick );
-			itr1--;
-			itr2 = pList_KLineData->end();
-			for ( ; itr1 != itr2; itr1++, n_insert_pos++ ) {
-				m_file_candlestick = (*itr1);
-				//pKLine_file_info->n_fsize += n_bytes;
-				p_fs->seekp ( n_insert_pos*n_bytes, ios::beg );
-				p_fs->write ( (char *) &m_file_candlestick, n_bytes );
+			/*search candlestick in file*/
+			bool found_in_file = false;
+			for ( i = 0; i < n_insert_pos; i++ ) {
+				p_fs->seekg ( i*n_bytes, ios::beg );
+				p_fs->read ( (char *) &m_file_candlestick, n_bytes );
+				if ( m_candlestick.mDate == m_file_candlestick.mDate && m_candlestick.mTime == m_file_candlestick.mTime ) {
+					found_in_file = true;
+				}
 			}
-			p_fs->flush();
-			pKLine_file_info->n_fsize = pList_KLineData->size() * n_bytes;
-			pKLine_file_info->n_list_end++;
-			if ( ( pKLine_file_info->n_list_end - pKLine_file_info->n_list_begin + 1 ) > 1000 )
-				pKLine_file_info->n_list_begin++;
+			if ( found_in_file == false ) {
+				pList_KLineData->insert ( itr1, m_candlestick );
+				itr1--;
+				itr2 = pList_KLineData->end();
+				for ( ; itr1 != itr2; itr1++, n_insert_pos++ ) {
+					m_file_candlestick = (*itr1);
+					//pKLine_file_info->n_fsize += n_bytes;
+					p_fs->seekp ( n_insert_pos*n_bytes, ios::beg );
+					p_fs->write ( (char *) &m_file_candlestick, n_bytes );
+				}
+				p_fs->flush();
+				pKLine_file_info->n_fsize = pList_KLineData->size() * n_bytes;
+				pKLine_file_info->n_list_end++;
+				if ( ( pKLine_file_info->n_list_end - pKLine_file_info->n_list_begin + 1 ) > 1000 ) {
+					pKLine_file_info->n_list_begin++;
+					pList_KLineData->pop_front();
+				}
+			}
 		}
 	}
 	*p = pList_KLineData->size();
@@ -280,7 +294,8 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	TCandleStick m_file_candlestick;
 
 	m_str_symbol = ticker_symbol;
-	m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 	//m_str_filename = ".\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 
 	map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.find( m_str_symbol );

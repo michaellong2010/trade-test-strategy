@@ -68,5 +68,5 @@ public:
 
 	/*implement object pointer queue to reduce dynamic alloc and improve efficiency*/
 	deque <TStock *> m_Queue_pTStock;
-	deque <TBest5*> m_Queue_pTBest5;
+	deque <TBest5 *> m_Queue_pTBest5;
 };

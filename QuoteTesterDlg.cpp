@@ -47,8 +47,8 @@ CQuoteTesterDlg::~CQuoteTesterDlg()
 	}
 	TBest5 *pTBest5;
 	for (deque<TBest5 *>::iterator itr = m_Queue_pTBest5.begin(); itr != m_Queue_pTBest5.end(); itr++) {
-		pTStock = (TStock *)*itr;
-		delete (pTStock);
+		pTBest5 = (TBest5 *)*itr;
+		delete (pTBest5);
 	}
 }
 
@@ -109,10 +109,10 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	Wait_ProductsReady_Event = CreateEvent(NULL, TRUE, FALSE, NULL);		
 	//mKline_stream.Push_KLine_Data(CString("1402"), CString("5+2+3"));
 	//mpKline_stream = NULL;
-	mKline_stream.load_KLine_from_archive( "1402" );
+	/*mKline_stream.load_KLine_from_archive( "1402" );
 	mKline_stream.Push_KLine_Data("1402", "06/03/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/05/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
-	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
+	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");*/
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
@@ -270,11 +270,13 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
-		//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-		PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-
-		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
+		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
+			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 			SysFreeString(bstrMsg);
+		}
+		else
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+
 	}
 }
 
@@ -296,11 +298,12 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
-		//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-		PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-
-		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
+		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
+			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 			SysFreeString(bstrMsg);
+		}
+		else
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 	}
 }
 
@@ -331,16 +334,16 @@ void _stdcall OnNotifyBest5( short sMarketNo, short sStockidx)
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
-		//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-		PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
+			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+			SysFreeString(bstrMsg);
+		}
+		else
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 
 		m_pDialog->m_Queue_pTBest5.push_back(tBest5);
 		//delete tBest5;
 		//tBest5 = NULL;
-		
-		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
-			SysFreeString(bstrMsg);
-
 	}
 }
 
@@ -364,18 +367,19 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 		CString strMsg;
 		strMsg.Format(_T("%s %s"),strStockNo,strData);
 		//pDialog->mKline_stream.Push_KLine_Data(strStockNo, strData);
-		//m_pDialog->mKline_stream.Push_KLine_Data( caStockNo, caData );
+		m_pDialog->mKline_stream.Push_KLine_Data( caStockNo, caData );
 		//TRACE("%s %s \n", caStockNo, caData );
 		
 		BSTR bstrMsg = strMsg.AllocSysString();
 
-		//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-		PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
+			SysFreeString(bstrMsg);
+			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+		}
+		else
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 		//PostThreadMessage(AfxGetApp()->m_nThreadID, WM_DATA,m_nType,(int)bstrMsg);
 		//PostThreadMessage(t_id, WM_DATA,m_nType,(int)bstrMsg);
-		
-		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
-			SysFreeString(bstrMsg);
 	}
 }
 
@@ -681,8 +685,9 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 	//strcpy(caText, "TX00");
 	//nType = 1;
 	//SKQuoteLib_GetKLine(caText,nType);
+	mKline_stream.load_KLine_from_archive( "TX00" );
 	SKQuoteLib_GetKLine("TX00", 1);
-	SKQuoteLib_GetKLine("TX00", 2);
+	//SKQuoteLib_GetKLine("TX00", 2);
 }
 
 void CQuoteTesterDlg::OnBnClickedButton8()
@@ -785,7 +790,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 	CQuoteTesterDlg *pDialog;
 
 	pDialog = (CQuoteTesterDlg *) dlg;
-	CEdit* pEdit; 
+	/*CEdit* pEdit; 
 	pEdit = (CEdit*) pDialog->GetDlgItem(IDC_EDIT_ID); 
 	CString strText;
 	pEdit->GetWindowTextW(strText);
@@ -801,13 +806,13 @@ DWORD WINAPI do_quote(PVOID dlg) {
 	const CHAR* caPass = (LPCSTR)strTempB;
 
 	//nCode = SKQuoteLib_Initialize(caText,caPass);
-	nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
+	nCode = SKQuoteLib_Initialize("S122811334", "swat9110");*/
 
 	pDialog->ReadyForTrading = false;
-	if( nCode == 0 )
+	//if( nCode == 0 )
 	{
 		//註冊CALLBACK
-		nCode = SKQuoteLib_AttachConnectionCallBack( (UINT_PTR) OnConnect);
+		/*nCode = SKQuoteLib_AttachConnectionCallBack( (UINT_PTR) OnConnect);
 		nCode = SKQuoteLib_AttachQuoteCallBack( (UINT_PTR) OnNotifyQuote);
 		nCode = SKQuoteLib_AttachBest5CallBack( (UINT_PTR) OnNotifyBest5);
 		//nCode = SKQuoteLib_AttachTicksCallBack( (UINT_PTR) OnNotifyTicks);
@@ -821,7 +826,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		nCode = SKQuoteLib_AttachHistoryTicksGetCallBack( (UINT_PTR) OnNotifyHistoryTicksGet);
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 
-		AfxMessageBox(_T("初始成功"));
+		AfxMessageBox(_T("初始成功"));*/
 
 		/*switch to main thread and enter monitor then wait connecttion callback*/
 		if (GetCurrentThreadId() != AfxGetApp()->m_nThreadID) {
@@ -847,7 +852,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		TRACE("Run in thread: %x\n", GetCurrentThreadId());
 		TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 		//pDialog->mpKline_stream = new CKLineStream();
-		//pDialog->OnBnClickedButton6();
+		pDialog->OnBnClickedButton6();
 		//pDialog->OnBnClickedButton5();
 	}
 
@@ -861,8 +866,46 @@ DWORD WINAPI do_quote(PVOID dlg) {
 void CQuoteTesterDlg::OnBnClickedButton13()
 {
 	// TODO: Add your control notification handler code here
-
+	int  nCode = 0;
 	t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
+
+	CEdit* pEdit; 
+	pEdit = (CEdit*) GetDlgItem(IDC_EDIT_ID); 
+	CString strText;
+	pEdit->GetWindowTextW(strText);
+
+    pEdit = (CEdit*) GetDlgItem(IDC_EDIT_Pass); 
+	CString strPassword;
+	pEdit->GetWindowTextW(strPassword);
+
+	CStringA strTempA(strText);
+	const CHAR* caText = strTempA.GetString();
+	
+	CStringA strTempB(strPassword);
+	const CHAR* caPass = (LPCSTR)strTempB;
+
+	//nCode = SKQuoteLib_Initialize(caText,caPass);
+	nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
+	if( nCode == 0 )
+	{
+		//註冊CALLBACK
+		nCode = SKQuoteLib_AttachConnectionCallBack( (UINT_PTR) OnConnect);
+		nCode = SKQuoteLib_AttachQuoteCallBack( (UINT_PTR) OnNotifyQuote);
+		nCode = SKQuoteLib_AttachBest5CallBack( (UINT_PTR) OnNotifyBest5);
+		//nCode = SKQuoteLib_AttachTicksCallBack( (UINT_PTR) OnNotifyTicks);
+		nCode = SKQuoteLib_AttachTicksGetCallBack( (UINT_PTR) OnNotifyTicksGet);
+		nCode = SKQuoteLib_AttachKLineDataCallBack( (UINT_PTR)OnNotifyKLineData );
+		nCode = SKQuoteLib_AttachMarketTotCallBack( (UINT_PTR)OnNotifyMarketTot );
+		nCode = SKQuoteLib_AttachMarketBuySellCallBack( (UINT_PTR)OnNotifyMarketBuySell );
+		nCode = SKQuoteLib_AttachMarketHighLowCallBack( (UINT_PTR)OnNotifyMarketHighLow );
+		nCode = SKQuoteLib_AttachStrikePricesCallBack( (UINT_PTR)OnNotifyStrikePrices );
+		nCode = SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+		nCode = SKQuoteLib_AttachHistoryTicksGetCallBack( (UINT_PTR) OnNotifyHistoryTicksGet);
+		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
+
+		AfxMessageBox(_T("初始成功"));
+	}
+
 	//OnBnClickedButton1();
 	//Sleep(10000);
 	//OnBnClickedButton2();
