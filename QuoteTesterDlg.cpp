@@ -180,8 +180,9 @@ void _stdcall OnNotifyQuote( short sMarketNo, short sStockidx)
 {
 	TStock *tStock;
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
+
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
-	if( m_nType == 1 )
+	//if( m_nType == 1 )
 	{
 		//TStock* tStock = new TStock();
 		if ( !m_pDialog->m_Queue_pTStock.empty() ) {
@@ -195,6 +196,7 @@ void _stdcall OnNotifyQuote( short sMarketNo, short sStockidx)
 
 		CString strStockNo(tStock->m_caStockNo);
 		CString strStockName(tStock->m_caName);
+		m_pDialog->mMap_stockidx_stockNo[ sStockidx ] = tStock->m_caStockNo;
 
 		CString strMsg;
 		strMsg.Format(_T("%s %s 禦基:%d 禦秖:%d 芥基:%d 禦秖:%d Θユ基:%d Θユ秖:%d"),
@@ -256,7 +258,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 {
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
-	if( m_nType == 2 )
+	//if( m_nType == 2 )
 	{
 		CString strMsg;
 
@@ -284,12 +286,25 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 {
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
-	if( m_nType == 2 )
+	//if( m_nType == 2 )
 	{
 		CString strMsg;
 
 		strMsg.Format(_T("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d "),
 			nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty);
+		TRACE("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d ",
+			nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty);
+		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
@@ -852,8 +867,8 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		TRACE("Run in thread: %x\n", GetCurrentThreadId());
 		TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 		//pDialog->mpKline_stream = new CKLineStream();
-		pDialog->OnBnClickedButton6();
-		//pDialog->OnBnClickedButton5();
+		//pDialog->OnBnClickedButton6();
+		pDialog->OnBnClickedButton5();
 	}
 
 	while(::GetMessage( &msg, NULL, 0, 0 )) {

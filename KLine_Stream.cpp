@@ -3,6 +3,7 @@
 #include "KLine_Stream.h"
 
 TCandleStick m_candlestick;
+TICK m_tick;
 
 map<int, string> CKLineStream::mTimeFrameName = init_timeframe_map();
 CKLineStream::CKLineStream(int time_frame) {
@@ -169,8 +170,8 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	//if ( dup_itr == pList_KLineData->end() ) {
 		//pList_KLineData->push_back(m_candlestick);
 		/*sync list<TCandleStick> with KLine data file stream*/
-		//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-		m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		if ( !file_stream_info.count( m_str_filename ) ) {
 			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 			pKLine_file_info = new TKLineData_FileInfo();
@@ -371,8 +372,8 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	TCandleStick m_file_candlestick;
 
 	m_str_symbol = ticker_symbol;
-	//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-	m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 	//m_str_filename = ".\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 
 	map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.find( m_str_symbol );
@@ -426,4 +427,40 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	}
 	else {
 	}*/
+}
+
+int CKLineStream::Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty ) {
+/*tick output format
+TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66 
+*/
+	vector<TICK> *pVector_TickData;
+	int n_VecCap, n_VecSize;
+
+	if ( !mMap_stock_ticks.count( symbol ) ) {
+		pVector_TickData = new vector<TICK>;
+		mMap_stock_ticks[ symbol ] = pVector_TickData;
+	}
+	else
+		pVector_TickData = mMap_stock_ticks[ symbol ];
+
+	m_tick.m_nPtr = nPtr;
+	m_tick.m_nTime = nTime;
+	m_tick.m_nBid = nBid;
+	m_tick.m_nAsk = nAsk;
+	m_tick.m_nClose = nClose;
+	m_tick.m_nQty = nQty;
+
+	n_VecCap = pVector_TickData->capacity( );
+	if ( n_VecCap <= nPtr )
+		//pVector_TickData->reserve( nPtr + 1);
+		pVector_TickData->resize( nPtr + 1 );
+
+	n_VecCap = pVector_TickData->capacity( );
+	n_VecSize = pVector_TickData->size();
+	//pVector_TickData->push_back( m_tick );
+	(*pVector_TickData)[ nPtr ] = m_tick;
+
+	//pVector_TickData->at( nPtr ) = m_tick;
+	//n_VecSize = pVector_TickData->capacity();
+	return 0;
 }

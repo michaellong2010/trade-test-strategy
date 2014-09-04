@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
+#include "Functions.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -73,6 +74,7 @@ public:
 
 	int Push_KLine_Data(CString, CString);
 	int Push_KLine_Data( char * caStockNo, char * caData );
+	int Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty );
 	map<string, TKLineData_FileInfo *> file_stream_info;
 
 	/*map stock symbol to it's link-list KLine data*/
@@ -85,4 +87,6 @@ public:
 	void load_KLine_from_archive ( char * ticker_symbol );
 
 	ofstream txt_out;
+	/*map stock symbol to reference it's vector<tick>*/
+	map<string, vector<TICK>*> mMap_stock_ticks;
 };
