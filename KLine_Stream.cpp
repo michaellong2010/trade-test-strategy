@@ -9,6 +9,7 @@ CKLineStream::CKLineStream(int time_frame) {
 	stream_file = "";
 	//ios::binary=
 	nTimeFrame = time_frame;
+	txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
 }
 
 CKLineStream::~CKLineStream() {
@@ -31,6 +32,8 @@ CKLineStream::~CKLineStream() {
 		if ( nSize == 4 )
 			delete (*itr1).second;
 	}
+	txt_out.flush();
+	txt_out.close();
 }
 
 int CKLineStream::Push_KLine_Data(CString Stock_No, CString Data) {
@@ -166,8 +169,8 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	//if ( dup_itr == pList_KLineData->end() ) {
 		//pList_KLineData->push_back(m_candlestick);
 		/*sync list<TCandleStick> with KLine data file stream*/
-		m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-		//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		if ( !file_stream_info.count( m_str_filename ) ) {
 			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 			pKLine_file_info = new TKLineData_FileInfo();
@@ -213,6 +216,15 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 			pKLine_file_info->n_list_begin = pKLine_file_info->n_list_end = 0;
 			p_fs->seekp ( 0, ios::beg );
 			p_fs->write ( (char *) &m_candlestick, n_bytes );
+#if 0
+			txt_out << m_candlestick.mDate << ", ";
+			txt_out << m_candlestick.mTime << ", ";
+			txt_out << m_candlestick.mOpen << ", ";
+			txt_out << m_candlestick.mHigh << ", ";
+			txt_out << m_candlestick.mLow << ", ";
+			txt_out << m_candlestick.mClose << ", ";
+			txt_out << m_candlestick.mVolumn << "\n";
+#endif
 		}
 		else {
 			itr1 = pList_KLineData->begin();
@@ -273,6 +285,15 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 						}
 						p_fs->seekp ( (n_insert_pos1)*n_bytes, ios::beg );
 						p_fs->write ( (char *) &m_candlestick, n_bytes );
+#if 0
+						txt_out << m_candlestick.mDate << ", ";
+						txt_out << m_candlestick.mTime << ", ";
+						txt_out << m_candlestick.mOpen << ", ";
+						txt_out << m_candlestick.mHigh << ", ";
+						txt_out << m_candlestick.mLow << ", ";
+						txt_out << m_candlestick.mClose << ", ";
+						txt_out << m_candlestick.mVolumn << "\n";
+#endif
 						pKLine_file_info->n_list_end++;
 						pKLine_file_info->n_list_begin++;
 						pKLine_file_info->n_fsize = ( pKLine_file_info->n_list_end + 1 ) * n_bytes;
@@ -293,6 +314,15 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 						//pKLine_file_info->n_fsize += n_bytes;
 						p_fs->seekp ( n_insert_pos*n_bytes, ios::beg );
 						p_fs->write ( (char *) &m_file_candlestick, n_bytes );
+#if 0
+						txt_out << m_file_candlestick.mDate << ", ";
+						txt_out << m_file_candlestick.mTime << ", ";
+						txt_out << m_file_candlestick.mOpen << ", ";
+						txt_out << m_file_candlestick.mHigh << ", ";
+						txt_out << m_file_candlestick.mLow << ", ";
+						txt_out << m_file_candlestick.mClose << ", ";
+						txt_out << m_file_candlestick.mVolumn << "\n";
+#endif
 					}
 					pKLine_file_info->n_list_end++;
 					pKLine_file_info->n_fsize = ( pKLine_file_info->n_list_end + 1 ) * n_bytes;
@@ -341,8 +371,8 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	TCandleStick m_file_candlestick;
 
 	m_str_symbol = ticker_symbol;
-	m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-	//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 	//m_str_filename = ".\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 
 	map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.find( m_str_symbol );
@@ -374,7 +404,7 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 		file_stream_info.insert( std::pair<string, TKLineData_FileInfo *> ( m_str_filename, pKLine_file_info ));
 		/*sync all TCandleStick in archive(p_fs) into pList_KLineData*/
 		nRead_candlesticks = 1;
-		while ( ( f_size - nRead_candlesticks*nSize ) >= 0 &&  nRead_candlesticks < 1000 ) {
+		while ( ( f_size - nRead_candlesticks*nSize ) >= 0 &&  nRead_candlesticks <= 1000 ) {
 			p_fs->seekg ( ( f_size - nRead_candlesticks*nSize ), ios::beg );
 			p_fs->read ( (char *) &m_file_candlestick, nSize );
 			pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );

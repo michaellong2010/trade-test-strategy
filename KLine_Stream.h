@@ -83,4 +83,6 @@ public:
 
 	/* load KLine data from archive into `mMap_stock_kline`¡@when call capital API SKQuoteLib_GetKLine() */
 	void load_KLine_from_archive ( char * ticker_symbol );
+
+	ofstream txt_out;
 };
