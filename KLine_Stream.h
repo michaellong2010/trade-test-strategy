@@ -74,7 +74,7 @@ public:
 
 	int Push_KLine_Data(CString, CString);
 	int Push_KLine_Data( char * caStockNo, char * caData );
-	int Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty );
+	int Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill );
 	map<string, TKLineData_FileInfo *> file_stream_info;
 
 	/*map stock symbol to it's link-list KLine data*/
@@ -89,4 +89,6 @@ public:
 	ofstream txt_out;
 	/*map stock symbol to reference it's vector<tick>*/
 	map<string, vector<TICK>*> mMap_stock_ticks;
+	map<string, int> mMap_intraday_open_time;
+	map<string, list<TCandleStick>*> mMap_tick_compose_kline;
 };

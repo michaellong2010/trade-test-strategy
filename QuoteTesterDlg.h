@@ -8,6 +8,7 @@
 
 using namespace std; 
 #define WM_DATA WM_USER+1
+#define WM_TICK WM_USER+3
 
 // CQuoteTesterDlg ¹ï¸Ü¤è¶ô
 class CQuoteTesterDlg : public CDialogEx

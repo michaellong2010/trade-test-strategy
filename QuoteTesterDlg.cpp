@@ -113,6 +113,9 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	mKline_stream.Push_KLine_Data("1402", "06/03/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/05/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");*/
+	/*mKline_stream.Push_Tick_Data( "1402", 0, 90003, -999999, 999999, 3255, 66 );
+	mKline_stream.Push_Tick_Data( "1402", 5, 90212, 3270, 3275, 3255, 66 );
+	mKline_stream.Push_Tick_Data( "1402", 8, 90507, 3215, 3220, 3255, 66 );*/
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
@@ -297,19 +300,19 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty);
-		TRACE("TICK 編號:%d 時間:%d 買價:%d 賣價:%d 成交價:%d 量:%d ",
+		/*TRACE("TICK 編號:%d 時間:%d 買價:%d 賣價:%d 成交價:%d 量:%d ",
 			nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty);
+			nQty);*/
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty);
+			nQty, 1 );
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
@@ -671,8 +674,8 @@ void CQuoteTesterDlg::OnBnClickedButton5()
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
 	
 	//SKQuoteLib_RequestTicks(&sPageNo,caText);
-	SKQuoteLib_RequestTicks(&sPageNo, "1402");
-	//SKQuoteLib_RequestTicks(&sPageNo, "TX00");
+	//SKQuoteLib_RequestTicks(&sPageNo, "1402");
+	SKQuoteLib_RequestTicks(&sPageNo, "TX00");
 }
 
 
@@ -872,7 +875,8 @@ DWORD WINAPI do_quote(PVOID dlg) {
 	}
 
 	while(::GetMessage( &msg, NULL, 0, 0 )) {
-		if ( msg.message == WM_DATA ) {
+		if ( msg.message == WM_TICK ) {
+			nCode = 0;
 		}
 	}
 	return 0;
