@@ -11,6 +11,7 @@ CKLineStream::CKLineStream(int time_frame) {
 	//ios::binary=
 	nTimeFrame = time_frame;
 	txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
+	GetSystemTime(&start_run_time);
 }
 
 CKLineStream::~CKLineStream() {
@@ -434,7 +435,7 @@ int CKLineStream::Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, i
 TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66 
 */
 	vector<TICK> *pVector_TickData;
-	vector<TICK>::reverse_iterator  itr1, itr2;
+	vector<TICK>::iterator  itr1, itr2;
 	int n_VecCap, n_VecSize;
 
 	if ( !mMap_stock_ticks.count( symbol ) ) {
@@ -452,8 +453,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	m_tick.m_nQty = nQty;
 
 	TICK m_init_tick = { -1, 0, 0, 0, 0, 0 };
-	itr1 = pVector_TickData->rbegin();
-	itr2 = pVector_TickData->rend();
+	itr1 = pVector_TickData->begin();
+	itr2 = pVector_TickData->end();
 
 	TICK m_vec_tick;
 	bool found_in_vec = false;
@@ -465,10 +466,10 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		}
 		else
 			if ( m_tick.m_nPtr > m_vec_tick.m_nPtr ) {
-				break;
 			}
 			else
 				if ( m_tick.m_nPtr < m_vec_tick.m_nPtr ) {
+					break;
 				}
 	}
 
@@ -488,10 +489,11 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	}
 
 	list<TCandleStick>::reverse_iterator itr3;
-	TCandleStick m_tick_candlestick;
+	TCandleStick *m_pTick_candlestick;
 	bool found_tick_in_candlestick = false;
+	float new_price;
 	if ( found_in_vec == false) {
-		pVector_TickData->insert( itr1.base(), m_tick );
+		pVector_TickData->insert( itr1, m_tick );
 		if ( m_tick.m_nPtr == 0 ) {
 			mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
 		}
@@ -519,19 +521,40 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 				  case 1: //5min
 					  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 5 + 1 ) );
 					  for (  itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++ ) {
-						  m_tick_candlestick = *itr3;
-						  if ( m_tick_candlestick.mTime == next_kline_close_time ) {
+						  m_pTick_candlestick = (TCandleStick *) &(*itr3);
+						  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
 							  found_tick_in_candlestick = true;
 							  break;
 						  }
 						  else
-							  if ( next_kline_close_time > m_tick_candlestick.mTime ) {
-								  itr3--;
+							  if ( next_kline_close_time > m_pTick_candlestick->mTime ) {
 								  break;
 							  }
 							  else
-								  if ( next_kline_close_time < m_tick_candlestick.mTime ) {
+								  if ( next_kline_close_time < m_pTick_candlestick->mTime ) {
 								  }
+					  }
+					  if ( found_tick_in_candlestick == false ) {
+						  m_candlestick.mTime = next_kline_close_time;
+						  new_price = ( float ) nClose / 100;
+						  //new_price = floor( ( new_price * 100 ) + 0.5 ) / 100;
+						  //new_price = 32.55;
+						  m_candlestick.mOpen = new_price;
+						  m_candlestick.mHigh = new_price;
+						  m_candlestick.mLow = new_price;
+						  m_candlestick.mClose = new_price;
+						  m_candlestick.mVolumn = nQty;
+						  pList_KLineData->insert( itr3.base(), m_candlestick );
+					  }
+					  else {
+						  new_price = ( float ) nClose / 100;
+						  m_pTick_candlestick->mClose = new_price;
+						  if ( m_pTick_candlestick->mHigh < new_price )
+							  m_pTick_candlestick->mHigh = new_price;
+						  else
+							  if ( m_pTick_candlestick->mLow > new_price )
+								  m_pTick_candlestick->mLow = new_price;
+						  m_pTick_candlestick->mVolumn += nQty;
 					  }
 					  break;
 				  case 2: //30min
@@ -558,4 +581,13 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	//n_VecSize = pVector_TickData->capacity();
 
 	return 0;
+}
+
+
+void CKLineStream::set_KLine_ready( char * ticker_symbol ) {
+	mMap_kline_ready [ ticker_symbol ] = true;
+}
+
+bool CKLineStream::get_KLine_ready ( char * ticker_symbol ) {
+	return mMap_kline_ready [ ticker_symbol ];
 }

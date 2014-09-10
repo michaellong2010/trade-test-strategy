@@ -113,9 +113,17 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	mKline_stream.Push_KLine_Data("1402", "06/03/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/05/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");*/
-	/*mKline_stream.Push_Tick_Data( "1402", 0, 90003, -999999, 999999, 3255, 66 );
-	mKline_stream.Push_Tick_Data( "1402", 5, 90212, 3270, 3275, 3255, 66 );
-	mKline_stream.Push_Tick_Data( "1402", 8, 90507, 3215, 3220, 3255, 66 );*/
+	/*mKline_stream.Push_Tick_Data( "1402", 0, 90003, -999999, 999999, 3255, 66, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 5, 90212, 3270, 3275, 3275, 105, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 8, 90507, 3215, 3220, 3215, 70, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 3, 90123, 3220, 3230, 3225, 69, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 18, 90845, 3270, 3275, 3270, 75, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 15, 90615, 3255, 3260, 3260, 35, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 7, 90435, 3230, 3235, 3230, 19, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 6, 90235, 3265, 3260, 3265, 73, 1 );*/
+	/*mKline_stream.set_KLine_ready ( "1402" );
+	mKline_stream.set_KLine_ready ( "TX00" );
+	mKline_stream.get_KLine_ready ( "2903" );*/
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
@@ -674,8 +682,8 @@ void CQuoteTesterDlg::OnBnClickedButton5()
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
 	
 	//SKQuoteLib_RequestTicks(&sPageNo,caText);
-	//SKQuoteLib_RequestTicks(&sPageNo, "1402");
-	SKQuoteLib_RequestTicks(&sPageNo, "TX00");
+	SKQuoteLib_RequestTicks(&sPageNo, "1402");
+	//SKQuoteLib_RequestTicks(&sPageNo, "TX00");
 }
 
 
@@ -703,8 +711,11 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 	//strcpy(caText, "TX00");
 	//nType = 1;
 	//SKQuoteLib_GetKLine(caText,nType);
-	mKline_stream.load_KLine_from_archive( "TX00" );
-	SKQuoteLib_GetKLine("TX00", 1);
+	if ( mKline_stream.get_KLine_ready( "TX00" ) == false ) {
+		mKline_stream.load_KLine_from_archive( "TX00" );
+		SKQuoteLib_GetKLine("TX00", 1);
+		mKline_stream.set_KLine_ready( "TX00" );
+	}
 	//SKQuoteLib_GetKLine("TX00", 2);
 }
 
@@ -945,8 +956,9 @@ void CQuoteTesterDlg::OnBnClickedButton14()
 	pWnd = GetDlgItem(IDC_BUTTON14);
 	pWnd->EnableWindow( FALSE );
 	
-	/*CloseHandle(t_hnd);
-	t_hnd = NULL;*/
+	CloseHandle(t_hnd);
+	t_hnd = NULL;
+	OnBnClickedButton3();
 }
 
 LRESULT CQuoteTesterDlg::OnDoTaskInMainThread(WPARAM wParam, LPARAM lParam) {

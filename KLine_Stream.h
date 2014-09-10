@@ -8,6 +8,7 @@
 #include <string.h>
 #include <algorithm>
 #include "Functions.h"
+#include <math.h>
 
 using namespace std;
 using namespace std::tr1;
@@ -80,15 +81,23 @@ public:
 	/*map stock symbol to it's link-list KLine data*/
 	map<string, list<TCandleStick>*> mMap_stock_kline;
 
+	/*map indicate if KLine data is ready*/
+	map<string, bool> mMap_kline_ready;
+
 	/* split string */
 	vector<string> tokenize( const char *input_str, char *delimiter );
 
 	/* load KLine data from archive into `mMap_stock_kline`¡@when call capital API SKQuoteLib_GetKLine() */
 	void load_KLine_from_archive ( char * ticker_symbol );
+	/*set/get KLine ready status of symbols*/
+	void set_KLine_ready ( char * ticker_symbol );
+	bool get_KLine_ready ( char * ticker_symbol );
 
 	ofstream txt_out;
 	/*map stock symbol to reference it's vector<tick>*/
 	map<string, vector<TICK>*> mMap_stock_ticks;
 	map<string, int> mMap_intraday_open_time;
 	map<string, list<TCandleStick>*> mMap_tick_compose_kline;
+
+	SYSTEMTIME start_run_time;
 };
