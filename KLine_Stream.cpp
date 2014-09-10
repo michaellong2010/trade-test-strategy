@@ -28,12 +28,33 @@ CKLineStream::~CKLineStream() {
 	/*cloase all file stream*/
 	for ( map<string, TKLineData_FileInfo *>::iterator itr1 = file_stream_info.begin(); itr1 != file_stream_info.end(); itr1++ ) {
 		p_fs = ((*itr1).second)->p_fs;
+		p_fs->flush();
 		p_fs->close();
 		nSize = sizeof((*itr1).second);
 		delete ((*itr1).second->p_fs);
 		if ( nSize == 4 )
 			delete (*itr1).second;
 	}
+
+	for ( map<string, vector<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
+		delete (*itr).second;
+
+	}
+
+	for ( map<string, list<TCandleStick>*>::iterator itr = mMap_tick_compose_kline.begin(); itr != mMap_tick_compose_kline.end(); itr++ ) {
+		delete (*itr).second;
+	}
+
+	for ( map<string, TKLineData_FileInfo *>::iterator itr1 = mMap_tickfile_stream_info.begin(); itr1 != mMap_tickfile_stream_info.end(); itr1++ ) {
+		p_fs = ((*itr1).second)->p_fs;
+		p_fs->flush();
+		p_fs->close();
+		nSize = sizeof((*itr1).second);
+		delete ((*itr1).second->p_fs);
+		if ( nSize == 4 )
+			delete (*itr1).second;
+	}
+
 	txt_out.flush();
 	txt_out.close();
 }
@@ -437,13 +458,57 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	vector<TICK> *pVector_TickData;
 	vector<TICK>::iterator  itr1, itr2;
 	int n_VecCap, n_VecSize;
+	TTickData_FileInfo *pTick_file_info;
+	string m_str_filename;
+	fstream *p_fs;
+	long f_size;
+	int nSize = sizeof(TICK), nRead_ticks;
+	TICK m_file_tick;
 
+	m_str_filename = "C:\\temp\\" + symbol;
 	if ( !mMap_stock_ticks.count( symbol ) ) {
 		pVector_TickData = new vector<TICK>;
 		mMap_stock_ticks[ symbol ] = pVector_TickData;
+
+		p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+		if ( p_fs->is_open() == true ) {
+		}
+		else {
+			delete p_fs;
+			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+		} 
+		pTick_file_info = new TTickData_FileInfo;
+		pTick_file_info->n_fsize = f_size = p_fs->tellg();
+		pTick_file_info->n_list_end = ( pTick_file_info->n_fsize / nSize ) - 1;
+		if ( pTick_file_info->n_list_end >= 0 ) {
+			if ( pTick_file_info->n_list_end < 1000 )
+				pTick_file_info->n_list_begin = 0;
+			else
+				pTick_file_info->n_list_begin = pTick_file_info->n_list_end - 999;
+		}
+		else
+			pTick_file_info->n_list_begin = -1;
+		pTick_file_info->p_fs = p_fs;
+
+		mMap_tickfile_stream_info.insert ( std::pair<string, TTickData_FileInfo *> ( m_str_filename, pTick_file_info ) );
+		/*sync all Tick in archive(p_fs) into pList_KLineData*/
+		nRead_ticks = 1;
+		while ( ( f_size - nRead_ticks * nSize ) >= 0 &&  nRead_ticks <= 1000 ) {
+			p_fs->seekg ( ( f_size - nRead_ticks * nSize ), ios::beg );
+			p_fs->read ( (char *) &m_file_tick, nSize );
+			pVector_TickData->insert ( pVector_TickData->begin(), m_file_tick );
+			nRead_ticks++;
+
+			//if ( pKLine_file_info->n_list_end == -1 )
+			//pKLine_file_info->n_list_end
+		}
 	}
-	else
+	else {
 		pVector_TickData = mMap_stock_ticks[ symbol ];
+
+		pTick_file_info = mMap_tickfile_stream_info[ m_str_filename ];
+		p_fs = pTick_file_info->p_fs;
+	}
 
 	m_tick.m_nPtr = nPtr;
 	m_tick.m_nTime = nTime;
@@ -458,7 +523,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 
 	TICK m_vec_tick;
 	bool found_in_vec = false;
-	for ( ; itr1 != itr2; itr1++ ) {
+	int n_insert_pos, n_insert_pos1, i, j, n_pos;
+	for ( n_pos = 0, n_insert_pos = pTick_file_info->n_list_begin ; itr1 != itr2; itr1++, n_pos++, n_insert_pos++ ) {
 		m_vec_tick = (*itr1);
 		if ( m_tick.m_nPtr == m_vec_tick.m_nPtr ) {
 			found_in_vec = true;
@@ -490,82 +556,141 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 
 	list<TCandleStick>::reverse_iterator itr3;
 	TCandleStick *m_pTick_candlestick;
-	bool found_tick_in_candlestick = false;
+	bool found_tick_in_candlestick = false, found_in_file = false;
 	float new_price;
 	if ( found_in_vec == false) {
-		pVector_TickData->insert( itr1, m_tick );
-		if ( m_tick.m_nPtr == 0 ) {
-			mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
-		}
-
-		if ( !mMap_tick_compose_kline.count( symbol ) ) {
-			pList_KLineData = new list<TCandleStick>;
-			mMap_tick_compose_kline.insert( pair<string, list<TCandleStick>*> ( symbol, pList_KLineData ) );
-		}
-		else {
-			pList_KLineData = mMap_tick_compose_kline[ symbol ];
-		}
-/*collapse tick data into appropriate candlestick*/
-		if ( nTimeFrame <= 2 ) {
-/*intraday timeframetake the first tick time as start within the day*/
-			if ( mMap_intraday_open_time.count( symbol ) ) {
-				m_open_time = mMap_intraday_open_time[ symbol ];
-				m_open_hour = m_open_time / 10000;
-				m_open_min = ( m_open_time - m_open_hour * 10000 ) / 100;
-				m_tick_hour = m_tick.m_nTime / 10000;
-				m_tick_min = ( m_tick.m_nTime - m_tick_hour * 10000 ) / 100;
-				
-				switch ( nTimeFrame ) {
-				  case 0: //1min
-					  break;
-				  case 1: //5min
-					  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 5 + 1 ) );
-					  for (  itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++ ) {
-						  m_pTick_candlestick = (TCandleStick *) &(*itr3);
-						  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
-							  found_tick_in_candlestick = true;
-							  break;
-						  }
-						  else
-							  if ( next_kline_close_time > m_pTick_candlestick->mTime ) {
-								  break;
-							  }
-							  else
-								  if ( next_kline_close_time < m_pTick_candlestick->mTime ) {
-								  }
-					  }
-					  if ( found_tick_in_candlestick == false ) {
-						  m_candlestick.mTime = next_kline_close_time;
-						  new_price = ( float ) nClose / 100;
-						  //new_price = floor( ( new_price * 100 ) + 0.5 ) / 100;
-						  //new_price = 32.55;
-						  m_candlestick.mOpen = new_price;
-						  m_candlestick.mHigh = new_price;
-						  m_candlestick.mLow = new_price;
-						  m_candlestick.mClose = new_price;
-						  m_candlestick.mVolumn = nQty;
-						  pList_KLineData->insert( itr3.base(), m_candlestick );
-					  }
-					  else {
-						  new_price = ( float ) nClose / 100;
-						  m_pTick_candlestick->mClose = new_price;
-						  if ( m_pTick_candlestick->mHigh < new_price )
-							  m_pTick_candlestick->mHigh = new_price;
-						  else
-							  if ( m_pTick_candlestick->mLow > new_price )
-								  m_pTick_candlestick->mLow = new_price;
-						  m_pTick_candlestick->mVolumn += nQty;
-					  }
-					  break;
-				  case 2: //30min
-					  break;
+		if ( itr1 == pVector_TickData->begin() ) {
+			for ( i = 0; i < n_insert_pos; i++ ) {
+				p_fs->seekg ( i*nSize, ios::beg );
+				p_fs->read ( (char *) &m_file_tick, nSize );
+				if ( m_tick.m_nPtr == m_file_tick.m_nPtr ) {
+					found_in_file = true;
+					break;
 				}
+				else
+					if ( m_tick.m_nPtr > m_file_tick.m_nPtr ) {
+					}
+					else
+						if ( m_tick.m_nPtr < m_file_tick.m_nPtr ) {
+							break;
+						}
+			}
+
+			if ( found_in_file == false ) {
+				n_insert_pos1 = i;
+				for ( j = pTick_file_info->n_list_end; j >= i; j-- ) {
+					p_fs->seekg ( j*nSize, ios::beg );
+					p_fs->read ( (char *) &m_file_tick, nSize );
+					p_fs->seekp ( (j+1)*nSize, ios::beg );
+					p_fs->write ( (char *) &m_file_tick, nSize );
+				}
+				p_fs->seekp ( (n_insert_pos1)*nSize, ios::beg );
+				p_fs->write ( (char *) &m_tick, nSize );
+				pTick_file_info->n_list_end++;
+				pTick_file_info->n_list_begin++;
+				pTick_file_info->n_fsize = ( pTick_file_info->n_list_end + 1 ) * nSize;
+				if ( n_insert_pos >= 0 && ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) < 1000 ) {
+					p_fs->seekg ( n_insert_pos*nSize, ios::beg );
+					p_fs->read ( (char *) &m_file_tick, nSize );
+					pVector_TickData->insert ( pVector_TickData->begin(), m_file_tick );
+					pTick_file_info->n_list_begin--;
+				}
+				else
+					if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) == 1 )
+						pVector_TickData->insert( itr1, m_tick );
 			}
 		}
 		else {
-/*interday timeframeweek/month/year candlestick chart*/	
+			pVector_TickData->insert( itr1, m_tick );
+			/*sync ticks in vector with ticks in file*/
+			//itr1--;
+			//itr2 = pVector_TickData->end();
+			
+			for ( i = n_pos; i < pVector_TickData->size(); n_insert_pos++, i++ ) {
+				m_file_tick = pVector_TickData->at(i);
+				p_fs->seekp ( n_insert_pos * nSize, ios::beg );
+				p_fs->write ( (char *) &m_file_tick, nSize );
+			}
+			pTick_file_info->n_list_end++;
+			pTick_file_info->n_fsize = ( pTick_file_info->n_list_end + 1 ) * nSize;
+			if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) > 1000 ) {
+				pTick_file_info->n_list_begin++;
+				pVector_TickData->erase( pVector_TickData->begin() );
+			}
 		}
 	}
+
+			if ( m_tick.m_nPtr == 0 ) {
+				mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
+			}
+
+			if ( !mMap_tick_compose_kline.count( symbol ) ) {
+				pList_KLineData = new list<TCandleStick>;
+				mMap_tick_compose_kline.insert( pair<string, list<TCandleStick>*> ( symbol, pList_KLineData ) );
+			}
+			else {
+				pList_KLineData = mMap_tick_compose_kline[ symbol ];
+			}
+/*collapse tick data into appropriate candlestick*/
+			if ( nTimeFrame <= 2 ) {
+/*intraday timeframetake the first tick time as start within the day*/
+				if ( mMap_intraday_open_time.count( symbol ) ) {
+					m_open_time = mMap_intraday_open_time[ symbol ];
+					m_open_hour = m_open_time / 10000;
+					m_open_min = ( m_open_time - m_open_hour * 10000 ) / 100;
+					m_tick_hour = m_tick.m_nTime / 10000;
+					m_tick_min = ( m_tick.m_nTime - m_tick_hour * 10000 ) / 100;
+				
+					switch ( nTimeFrame ) {
+				      case 0: //1min
+						  break;
+					  case 1: //5min
+						  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 5 + 1 ) );
+						  for (  itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++ ) {
+							  m_pTick_candlestick = (TCandleStick *) &(*itr3);
+							  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
+								  found_tick_in_candlestick = true;
+								  break;
+							  }
+							  else
+								  if ( next_kline_close_time > m_pTick_candlestick->mTime ) {
+									  break;
+								  }
+								  else
+									  if ( next_kline_close_time < m_pTick_candlestick->mTime ) {
+									  }
+						  }
+						  if ( found_tick_in_candlestick == false ) {
+							  m_candlestick.mTime = next_kline_close_time;
+							  new_price = ( float ) nClose / 100;
+						  //new_price = floor( ( new_price * 100 ) + 0.5 ) / 100;
+						  //new_price = 32.55;
+							  m_candlestick.mOpen = new_price;
+							  m_candlestick.mHigh = new_price;
+							  m_candlestick.mLow = new_price;
+							  m_candlestick.mClose = new_price;
+							  m_candlestick.mVolumn = nQty;
+							  pList_KLineData->insert( itr3.base(), m_candlestick );
+						  }
+						  else {
+							  new_price = ( float ) nClose / 100;
+							  m_pTick_candlestick->mClose = new_price;
+							  if ( m_pTick_candlestick->mHigh < new_price )
+								  m_pTick_candlestick->mHigh = new_price;
+							  else
+								  if ( m_pTick_candlestick->mLow > new_price )
+									  m_pTick_candlestick->mLow = new_price;
+							  m_pTick_candlestick->mVolumn += nQty;
+						  }
+						  break;
+					  case 2: //30min
+						  break;
+					}
+				}
+			}
+			else {
+/*interday timeframeweek/month/year candlestick chart*/	
+			}
 	/*n_VecCap = pVector_TickData->capacity( );
 	if ( n_VecCap <= nPtr )
 		pVector_TickData->reserve( nPtr + 100);

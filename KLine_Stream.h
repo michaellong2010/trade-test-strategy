@@ -30,6 +30,7 @@ struct TKLineData_FileInfo {
 		n_fsize = n_list_begin = n_list_end = -1;
 	}
 };
+typedef TKLineData_FileInfo TTickData_FileInfo;
 
 struct TCandleStick {
 	int mDate;
@@ -98,6 +99,7 @@ public:
 	map<string, vector<TICK>*> mMap_stock_ticks;
 	map<string, int> mMap_intraday_open_time;
 	map<string, list<TCandleStick>*> mMap_tick_compose_kline;
+	map<string, TKLineData_FileInfo *> mMap_tickfile_stream_info;
 
 	SYSTEMTIME start_run_time;
 };

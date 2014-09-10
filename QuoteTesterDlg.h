@@ -9,6 +9,7 @@
 using namespace std; 
 #define WM_DATA WM_USER+1
 #define WM_TICK WM_USER+3
+#define WM_HISTORY_TICK WM_USER+5
 
 // CQuoteTesterDlg ¹ï¸Ü¤è¶ô
 class CQuoteTesterDlg : public CDialogEx
@@ -70,7 +71,10 @@ public:
 	/*implement object pointer queue to reduce dynamic alloc and improve efficiency*/
 	deque <TStock *> m_Queue_pTStock;
 	deque <TBest5 *> m_Queue_pTBest5;
+	deque <TTick *> m_Queue_pTTick;
 
 	/*Request Quote or Tick, Best5 use stock index correspond to stock No.¡AKLine use stock No. as index¡Athe stock index may be different every day*/
 	map <short, string> mMap_stockidx_stockNo;
+
+	HANDLE ghMutex;
 };

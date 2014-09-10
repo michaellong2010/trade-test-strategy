@@ -50,6 +50,13 @@ CQuoteTesterDlg::~CQuoteTesterDlg()
 		pTBest5 = (TBest5 *)*itr;
 		delete (pTBest5);
 	}
+	TTick *pTTick;
+	for (deque<TTick *>::iterator itr = m_Queue_pTTick.begin(); itr != m_Queue_pTTick.end(); itr++) {
+		pTTick = (TTick *)*itr;
+		delete (pTTick);
+	}
+
+	CloseHandle(ghMutex);
 }
 
 void CQuoteTesterDlg::DoDataExchange(CDataExchange* pDX)
@@ -125,6 +132,10 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	mKline_stream.set_KLine_ready ( "TX00" );
 	mKline_stream.get_KLine_ready ( "2903" );*/
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
+	ghMutex = CreateMutex( 
+		NULL,              // default security attributes
+		FALSE,             // initially not owned
+		NULL);             // unnamed mutex
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
@@ -280,6 +291,12 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty);
+		/*m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0 );*/
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
@@ -295,10 +312,23 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 
 void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty)
 {
+	TTick* tTick;
+	DWORD dwWaitResult;
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	//if( m_nType == 2 )
 	{
+		/*dwWaitResult = WaitForSingleObject( 
+            m_pDialog->ghMutex,    // handle to mutex
+            INFINITE);  // no time-out interval*/
+		if ( !m_pDialog->m_Queue_pTTick.empty() ) {
+			tTick = m_pDialog->m_Queue_pTTick.front();
+			m_pDialog->m_Queue_pTTick.pop_front();
+		}
+		else
+			tTick = new TTick();
+		//ReleaseMutex(m_pDialog->ghMutex);
+
 		CString strMsg;
 
 		strMsg.Format(_T("TICK 編號:%d 時間:%d 買價:%d 賣價:%d 成交價:%d 量:%d "),
@@ -321,12 +351,20 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty, 1 );
+		/*tTick->m_nAsk = nAsk;
+		tTick->m_nBid = nBid;
+		tTick->m_nClose = nClose;
+		tTick->m_nPtr = nPtr;
+		tTick->m_nQty = nQty;
+		tTick->m_nTime = nTime;*/
 
 		BSTR bstrMsg = strMsg.AllocSysString();
 
+		m_pDialog->m_Queue_pTTick.push_back(tTick);
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
-			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+			//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 			SysFreeString(bstrMsg);
+			//PostThreadMessage( t_id, WM_HISTORY_TICK, sStockidx,(int)tTick );
 		}
 		else
 			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
@@ -682,8 +720,8 @@ void CQuoteTesterDlg::OnBnClickedButton5()
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
 	
 	//SKQuoteLib_RequestTicks(&sPageNo,caText);
-	SKQuoteLib_RequestTicks(&sPageNo, "1402");
-	//SKQuoteLib_RequestTicks(&sPageNo, "TX00");
+	//SKQuoteLib_RequestTicks(&sPageNo, "1402");
+	SKQuoteLib_RequestTicks(&sPageNo, "TX00");
 }
 
 
@@ -885,9 +923,25 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		pDialog->OnBnClickedButton5();
 	}
 
+	TTick *tTick;
+	DWORD dwWaitResult;
+	short sStockidx;
 	while(::GetMessage( &msg, NULL, 0, 0 )) {
-		if ( msg.message == WM_TICK ) {
+		if ( msg.message == WM_HISTORY_TICK ) {
 			nCode = 0;
+			tTick = ( TTick * ) msg.lParam;
+			sStockidx = (int) msg.wParam;
+			m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], tTick->m_nPtr,
+			tTick->m_nTime,
+			tTick->m_nBid,
+			tTick->m_nAsk,
+			tTick->m_nClose,
+			tTick->m_nQty, 1 );
+			dwWaitResult = WaitForSingleObject( 
+				m_pDialog->ghMutex,    // handle to mutex
+				INFINITE);  // no time-out interval
+			m_pDialog->m_Queue_pTTick.push_back(tTick);
+			ReleaseMutex(m_pDialog->ghMutex);
 		}
 	}
 	return 0;
