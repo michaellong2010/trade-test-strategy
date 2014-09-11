@@ -51,6 +51,7 @@ CQuoteTesterDlg::~CQuoteTesterDlg()
 		delete (pTBest5);
 	}
 	TTick *pTTick;
+	TRACE("TTick deque size: %d\n", m_Queue_pTTick.size());
 	for (deque<TTick *>::iterator itr = m_Queue_pTTick.begin(); itr != m_Queue_pTTick.end(); itr++) {
 		pTTick = (TTick *)*itr;
 		delete (pTTick);
@@ -291,21 +292,21 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty);
-		/*m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty, 0 );*/
+			nQty, 0 );
 
-		BSTR bstrMsg = strMsg.AllocSysString();
+		/*BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
 			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 			SysFreeString(bstrMsg);
 		}
 		else
-			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);*/
 
 	}
 }
@@ -318,16 +319,18 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	//if( m_nType == 2 )
 	{
-		/*dwWaitResult = WaitForSingleObject( 
-            m_pDialog->ghMutex,    // handle to mutex
-            INFINITE);  // no time-out interval*/
 		if ( !m_pDialog->m_Queue_pTTick.empty() ) {
+			/*dwWaitResult = WaitForSingleObject( 
+				m_pDialog->ghMutex,    // handle to mutex
+				INFINITE);  // no time-out interval*/
 			tTick = m_pDialog->m_Queue_pTTick.front();
 			m_pDialog->m_Queue_pTTick.pop_front();
+			//ReleaseMutex(m_pDialog->ghMutex);
 		}
-		else
+		else {
+			//ReleaseMutex(m_pDialog->ghMutex);
 			tTick = new TTick();
-		//ReleaseMutex(m_pDialog->ghMutex);
+		}
 
 		CString strMsg;
 
@@ -358,16 +361,16 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		tTick->m_nQty = nQty;
 		tTick->m_nTime = nTime;*/
 
-		BSTR bstrMsg = strMsg.AllocSysString();
+		//BSTR bstrMsg = strMsg.AllocSysString();
 
 		m_pDialog->m_Queue_pTTick.push_back(tTick);
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
 			//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
-			SysFreeString(bstrMsg);
+			//SysFreeString(bstrMsg);
 			//PostThreadMessage( t_id, WM_HISTORY_TICK, sStockidx,(int)tTick );
 		}
-		else
-			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+		/*else
+			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);*/
 	}
 }
 
@@ -757,6 +760,7 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 		SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
 		//OnBnClickedButton7(); //request server time;
 		mKline_stream.set_KLine_ready( "TX00" );
+		mKline_stream.candlestick_collapse( "TX00", 3 );
 	}
 	//SKQuoteLib_GetKLine("TX00", 2);
 }
@@ -927,7 +931,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		//pDialog->OnBnClickedButton5();
 	}
 
-#if 0
+#if 1
 	TTick *tTick;
 	DWORD dwWaitResult;
 	short sStockidx;

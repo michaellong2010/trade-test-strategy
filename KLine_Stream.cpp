@@ -629,6 +629,7 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 				pList_TickData->pop_front();
 			}
 		}
+		p_fs->flush();
 	}
 #endif
 
@@ -812,6 +813,100 @@ bool CKLineStream::search_tick_in_file( TTickData_FileInfo *pTick_file_info, int
 */
 }
 
+/*group several sticks into single stick*/
+void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
+	list<TCandleStick> *pList_KLineData;
+	TKLineData_FileInfo *pOrig_KLine_file_info, *pNew_KLine_file_info;
+	string m_str_symbol, m_orig_filename, m_new_filename;
+	char str_buf[ 100 ];
+	int max_sticks;
+	fstream *p_orig_fs, *p_new_fs;
+	int nSize = sizeof ( TCandleStick );
+
+	if ( !mMap_stock_kline.count ( ticker_symbol ) )
+		return;
+	else {
+		m_str_symbol = ticker_symbol;
+		m_orig_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		pList_KLineData = mMap_stock_kline [ ticker_symbol ];
+		pOrig_KLine_file_info = file_stream_info [ m_orig_filename ];
+		p_orig_fs = pOrig_KLine_file_info->p_fs;
+		p_orig_fs->flush();
+	}
+
+	if ( n_sticks == 1 )
+		return;
+
+	int n_total_sticks, i, j;
+	TCandleStick m_raw_candlestick;
+	switch ( nTimeFrame ) {
+		case 0:
+			max_sticks = 180 / 1;
+			if ( n_sticks <= max_sticks ) {
+			}
+			break;
+		case 1:
+			max_sticks = 180 / 5;
+			if ( n_sticks <= max_sticks ) {
+				sprintf( str_buf, "%s_%dmin", ticker_symbol, 5 * n_sticks );
+				m_str_symbol = str_buf;
+				m_new_filename = "C:\\temp\\" + m_str_symbol;
+
+				if ( !mMap_stock_kline.count (m_str_symbol) ) {
+					pList_KLineData = new list<TCandleStick>;
+					mMap_stock_kline.insert ( pair<string, list<TCandleStick> *> ( m_str_symbol, pList_KLineData ) );
+
+					pNew_KLine_file_info = new TKLineData_FileInfo;
+					p_new_fs = new fstream( m_new_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+					if ( p_new_fs->is_open() == true ) {
+					}
+					else {
+						delete p_new_fs;
+						p_new_fs = new fstream( m_new_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+					}
+					
+					n_total_sticks = pOrig_KLine_file_info->n_fsize / nSize;
+					for ( i = 0; i < n_total_sticks; i += n_sticks ) {
+						for ( j = i; j < ( i + n_sticks ); j++ ) {
+							p_orig_fs->seekg ( j*nSize, ios::beg );
+							p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
+							m_candlestick.mClose = m_raw_candlestick.mClose;
+							if ( !( j % n_sticks ) ) {
+								m_candlestick = m_raw_candlestick;
+							}
+							else {
+								m_candlestick.mVolumn += m_raw_candlestick.mVolumn;
+								if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
+									m_candlestick.mHigh = m_raw_candlestick.mHigh;
+								if ( m_raw_candlestick.mLow < m_candlestick.mLow )
+									m_candlestick.mClose = m_raw_candlestick.mLow;
+								if ( ( j % n_sticks ) == ( n_sticks - 1 ) ) {
+									m_candlestick.mDate = m_raw_candlestick.mDate;
+									m_candlestick.mTime = m_raw_candlestick.mTime;
+								}
+							}
+						}
+						p_new_fs->seekp ( ( i / n_sticks ) * nSize, ios::beg );
+						p_new_fs->write ( (char *) &m_candlestick, nSize );	
+					}
+				}
+				else {
+					//pList_KLineData = mMap_stock_kline [ m_str_symbol ];
+					//pOrig_KLine_file_info = file_stream_info [ m_new_filename ];
+				}
+			}
+			break;
+		case 2:
+			max_sticks = 180 / 30;
+			if ( n_sticks <= max_sticks ) {
+			
+			}
+			break;
+		default:
+			return;
+	}
+}
+
 VOID CALLBACK OnTimerProc(
   HWND hwnd,         // handle to window
   UINT uMsg,         // WM_TIMER message
@@ -827,10 +922,16 @@ void CKLineStream::set_KLine_ready( char * ticker_symbol ) {
 }
 
 void CKLineStream::KLine_server_time( int total_secconds ) {
+	/*time duration in millisecond from now to next 15:00:00 PM*/
+	int escape_time;
     kline_fetch_server_time = total_secconds;
     GetSystemTime( &kline_fetch_system_time );
 	if ( total_secconds < 15 * 60 * 60)
-	::SetTimer( AfxGetApp ()->GetMainWnd ()->m_hWnd, 198, ( 15 * 60 * 60 - total_secconds ) * 1000, (TIMERPROC)OnTimerProc );
+		escape_time = ( 15 * 60 * 60 - total_secconds ) * 1000;
+	else
+		escape_time = ( 24 * 60 * 60 - total_secconds + 15 * 60 * 60 ) * 1000;
+	escape_time = 10000;
+	::SetTimer( AfxGetApp ()->GetMainWnd ()->m_hWnd, 198, escape_time, (TIMERPROC)OnTimerProc );
 }
 
 bool CKLineStream::get_KLine_ready ( char * ticker_symbol ) {

@@ -107,4 +107,7 @@ public:
 	/*record fetch kline data server time*/
 	void KLine_server_time( int total_secconds );
 	int kline_fetch_server_time;
+
+	/*collapse multiple candlestick form another time frame KLine*/
+	void candlestick_collapse ( char * ticker_symbol, int n_sticks );
 };
