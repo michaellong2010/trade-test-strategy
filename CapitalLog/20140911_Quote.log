@@ -525,3 +525,858 @@
 [3252] 2014/09/11 03:46:34.203 Stocks Ready
 [3252] 2014/09/11 03:46:37.125 SKQuoteLib_RequestTicks (1,TX00)
 [3252] 2014/09/11 03:51:50.392 SocketErrorDisConnect Type¡G101  ErrorCode¡G0
+[11256] 2014/09/11 09:50:13.468 API InitInstance 
+[11256] 2014/09/11 09:53:09.156 SKQuoteLib_Initialize ¡GS122811334
+[11256] 2014/09/11 09:53:09.156 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_Initialize  SUCCESS 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachConnectionCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachQuoteCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachBest5CallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachTicksGetCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachKLineDataCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachMarketTotCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachMarketBuySellCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachMarketHighLowCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachStrikePricesCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttchServerTimeCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11256] 2014/09/11 09:53:09.671 SKQuoteLib_AttachProductsReadyCallBack 
+[11256] 2014/09/11 09:53:09.687 SKQuoteLib_EnterMonitor IP¡Ginfo10.capital.com.tw
+[11256] 2014/09/11 09:53:09.687 SocketConnect Type¡G100  ErrorCode¡G0
+[11256] 2014/09/11 09:53:11.156 Stocks Ready
+[11256] 2014/09/11 09:53:26.890 SKQuoteLib_RequestTicks (1,TX00)
+[11256] 2014/09/11 09:53:52.328 SKQuoteLib_LeaveMonitor 
+[11256] 2014/09/11 09:53:52.328 SocketClose Type¡G101  ErrorCode¡G0
+[11256] 2014/09/11 09:53:53.125 SKQuoteLib_LeaveMonitor 
+[6528] 2014/09/11 09:54:15.359 API InitInstance 
+[6528] 2014/09/11 09:54:16.328 SKQuoteLib_Initialize ¡GS122811334
+[6528] 2014/09/11 09:54:16.328 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_Initialize  SUCCESS 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachConnectionCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachQuoteCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachBest5CallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachTicksGetCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachKLineDataCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachMarketTotCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachMarketBuySellCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachMarketHighLowCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachStrikePricesCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttchServerTimeCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6528] 2014/09/11 09:54:16.750 SKQuoteLib_AttachProductsReadyCallBack 
+[6528] 2014/09/11 09:54:16.781 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[6528] 2014/09/11 09:54:16.781 SocketConnect Type¡G100  ErrorCode¡G0
+[6528] 2014/09/11 09:54:18.140 Stocks Ready
+[6528] 2014/09/11 09:54:18.578 SKQuoteLib_RequestTicks (1,TX00)
+[12112] 2014/09/11 09:55:05.015 API InitInstance 
+[12112] 2014/09/11 09:55:06.218 SKQuoteLib_Initialize ¡GS122811334
+[12112] 2014/09/11 09:55:06.218 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_Initialize  SUCCESS 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachConnectionCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachQuoteCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachBest5CallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachTicksGetCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachKLineDataCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachMarketTotCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachMarketBuySellCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachMarketHighLowCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachStrikePricesCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttchServerTimeCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[12112] 2014/09/11 09:55:06.640 SKQuoteLib_AttachProductsReadyCallBack 
+[12112] 2014/09/11 09:55:06.656 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[12112] 2014/09/11 09:55:06.656 SocketConnect Type¡G100  ErrorCode¡G0
+[12112] 2014/09/11 09:55:08.015 Stocks Ready
+[12112] 2014/09/11 09:55:08.906 SKQuoteLib_RequestTicks (1,TX00)
+[8872] 2014/09/11 10:23:27.468 API InitInstance 
+[8872] 2014/09/11 10:23:28.234 API ExitInstance 
+[4672] 2014/09/11 10:27:26.421 API InitInstance 
+[4672] 2014/09/11 10:27:32.421 API ExitInstance 
+[10436] 2014/09/11 10:28:04.640 API InitInstance 
+[10436] 2014/09/11 10:28:07.500 API ExitInstance 
+[10156] 2014/09/11 10:32:59.421 API InitInstance 
+[10156] 2014/09/11 10:33:00.703 API ExitInstance 
+[9768] 2014/09/11 10:33:10.484 API InitInstance 
+[9768] 2014/09/11 10:33:11.937 SKQuoteLib_Initialize ¡GS122811334
+[9768] 2014/09/11 10:33:11.937 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_Initialize  SUCCESS 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachConnectionCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachQuoteCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachBest5CallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachTicksGetCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachKLineDataCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachMarketTotCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachMarketBuySellCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachMarketHighLowCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachStrikePricesCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttchServerTimeCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9768] 2014/09/11 10:33:12.421 SKQuoteLib_AttachProductsReadyCallBack 
+[9768] 2014/09/11 10:33:12.453 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[9768] 2014/09/11 10:33:12.453 SocketConnect Type¡G100  ErrorCode¡G0
+[9768] 2014/09/11 10:33:24.265 Stocks Ready
+[9768] 2014/09/11 10:33:26.515 SKQuoteLib_RequestTicks (1,TX00)
+[11484] 2014/09/11 10:34:14.515 API InitInstance 
+[11484] 2014/09/11 10:34:15.671 SKQuoteLib_Initialize ¡GS122811334
+[11484] 2014/09/11 10:34:15.671 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_Initialize  SUCCESS 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachConnectionCallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachQuoteCallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachBest5CallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachTicksGetCallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachKLineDataCallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachMarketTotCallBack 
+[11484] 2014/09/11 10:34:16.093 SKQuoteLib_AttachMarketBuySellCallBack 
+[11484] 2014/09/11 10:34:16.109 SKQuoteLib_AttachMarketHighLowCallBack 
+[11484] 2014/09/11 10:34:16.109 SKQuoteLib_AttachStrikePricesCallBack 
+[11484] 2014/09/11 10:34:16.109 SKQuoteLib_AttchServerTimeCallBack 
+[11484] 2014/09/11 10:34:16.109 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11484] 2014/09/11 10:34:16.109 SKQuoteLib_AttachProductsReadyCallBack 
+[11484] 2014/09/11 10:34:16.625 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[11484] 2014/09/11 10:34:16.640 SocketConnect Type¡G100  ErrorCode¡G0
+[11484] 2014/09/11 10:34:28.421 Stocks Ready
+[11484] 2014/09/11 10:34:30.171 SKQuoteLib_RequestTicks (1,TX00)
+[10668] 2014/09/11 10:38:05.812 API InitInstance 
+[10668] 2014/09/11 10:38:07.125 SKQuoteLib_Initialize ¡GS122811334
+[10668] 2014/09/11 10:38:07.125 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_Initialize  SUCCESS 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachConnectionCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachQuoteCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachBest5CallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachTicksGetCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachKLineDataCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachMarketTotCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachMarketBuySellCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachMarketHighLowCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachStrikePricesCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttchServerTimeCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10668] 2014/09/11 10:38:07.546 SKQuoteLib_AttachProductsReadyCallBack 
+[10668] 2014/09/11 10:38:07.578 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[10668] 2014/09/11 10:38:07.578 SocketConnect Type¡G100  ErrorCode¡G0
+[10668] 2014/09/11 10:38:19.390 Stocks Ready
+[10668] 2014/09/11 10:38:21.343 SKQuoteLib_RequestTicks (1,TX00)
+[10668] 2014/09/11 10:39:07.578 Check Link Status 
+[10668] 2014/09/11 10:40:01.468 SKQuoteLib_LeaveMonitor 
+[10668] 2014/09/11 10:40:01.468 SocketClose Type¡G101  ErrorCode¡G0
+[10668] 2014/09/11 10:40:02.796 SKQuoteLib_LeaveMonitor 
+[10668] 2014/09/11 10:40:04.406 SKQuoteLib_Initialize ¡GS122811334
+[10668] 2014/09/11 10:40:04.406 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10668] 2014/09/11 10:40:04.609 SKQuoteLib_Initialize  SUCCESS 
+[10668] 2014/09/11 10:40:04.609 SKQuoteLib_AttachConnectionCallBack 
+[10668] 2014/09/11 10:40:04.609 SKQuoteLib_AttachQuoteCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachBest5CallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachTicksGetCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachKLineDataCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachMarketTotCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachMarketBuySellCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachMarketHighLowCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachStrikePricesCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttchServerTimeCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_AttachProductsReadyCallBack 
+[10668] 2014/09/11 10:40:04.625 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[10668] 2014/09/11 10:40:04.640 SKQuoteLib_RequestTicks (1,TX00)
+[10668] 2014/09/11 10:40:04.640 SocketConnect Type¡G100  ErrorCode¡G0
+[10668] 2014/09/11 10:40:04.968 Stocks Ready
+[10668] 2014/09/11 10:40:20.062 SKQuoteLib_LeaveMonitor 
+[10668] 2014/09/11 10:40:20.062 SocketClose Type¡G101  ErrorCode¡G0
+[10668] 2014/09/11 10:40:20.093 API ExitInstance 
+[12004] 2014/09/11 10:40:24.890 API InitInstance 
+[12004] 2014/09/11 10:40:31.390 SKQuoteLib_Initialize ¡GS122811334
+[12004] 2014/09/11 10:40:31.390 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_Initialize  SUCCESS 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachConnectionCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachQuoteCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachBest5CallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachTicksGetCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachKLineDataCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachMarketTotCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachMarketBuySellCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachMarketHighLowCallBack 
+[12004] 2014/09/11 10:40:31.796 SKQuoteLib_AttachStrikePricesCallBack 
+[12004] 2014/09/11 10:40:31.812 SKQuoteLib_AttchServerTimeCallBack 
+[12004] 2014/09/11 10:40:31.812 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[12004] 2014/09/11 10:40:31.812 SKQuoteLib_AttachProductsReadyCallBack 
+[12004] 2014/09/11 10:40:31.828 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[12004] 2014/09/11 10:40:31.843 SocketConnect Type¡G100  ErrorCode¡G0
+[12004] 2014/09/11 10:40:33.171 Stocks Ready
+[12004] 2014/09/11 10:40:34.218 SKQuoteLib_RequestTicks (1,TX00)
+[12004] 2014/09/11 10:41:31.843 Check Link Status 
+[12004] 2014/09/11 10:42:31.843 Check Link Status 
+[12004] 2014/09/11 10:43:31.843 Check Link Status 
+[12004] 2014/09/11 10:44:31.843 Check Link Status 
+[12004] 2014/09/11 10:45:31.843 Check Link Status 
+[12004] 2014/09/11 10:46:31.843 Check Link Status 
+[12004] 2014/09/11 10:47:18.546 SKQuoteLib_LeaveMonitor 
+[12004] 2014/09/11 10:47:18.546 SocketClose Type¡G101  ErrorCode¡G0
+[12004] 2014/09/11 10:47:19.531 SKQuoteLib_LeaveMonitor 
+[12004] 2014/09/11 10:47:21.937 SKQuoteLib_LeaveMonitor 
+[12004] 2014/09/11 10:47:21.953 API ExitInstance 
+[2964] 2014/09/11 11:11:08.140 API InitInstance 
+[2964] 2014/09/11 11:11:18.421 SKQuoteLib_Initialize ¡GS122811334
+[2964] 2014/09/11 11:11:18.421 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_Initialize  SUCCESS 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachConnectionCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachQuoteCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachBest5CallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachTicksGetCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachKLineDataCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachMarketTotCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachMarketBuySellCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachMarketHighLowCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachStrikePricesCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttchServerTimeCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[2964] 2014/09/11 11:11:18.843 SKQuoteLib_AttachProductsReadyCallBack 
+[2964] 2014/09/11 11:11:18.875 SKQuoteLib_EnterMonitor IP¡Ginfo12.capital.com.tw
+[2964] 2014/09/11 11:11:18.875 SocketConnect Type¡G100  ErrorCode¡G0
+[2964] 2014/09/11 11:11:20.187 Stocks Ready
+[2964] 2014/09/11 11:11:21.187 SKQuoteLib_RequestTicks (1,TX00)
+[2964] 2014/09/11 11:12:18.875 Check Link Status 
+[2964] 2014/09/11 11:13:18.875 Check Link Status 
+[2964] 2014/09/11 11:14:18.875 Check Link Status 
+[2964] 2014/09/11 11:15:18.875 Check Link Status 
+[2964] 2014/09/11 11:16:18.875 Check Link Status 
+[2964] 2014/09/11 11:17:18.875 Check Link Status 
+[2964] 2014/09/11 11:17:40.828 SKQuoteLib_LeaveMonitor 
+[2964] 2014/09/11 11:17:40.828 SocketClose Type¡G101  ErrorCode¡G0
+[2964] 2014/09/11 11:17:40.921 API ExitInstance 
+[11544] 2014/09/11 11:19:12.140 API InitInstance 
+[11516] 2014/09/11 11:21:54.515 API InitInstance 
+[11976] 2014/09/11 11:24:21.406 API InitInstance 
+[9288] 2014/09/11 11:24:58.562 API InitInstance 
+[9132] 2014/09/11 11:26:22.062 API InitInstance 
+[9132] 2014/09/11 11:30:38.703 API ExitInstance 
+[11740] 2014/09/11 11:30:43.187 API InitInstance 
+[11312] 2014/09/11 11:38:10.625 API InitInstance 
+[11312] 2014/09/11 11:38:12.000 SKQuoteLib_Initialize ¡GS122811334
+[11312] 2014/09/11 11:38:12.000 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_Initialize  SUCCESS 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachConnectionCallBack 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachQuoteCallBack 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachBest5CallBack 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachTicksGetCallBack 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachKLineDataCallBack 
+[11312] 2014/09/11 11:38:12.968 SKQuoteLib_AttachMarketTotCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttachMarketBuySellCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttachMarketHighLowCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttachStrikePricesCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttchServerTimeCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11312] 2014/09/11 11:38:12.984 SKQuoteLib_AttachProductsReadyCallBack 
+[11312] 2014/09/11 11:38:13.125 SKQuoteLib_EnterMonitor IP¡Ginfo9.capital.com.tw
+[11312] 2014/09/11 11:38:13.234 SocketConnect Type¡G100  ErrorCode¡G0
+[11312] 2014/09/11 11:38:25.468 Stocks Ready
+[11312] 2014/09/11 11:38:27.437 SKQuoteLib_RequestTicks (1,TX00)
+[11312] 2014/09/11 11:39:14.703 Check Link Status 
+[11312] 2014/09/11 11:40:13.234 Check Link Status 
+[11312] 2014/09/11 11:40:14.953 SKQuoteLib_LeaveMonitor 
+[11312] 2014/09/11 11:40:14.953 SocketClose Type¡G101  ErrorCode¡G0
+[11312] 2014/09/11 11:40:15.765 SKQuoteLib_LeaveMonitor 
+[11312] 2014/09/11 11:40:23.109 SKQuoteLib_Initialize ¡GS122811334
+[11312] 2014/09/11 11:40:23.109 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_Initialize  SUCCESS 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachConnectionCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachQuoteCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachBest5CallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachTicksGetCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachKLineDataCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachMarketTotCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachMarketBuySellCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachMarketHighLowCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachStrikePricesCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttchServerTimeCallBack 
+[11312] 2014/09/11 11:40:23.312 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11312] 2014/09/11 11:40:23.328 SKQuoteLib_AttachProductsReadyCallBack 
+[11312] 2014/09/11 11:40:23.343 SKQuoteLib_EnterMonitor IP¡Ginfo10.capital.com.tw
+[11312] 2014/09/11 11:40:23.359 SKQuoteLib_RequestTicks (1,TX00)
+[11312] 2014/09/11 11:40:23.359 SocketConnect Type¡G100  ErrorCode¡G0
+[11312] 2014/09/11 11:40:23.875 Stocks Ready
+[11312] 2014/09/11 11:41:14.000 SKQuoteLib_LeaveMonitor 
+[11312] 2014/09/11 11:41:14.000 SocketClose Type¡G101  ErrorCode¡G0
+[11312] 2014/09/11 11:41:15.390 SKQuoteLib_LeaveMonitor 
+[11312] 2014/09/11 11:41:17.171 SKQuoteLib_Initialize ¡GS122811334
+[11312] 2014/09/11 11:41:17.171 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_Initialize  SUCCESS 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachConnectionCallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachQuoteCallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachBest5CallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachTicksGetCallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachKLineDataCallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachMarketTotCallBack 
+[11312] 2014/09/11 11:41:17.375 SKQuoteLib_AttachMarketBuySellCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_AttachMarketHighLowCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_AttachStrikePricesCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_AttchServerTimeCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_AttachProductsReadyCallBack 
+[11312] 2014/09/11 11:41:17.390 SKQuoteLib_EnterMonitor IP¡Ginfo10.capital.com.tw
+[11312] 2014/09/11 11:41:17.406 SKQuoteLib_RequestTicks (1,TX00)
+[11312] 2014/09/11 11:41:17.468 SocketConnect Type¡G100  ErrorCode¡G0
+[11312] 2014/09/11 11:41:18.671 Stocks Ready
+[11312] 2014/09/11 11:41:45.593 SKQuoteLib_LeaveMonitor 
+[11312] 2014/09/11 11:41:45.593 SocketClose Type¡G101  ErrorCode¡G0
+[11312] 2014/09/11 11:41:46.500 SKQuoteLib_LeaveMonitor 
+[7548] 2014/09/11 11:44:00.406 API InitInstance 
+[7548] 2014/09/11 11:44:01.765 SKQuoteLib_Initialize ¡GS122811334
+[7548] 2014/09/11 11:44:01.765 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_Initialize  SUCCESS 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachConnectionCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachQuoteCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachBest5CallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachTicksGetCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachKLineDataCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachMarketTotCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachMarketBuySellCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachMarketHighLowCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachStrikePricesCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttchServerTimeCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[7548] 2014/09/11 11:44:02.828 SKQuoteLib_AttachProductsReadyCallBack 
+[7548] 2014/09/11 11:44:02.843 SKQuoteLib_EnterMonitor IP¡Ginfo9.capital.com.tw
+[7548] 2014/09/11 11:44:03.046 SocketConnect Type¡G100  ErrorCode¡G0
+[7548] 2014/09/11 11:44:15.078 Stocks Ready
+[7548] 2014/09/11 11:44:17.015 SKQuoteLib_RequestTicks (1,TX00)
+[7548] 2014/09/11 11:52:00.468 SocketErrorDisConnect Type¡G101  ErrorCode¡G0
+[9380] 2014/09/11 12:24:38.640 API InitInstance 
+[9380] 2014/09/11 12:24:40.437 API ExitInstance 
+[11256] 2014/09/11 12:25:44.140 API InitInstance 
+[11256] 2014/09/11 12:25:46.921 API ExitInstance 
+[10764] 2014/09/11 14:24:55.328 API InitInstance 
+[10764] 2014/09/11 14:24:56.828 API ExitInstance 
+[8360] 2014/09/11 14:28:48.250 API InitInstance 
+[8360] 2014/09/11 14:28:50.609 API ExitInstance 
+[2088] 2014/09/11 14:37:12.640 API InitInstance 
+[4588] 2014/09/11 14:39:22.171 API InitInstance 
+[11280] 2014/09/11 14:43:47.125 API InitInstance 
+[9288] 2014/09/11 14:57:15.000 API InitInstance 
+[9288] 2014/09/11 14:59:01.515 API ExitInstance 
+[11368] 2014/09/11 14:59:40.968 API InitInstance 
+[10372] 2014/09/11 15:02:21.296 API InitInstance 
+[10372] 2014/09/11 15:03:34.187 API ExitInstance 
+[8004] 2014/09/11 15:03:39.000 API InitInstance 
+[11684] 2014/09/11 15:38:01.625 API InitInstance 
+[11684] 2014/09/11 15:38:03.046 SKQuoteLib_Initialize ¡GS122811334
+[11684] 2014/09/11 15:38:03.046 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_Initialize  SUCCESS 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachConnectionCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachQuoteCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachBest5CallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachTicksGetCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachKLineDataCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachMarketTotCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachMarketBuySellCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachMarketHighLowCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachStrikePricesCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttchServerTimeCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11684] 2014/09/11 15:38:03.562 SKQuoteLib_AttachProductsReadyCallBack 
+[11684] 2014/09/11 15:38:03.609 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[11684] 2014/09/11 15:38:03.625 SocketConnect Type¡G100  ErrorCode¡G0
+[11684] 2014/09/11 15:38:15.125 Stocks Ready
+[11684] 2014/09/11 15:38:17.125 SKQuoteLib_RequestTicks (1,TX00)
+[11684] 2014/09/11 15:41:28.578 SocketErrorDisConnect Type¡G101  ErrorCode¡G0
+[10736] 2014/09/11 15:42:04.906 API InitInstance 
+[10736] 2014/09/11 15:42:06.359 SKQuoteLib_Initialize ¡GS122811334
+[10736] 2014/09/11 15:42:06.359 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_Initialize  SUCCESS 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachConnectionCallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachQuoteCallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachBest5CallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachTicksGetCallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachKLineDataCallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachMarketTotCallBack 
+[10736] 2014/09/11 15:42:06.859 SKQuoteLib_AttachMarketBuySellCallBack 
+[10736] 2014/09/11 15:42:06.875 SKQuoteLib_AttachMarketHighLowCallBack 
+[10736] 2014/09/11 15:42:06.875 SKQuoteLib_AttachStrikePricesCallBack 
+[10736] 2014/09/11 15:42:06.875 SKQuoteLib_AttchServerTimeCallBack 
+[10736] 2014/09/11 15:42:06.875 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10736] 2014/09/11 15:42:06.875 SKQuoteLib_AttachProductsReadyCallBack 
+[10736] 2014/09/11 15:42:06.906 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[10736] 2014/09/11 15:42:06.921 SocketConnect Type¡G100  ErrorCode¡G0
+[10736] 2014/09/11 15:42:18.843 Stocks Ready
+[10736] 2014/09/11 15:42:20.843 SKQuoteLib_RequestTicks (1,TX00)
+[10736] 2014/09/11 15:43:37.390 Check Link Status 
+[10736] 2014/09/11 15:44:06.921 Check Link Status 
+[10736] 2014/09/11 15:44:43.109 SKQuoteLib_LeaveMonitor 
+[10736] 2014/09/11 15:44:43.109 SocketClose Type¡G101  ErrorCode¡G0
+[10736] 2014/09/11 15:44:43.203 API ExitInstance 
+[9312] 2014/09/11 15:45:14.000 API InitInstance 
+[9312] 2014/09/11 15:45:15.312 SKQuoteLib_Initialize ¡GS122811334
+[9312] 2014/09/11 15:45:15.312 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_Initialize  SUCCESS 
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_AttachConnectionCallBack 
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_AttachQuoteCallBack 
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_AttachBest5CallBack 
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_AttachTicksGetCallBack 
+[9312] 2014/09/11 15:45:15.812 SKQuoteLib_AttachKLineDataCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachMarketTotCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachMarketBuySellCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachMarketHighLowCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachStrikePricesCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttchServerTimeCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9312] 2014/09/11 15:45:15.828 SKQuoteLib_AttachProductsReadyCallBack 
+[9312] 2014/09/11 15:45:15.859 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[9312] 2014/09/11 15:45:15.875 SocketConnect Type¡G100  ErrorCode¡G0
+[9312] 2014/09/11 15:45:17.375 Stocks Ready
+[9312] 2014/09/11 15:45:18.953 SKQuoteLib_RequestTicks (1,TX00)
+[11380] 2014/09/11 15:53:48.625 API InitInstance 
+[11380] 2014/09/11 15:53:50.453 SKQuoteLib_Initialize ¡GS122811334
+[11380] 2014/09/11 15:53:50.453 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_Initialize  SUCCESS 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachConnectionCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachQuoteCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachBest5CallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachTicksGetCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachKLineDataCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachMarketTotCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachMarketBuySellCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachMarketHighLowCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttachStrikePricesCallBack 
+[11380] 2014/09/11 15:53:50.968 SKQuoteLib_AttchServerTimeCallBack 
+[11380] 2014/09/11 15:53:50.984 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[11380] 2014/09/11 15:53:50.984 SKQuoteLib_AttachProductsReadyCallBack 
+[11380] 2014/09/11 15:53:51.015 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[11380] 2014/09/11 15:53:51.031 SocketConnect Type¡G100  ErrorCode¡G0
+[11380] 2014/09/11 15:53:52.515 Stocks Ready
+[11380] 2014/09/11 15:53:54.156 SKQuoteLib_RequestTicks (1,TX00)
+[11380] 2014/09/11 15:55:25.281 SocketErrorDisConnect Type¡G101  ErrorCode¡G0
+[9696] 2014/09/11 15:55:48.500 API InitInstance 
+[9696] 2014/09/11 15:55:49.859 SKQuoteLib_Initialize ¡GS122811334
+[9696] 2014/09/11 15:55:49.859 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_Initialize  SUCCESS 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachConnectionCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachQuoteCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachBest5CallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachTicksGetCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachKLineDataCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachMarketTotCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachMarketBuySellCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachMarketHighLowCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachStrikePricesCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttchServerTimeCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9696] 2014/09/11 15:55:50.343 SKQuoteLib_AttachProductsReadyCallBack 
+[9696] 2014/09/11 15:55:50.375 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[9696] 2014/09/11 15:55:50.375 SocketConnect Type¡G100  ErrorCode¡G0
+[9696] 2014/09/11 15:55:51.875 Stocks Ready
+[9696] 2014/09/11 15:55:56.625 SKQuoteLib_RequestTicks (1,TX00)
+[9696] 2014/09/11 15:56:50.375 Check Link Status 
+[9696] 2014/09/11 15:57:50.375 Check Link Status 
+[9696] 2014/09/11 15:58:13.015 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 15:58:13.015 SocketClose Type¡G101  ErrorCode¡G0
+[9696] 2014/09/11 15:58:13.875 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 15:58:15.703 SKQuoteLib_Initialize ¡GS122811334
+[9696] 2014/09/11 15:58:15.703 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_Initialize  SUCCESS 
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_AttachConnectionCallBack 
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_AttachQuoteCallBack 
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_AttachBest5CallBack 
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_AttachTicksGetCallBack 
+[9696] 2014/09/11 15:58:16.000 SKQuoteLib_AttachKLineDataCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachMarketTotCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachMarketBuySellCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachMarketHighLowCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachStrikePricesCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttchServerTimeCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9696] 2014/09/11 15:58:16.015 SKQuoteLib_AttachProductsReadyCallBack 
+[9696] 2014/09/11 15:58:16.031 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[9696] 2014/09/11 15:58:16.031 SKQuoteLib_RequestTicks (1,TX00)
+[9696] 2014/09/11 15:58:38.843 SocketConnect Type¡G100  ErrorCode¡G0
+[9696] 2014/09/11 15:58:39.421 Stocks Ready
+[9696] 2014/09/11 15:58:53.796 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 15:58:53.812 SocketClose Type¡G101  ErrorCode¡G0
+[9696] 2014/09/11 15:58:54.578 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 15:59:14.796 SKQuoteLib_Initialize ¡GS122811334
+[9696] 2014/09/11 15:59:14.796 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_Initialize  SUCCESS 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachConnectionCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachQuoteCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachBest5CallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachTicksGetCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachKLineDataCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachMarketTotCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachMarketBuySellCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachMarketHighLowCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachStrikePricesCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttchServerTimeCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9696] 2014/09/11 15:59:15.125 SKQuoteLib_AttachProductsReadyCallBack 
+[9696] 2014/09/11 15:59:15.140 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[9696] 2014/09/11 15:59:29.203 SocketConnect Type¡G100  ErrorCode¡G0
+[9696] 2014/09/11 15:59:42.125 SKQuoteLib_RequestTicks (1,TX00)
+[9696] 2014/09/11 15:59:47.546 Stocks Ready
+[9696] 2014/09/11 16:00:24.062 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 16:00:24.062 SocketClose Type¡G101  ErrorCode¡G0
+[9696] 2014/09/11 16:00:24.859 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 16:00:28.562 SKQuoteLib_Initialize ¡GS122811334
+[9696] 2014/09/11 16:00:28.562 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_Initialize  SUCCESS 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachConnectionCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachQuoteCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachBest5CallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachTicksGetCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachKLineDataCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachMarketTotCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachMarketBuySellCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachMarketHighLowCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachStrikePricesCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttchServerTimeCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9696] 2014/09/11 16:00:28.859 SKQuoteLib_AttachProductsReadyCallBack 
+[9696] 2014/09/11 16:00:28.890 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[9696] 2014/09/11 16:00:32.656 SocketConnect Type¡G100  ErrorCode¡G0
+[9696] 2014/09/11 16:00:32.656 SKQuoteLib_RequestTicks (1,TX00)
+[9696] 2014/09/11 16:00:35.828 Stocks Ready
+[9696] 2014/09/11 16:00:52.000 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 16:00:52.000 SocketClose Type¡G101  ErrorCode¡G0
+[9696] 2014/09/11 16:00:53.015 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 16:00:54.578 SKQuoteLib_LeaveMonitor 
+[9696] 2014/09/11 16:00:54.609 API ExitInstance 
+[3104] 2014/09/11 16:02:11.593 API InitInstance 
+[3104] 2014/09/11 16:02:12.500 API ExitInstance 
+[9352] 2014/09/11 16:35:11.734 API InitInstance 
+[9352] 2014/09/11 16:35:16.859 API ExitInstance 
+[12088] 2014/09/11 16:38:40.484 API InitInstance 
+[12088] 2014/09/11 16:38:56.875 SKQuoteLib_Initialize ¡GS122811334
+[12088] 2014/09/11 16:38:56.875 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_Initialize  SUCCESS 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachConnectionCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachQuoteCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachBest5CallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachTicksGetCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachKLineDataCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachMarketTotCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachMarketBuySellCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachMarketHighLowCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachStrikePricesCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttchServerTimeCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[12088] 2014/09/11 16:38:57.421 SKQuoteLib_AttachProductsReadyCallBack 
+[12088] 2014/09/11 16:38:57.468 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[12088] 2014/09/11 16:38:57.484 SocketConnect Type¡G100  ErrorCode¡G0
+[12088] 2014/09/11 16:39:09.671 Stocks Ready
+[12088] 2014/09/11 16:39:11.781 SKQuoteLib_GetKLine(TX00,1)
+[12088] 2014/09/11 16:39:57.484 Check Link Status 
+[12088] 2014/09/11 16:40:57.484 Check Link Status 
+[12088] 2014/09/11 16:41:57.484 Check Link Status 
+[12088] 2014/09/11 16:42:57.484 Check Link Status 
+[12088] 2014/09/11 16:43:57.484 Check Link Status 
+[12088] 2014/09/11 16:44:57.484 Check Link Status 
+[12088] 2014/09/11 16:45:57.484 Check Link Status 
+[12088] 2014/09/11 16:46:57.484 Check Link Status 
+[12088] 2014/09/11 16:47:57.484 Check Link Status 
+[12088] 2014/09/11 16:48:57.484 Check Link Status 
+[12088] 2014/09/11 16:49:57.484 Check Link Status 
+[12088] 2014/09/11 16:50:57.484 Check Link Status 
+[12088] 2014/09/11 16:51:57.484 Check Link Status 
+[12088] 2014/09/11 16:52:57.484 Check Link Status 
+[12088] 2014/09/11 16:53:57.484 Check Link Status 
+[12088] 2014/09/11 16:54:57.484 Check Link Status 
+[12088] 2014/09/11 16:55:57.484 Check Link Status 
+[12088] 2014/09/11 16:56:57.484 Check Link Status 
+[12088] 2014/09/11 16:57:57.484 Check Link Status 
+[12088] 2014/09/11 16:58:57.484 Check Link Status 
+[12088] 2014/09/11 16:58:59.515 SKQuoteLib_LeaveMonitor 
+[12088] 2014/09/11 16:58:59.515 SocketClose Type¡G101  ErrorCode¡G0
+[12088] 2014/09/11 16:58:59.593 API ExitInstance 
+[10404] 2014/09/11 16:59:08.593 API InitInstance 
+[10404] 2014/09/11 16:59:09.875 SKQuoteLib_Initialize ¡GS122811334
+[10404] 2014/09/11 16:59:09.875 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_Initialize  SUCCESS 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachConnectionCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachQuoteCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachBest5CallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachTicksGetCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachKLineDataCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachMarketTotCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachMarketBuySellCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachMarketHighLowCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachStrikePricesCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttchServerTimeCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10404] 2014/09/11 16:59:10.453 SKQuoteLib_AttachProductsReadyCallBack 
+[10404] 2014/09/11 16:59:10.500 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[10404] 2014/09/11 16:59:10.515 SocketConnect Type¡G100  ErrorCode¡G0
+[10404] 2014/09/11 16:59:13.796 Stocks Ready
+[10404] 2014/09/11 16:59:15.375 SKQuoteLib_GetKLine(TX00,1)
+[2292] 2014/09/11 17:02:05.437 API InitInstance 
+[2292] 2014/09/11 17:02:07.453 SKQuoteLib_Initialize ¡GS122811334
+[2292] 2014/09/11 17:02:07.453 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_Initialize  SUCCESS 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachConnectionCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachQuoteCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachBest5CallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachTicksGetCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachKLineDataCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachMarketTotCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachMarketBuySellCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachMarketHighLowCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachStrikePricesCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttchServerTimeCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[2292] 2014/09/11 17:02:08.015 SKQuoteLib_AttachProductsReadyCallBack 
+[2292] 2014/09/11 17:02:08.046 SKQuoteLib_EnterMonitor IP¡Ginfo13.capital.com.tw
+[2292] 2014/09/11 17:02:08.062 SocketConnect Type¡G100  ErrorCode¡G0
+[2292] 2014/09/11 17:02:11.343 Stocks Ready
+[2292] 2014/09/11 17:02:13.234 SKQuoteLib_GetKLine(TX00,1)
+[2292] 2014/09/11 17:03:08.062 Check Link Status 
+[2292] 2014/09/11 17:03:25.062 SKQuoteLib_LeaveMonitor 
+[2292] 2014/09/11 17:03:25.062 SocketClose Type¡G101  ErrorCode¡G0
+[2292] 2014/09/11 17:03:25.140 API ExitInstance 
+[10728] 2014/09/11 17:09:43.203 API InitInstance 
+[10728] 2014/09/11 17:09:50.625 SKQuoteLib_Initialize ¡GS122811334
+[10728] 2014/09/11 17:09:50.640 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_Initialize  SUCCESS 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachConnectionCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachQuoteCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachBest5CallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachTicksGetCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachKLineDataCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachMarketTotCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachMarketBuySellCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachMarketHighLowCallBack 
+[10728] 2014/09/11 17:09:52.250 SKQuoteLib_AttachStrikePricesCallBack 
+[10728] 2014/09/11 17:09:52.265 SKQuoteLib_AttchServerTimeCallBack 
+[10728] 2014/09/11 17:09:52.265 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10728] 2014/09/11 17:09:52.265 SKQuoteLib_AttachProductsReadyCallBack 
+[10728] 2014/09/11 17:09:52.312 SKQuoteLib_EnterMonitor IP¡Ginfo12.capital.com.tw
+[10728] 2014/09/11 17:09:52.312 SocketConnect Type¡G100  ErrorCode¡G0
+[10728] 2014/09/11 17:09:54.546 Stocks Ready
+[10728] 2014/09/11 17:09:58.937 SKQuoteLib_GetKLine(TX00,1)
+[10728] 2014/09/11 17:10:52.359 Check Link Status 
+[10728] 2014/09/11 17:11:25.296 SKQuoteLib_LeaveMonitor 
+[10728] 2014/09/11 17:11:25.296 SocketClose Type¡G101  ErrorCode¡G0
+[10728] 2014/09/11 17:11:26.515 SKQuoteLib_LeaveMonitor 
+[10728] 2014/09/11 17:11:27.796 SKQuoteLib_Initialize ¡GS122811334
+[10728] 2014/09/11 17:11:27.796 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_Initialize  SUCCESS 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachConnectionCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachQuoteCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachBest5CallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachTicksGetCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachKLineDataCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachMarketTotCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachMarketBuySellCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachMarketHighLowCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachStrikePricesCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttchServerTimeCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[10728] 2014/09/11 17:11:28.250 SKQuoteLib_AttachProductsReadyCallBack 
+[10728] 2014/09/11 17:11:28.281 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[3420] 2014/09/11 17:12:07.375 API InitInstance 
+[3420] 2014/09/11 17:12:08.906 SKQuoteLib_Initialize ¡GS122811334
+[3420] 2014/09/11 17:12:08.906 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_Initialize  SUCCESS 
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_AttachConnectionCallBack 
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_AttachQuoteCallBack 
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_AttachBest5CallBack 
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_AttachTicksGetCallBack 
+[3420] 2014/09/11 17:12:09.468 SKQuoteLib_AttachKLineDataCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachMarketTotCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachMarketBuySellCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachMarketHighLowCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachStrikePricesCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttchServerTimeCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[3420] 2014/09/11 17:12:09.484 SKQuoteLib_AttachProductsReadyCallBack 
+[3420] 2014/09/11 17:12:09.546 SKQuoteLib_EnterMonitor IP¡Ginfo8.capital.com.tw
+[3420] 2014/09/11 17:12:09.562 SocketConnect Type¡G100  ErrorCode¡G0
+[3420] 2014/09/11 17:12:11.046 Stocks Ready
+[3420] 2014/09/11 17:12:16.843 SKQuoteLib_GetKLine(TX00,1)
+[3420] 2014/09/11 17:12:41.093 SKQuoteLib_LeaveMonitor 
+[3420] 2014/09/11 17:12:41.093 SocketClose Type¡G101  ErrorCode¡G0
+[3420] 2014/09/11 17:12:42.437 SKQuoteLib_LeaveMonitor 
+[3420] 2014/09/11 17:12:43.406 SKQuoteLib_Initialize ¡GS122811334
+[3420] 2014/09/11 17:12:43.406 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_Initialize  SUCCESS 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachConnectionCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachQuoteCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachBest5CallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachTicksGetCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachKLineDataCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachMarketTotCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachMarketBuySellCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachMarketHighLowCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachStrikePricesCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttchServerTimeCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[3420] 2014/09/11 17:12:43.718 SKQuoteLib_AttachProductsReadyCallBack 
+[3420] 2014/09/11 17:12:43.765 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[3420] 2014/09/11 17:12:46.203 SKQuoteLib_GetKLine(TX00,1)
+[3420] 2014/09/11 17:12:46.203 SocketConnect Type¡G100  ErrorCode¡G0
+[3420] 2014/09/11 17:12:51.906 Stocks Ready
+[3420] 2014/09/11 17:13:22.046 SKQuoteLib_LeaveMonitor 
+[3420] 2014/09/11 17:13:22.046 SocketClose Type¡G101  ErrorCode¡G0
+[3420] 2014/09/11 17:13:23.093 SKQuoteLib_LeaveMonitor 
+[3420] 2014/09/11 17:13:24.140 SKQuoteLib_Initialize ¡GS122811334
+[3420] 2014/09/11 17:13:24.140 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_Initialize  SUCCESS 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachConnectionCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachQuoteCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachBest5CallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachTicksGetCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachKLineDataCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachMarketTotCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachMarketBuySellCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachMarketHighLowCallBack 
+[3420] 2014/09/11 17:13:24.562 SKQuoteLib_AttachStrikePricesCallBack 
+[3420] 2014/09/11 17:13:24.578 SKQuoteLib_AttchServerTimeCallBack 
+[3420] 2014/09/11 17:13:24.578 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[3420] 2014/09/11 17:13:24.578 SKQuoteLib_AttachProductsReadyCallBack 
+[3420] 2014/09/11 17:13:24.593 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[3420] 2014/09/11 17:13:27.093 SKQuoteLib_GetKLine(TX00,1)
+[3420] 2014/09/11 17:13:27.093 SocketConnect Type¡G100  ErrorCode¡G0
+[3420] 2014/09/11 17:13:27.703 Stocks Ready
+[3420] 2014/09/11 17:13:31.468 SKQuoteLib_LeaveMonitor 
+[3420] 2014/09/11 17:13:31.468 SocketClose Type¡G101  ErrorCode¡G0
+[3420] 2014/09/11 17:13:32.515 SKQuoteLib_LeaveMonitor 
+[9748] 2014/09/11 17:23:18.609 API InitInstance 
+[9748] 2014/09/11 17:23:24.531 SKQuoteLib_Initialize ¡GS122811334
+[9748] 2014/09/11 17:23:24.531 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_Initialize  SUCCESS 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachConnectionCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachQuoteCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachBest5CallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachTicksGetCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachKLineDataCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachMarketTotCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachMarketBuySellCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachMarketHighLowCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachStrikePricesCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9748] 2014/09/11 17:23:25.109 SKQuoteLib_AttachProductsReadyCallBack 
+[9748] 2014/09/11 17:23:25.156 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[9748] 2014/09/11 17:23:25.171 SocketConnect Type¡G100  ErrorCode¡G0
+[9748] 2014/09/11 17:23:26.671 Stocks Ready
+[9748] 2014/09/11 17:23:34.640 SKQuoteLib_GetKLine(TX00,1)
+[9748] 2014/09/11 17:24:25.171 Check Link Status 
+[9748] 2014/09/11 17:25:25.171 Check Link Status 
+[9748] 2014/09/11 17:26:25.171 Check Link Status 
+[9748] 2014/09/11 17:27:25.171 Check Link Status 
+[9748] 2014/09/11 17:28:25.171 Check Link Status 
+[9748] 2014/09/11 17:29:25.171 Check Link Status 
+[9748] 2014/09/11 17:30:25.171 Check Link Status 
+[9748] 2014/09/11 17:31:25.171 Check Link Status 
+[9748] 2014/09/11 17:32:25.171 Check Link Status 
+[9748] 2014/09/11 17:33:25.171 Check Link Status 
+[9364] 2014/09/11 17:33:35.437 API InitInstance 
+[9364] 2014/09/11 17:33:37.218 SKQuoteLib_Initialize ¡GS122811334
+[9364] 2014/09/11 17:33:37.218 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_Initialize  SUCCESS 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachConnectionCallBack 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachQuoteCallBack 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachBest5CallBack 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachTicksGetCallBack 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachKLineDataCallBack 
+[9364] 2014/09/11 17:33:37.781 SKQuoteLib_AttachMarketTotCallBack 
+[9364] 2014/09/11 17:33:37.796 SKQuoteLib_AttachMarketBuySellCallBack 
+[9364] 2014/09/11 17:33:37.796 SKQuoteLib_AttachMarketHighLowCallBack 
+[9364] 2014/09/11 17:33:37.796 SKQuoteLib_AttachStrikePricesCallBack 
+[9364] 2014/09/11 17:33:37.796 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9364] 2014/09/11 17:33:37.796 SKQuoteLib_AttachProductsReadyCallBack 
+[9364] 2014/09/11 17:33:37.812 SKQuoteLib_EnterMonitor IP¡Ginfo23.capital.com.tw
+[9364] 2014/09/11 17:33:37.828 SocketConnect Type¡G100  ErrorCode¡G0
+[9364] 2014/09/11 17:33:39.312 Stocks Ready
+[9364] 2014/09/11 17:33:40.953 SKQuoteLib_GetKLine(TX00,1)
+[9364] 2014/09/11 17:33:53.734 SKQuoteLib_AttchServerTimeCallBack 
+[9364] 2014/09/11 17:34:37.828 Check Link Status 
+[9364] 2014/09/11 17:34:50.906 SKQuoteLib_AttchServerTimeCallBack 
+[9364] 2014/09/11 17:35:37.828 Check Link Status 
+[9364] 2014/09/11 17:36:37.828 Check Link Status 
+[9364] 2014/09/11 17:37:37.828 Check Link Status 
+[9364] 2014/09/11 17:38:37.828 Check Link Status 
+[9364] 2014/09/11 17:38:52.000 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:38:52.000 SocketClose Type¡G101  ErrorCode¡G0
+[9364] 2014/09/11 17:38:52.750 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:38:54.656 SKQuoteLib_Initialize ¡GS122811334
+[9364] 2014/09/11 17:38:54.656 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_Initialize  SUCCESS 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachConnectionCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachQuoteCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachBest5CallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachTicksGetCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachKLineDataCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachMarketTotCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachMarketBuySellCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachMarketHighLowCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachStrikePricesCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9364] 2014/09/11 17:38:54.968 SKQuoteLib_AttachProductsReadyCallBack 
+[9364] 2014/09/11 17:38:55.031 SKQuoteLib_EnterMonitor IP¡Ginfo9.capital.com.tw
+[9364] 2014/09/11 17:38:55.062 SocketConnect Type¡G100  ErrorCode¡G0
+[9364] 2014/09/11 17:38:55.859 Stocks Ready
+[9364] 2014/09/11 17:39:18.015 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:39:18.015 SocketClose Type¡G101  ErrorCode¡G0
+[9364] 2014/09/11 17:39:19.031 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:39:20.109 SKQuoteLib_Initialize ¡GS122811334
+[9364] 2014/09/11 17:39:20.109 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_Initialize  SUCCESS 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachConnectionCallBack 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachQuoteCallBack 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachBest5CallBack 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachTicksGetCallBack 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachKLineDataCallBack 
+[9364] 2014/09/11 17:39:20.421 SKQuoteLib_AttachMarketTotCallBack 
+[9364] 2014/09/11 17:39:20.437 SKQuoteLib_AttachMarketBuySellCallBack 
+[9364] 2014/09/11 17:39:20.437 SKQuoteLib_AttachMarketHighLowCallBack 
+[9364] 2014/09/11 17:39:20.437 SKQuoteLib_AttachStrikePricesCallBack 
+[9364] 2014/09/11 17:39:20.437 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9364] 2014/09/11 17:39:20.437 SKQuoteLib_AttachProductsReadyCallBack 
+[9364] 2014/09/11 17:39:20.484 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[9364] 2014/09/11 17:39:20.515 SocketConnect Type¡G100  ErrorCode¡G0
+[9364] 2014/09/11 17:39:21.265 Stocks Ready
+[9364] 2014/09/11 17:40:20.515 Check Link Status 
+[9364] 2014/09/11 17:40:29.468 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:40:29.468 SocketClose Type¡G101  ErrorCode¡G0
+[9364] 2014/09/11 17:40:30.281 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:40:31.265 SKQuoteLib_Initialize ¡GS122811334
+[9364] 2014/09/11 17:40:31.265 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_Initialize  SUCCESS 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachConnectionCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachQuoteCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachBest5CallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachTicksGetCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachKLineDataCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachMarketTotCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachMarketBuySellCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachMarketHighLowCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachStrikePricesCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[9364] 2014/09/11 17:40:31.562 SKQuoteLib_AttachProductsReadyCallBack 
+[9364] 2014/09/11 17:40:31.593 SKQuoteLib_EnterMonitor IP¡Ginfo8.capital.com.tw
+[9364] 2014/09/11 17:40:33.390 SocketConnect Type¡G100  ErrorCode¡G0
+[9364] 2014/09/11 17:40:33.953 Stocks Ready
+[9364] 2014/09/11 17:40:57.328 SKQuoteLib_LeaveMonitor 
+[9364] 2014/09/11 17:40:57.328 SocketClose Type¡G101  ErrorCode¡G0
+[9364] 2014/09/11 17:40:57.406 API ExitInstance 
+[8736] 2014/09/11 17:41:06.125 API InitInstance 
+[8736] 2014/09/11 17:41:07.453 SKQuoteLib_Initialize ¡GS122811334
+[8736] 2014/09/11 17:41:07.453 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_Initialize  SUCCESS 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachConnectionCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachQuoteCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachBest5CallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachTicksGetCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachKLineDataCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachMarketTotCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachMarketBuySellCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachMarketHighLowCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachStrikePricesCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[8736] 2014/09/11 17:41:08.078 SKQuoteLib_AttachProductsReadyCallBack 
+[8736] 2014/09/11 17:41:08.203 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[8736] 2014/09/11 17:41:08.218 SocketConnect Type¡G100  ErrorCode¡G0
+[8736] 2014/09/11 17:41:09.718 Stocks Ready
+[8736] 2014/09/11 17:41:12.703 SKQuoteLib_GetKLine(TX00,1)
+[8736] 2014/09/11 17:41:28.578 SKQuoteLib_AttchServerTimeCallBack 
+[8736] 2014/09/11 17:42:08.218 Check Link Status 
+[9312] 2014/09/11 17:59:26.843 API InitInstance 
+[9312] 2014/09/11 17:59:29.484 API ExitInstance 
+[10328] 2014/09/11 18:02:04.625 API InitInstance 
+[10328] 2014/09/11 18:02:05.546 API ExitInstance 
+[8824] 2014/09/11 18:39:46.359 API InitInstance 
+[8824] 2014/09/11 18:39:47.359 API ExitInstance 

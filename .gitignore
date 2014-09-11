@@ -1,6 +1,5 @@
 Debug/
-i-tracker/Debug/
-i-tracker/Release/
+Release/
 *.ncb
 *.bak
 *.rar

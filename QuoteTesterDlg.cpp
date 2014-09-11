@@ -418,10 +418,10 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	
 	//CQuoteTesterDlg *pDialog;
-	if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
+	/*if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
 		m_pDialog = (CQuoteTesterDlg *) AfxGetMainWnd();
 	else
-		m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
+		m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();*/
 
 	//if( m_nType == 3 )
 	{
@@ -539,6 +539,8 @@ void _stdcall OnNotifyServerTime( short sHour, short sMinute, short sSecond, int
 	SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,99,(int)bstrMsg);
 		
 	SysFreeString(bstrMsg);
+	SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)NULL );
+	m_pDialog->mKline_stream.KLine_server_time( nTotal );
 }
 
 void _stdcall OnNotifyProductsReady()
@@ -752,6 +754,8 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 	if ( mKline_stream.get_KLine_ready( "TX00" ) == false ) {
 		mKline_stream.load_KLine_from_archive( "TX00" );
 		SKQuoteLib_GetKLine("TX00", 1);
+		SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+		//OnBnClickedButton7(); //request server time;
 		mKline_stream.set_KLine_ready( "TX00" );
 	}
 	//SKQuoteLib_GetKLine("TX00", 2);
@@ -919,10 +923,11 @@ DWORD WINAPI do_quote(PVOID dlg) {
 		TRACE("Run in thread: %x\n", GetCurrentThreadId());
 		TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 		//pDialog->mpKline_stream = new CKLineStream();
-		//pDialog->OnBnClickedButton6();
-		pDialog->OnBnClickedButton5();
+		pDialog->OnBnClickedButton6();
+		//pDialog->OnBnClickedButton5();
 	}
 
+#if 0
 	TTick *tTick;
 	DWORD dwWaitResult;
 	short sStockidx;
@@ -944,6 +949,7 @@ DWORD WINAPI do_quote(PVOID dlg) {
 			ReleaseMutex(m_pDialog->ghMutex);
 		}
 	}
+#endif
 	return 0;
 }
 
@@ -983,7 +989,7 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 		nCode = SKQuoteLib_AttachMarketBuySellCallBack( (UINT_PTR)OnNotifyMarketBuySell );
 		nCode = SKQuoteLib_AttachMarketHighLowCallBack( (UINT_PTR)OnNotifyMarketHighLow );
 		nCode = SKQuoteLib_AttachStrikePricesCallBack( (UINT_PTR)OnNotifyStrikePrices );
-		nCode = SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+		//nCode = SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
 		nCode = SKQuoteLib_AttachHistoryTicksGetCallBack( (UINT_PTR) OnNotifyHistoryTicksGet);
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 

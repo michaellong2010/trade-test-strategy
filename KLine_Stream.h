@@ -66,6 +66,8 @@ private:
 		return timeframe_name_map;
 	}
 	int nTimeFrame;
+
+	bool search_tick_in_file( TTickData_FileInfo *, int, int, int & );
 public:
 	CKLineStream(int time_frame);	// 標準建構函式
 	~CKLineStream();
@@ -96,10 +98,13 @@ public:
 
 	ofstream txt_out;
 	/*map stock symbol to reference it's vector<tick>*/
-	map<string, vector<TICK>*> mMap_stock_ticks;
+	map<string, list<TICK>*> mMap_stock_ticks;
 	map<string, int> mMap_intraday_open_time;
 	map<string, list<TCandleStick>*> mMap_tick_compose_kline;
 	map<string, TKLineData_FileInfo *> mMap_tickfile_stream_info;
 
-	SYSTEMTIME start_run_time;
+	SYSTEMTIME kline_fetch_system_time;
+	/*record fetch kline data server time*/
+	void KLine_server_time( int total_secconds );
+	int kline_fetch_server_time;
 };

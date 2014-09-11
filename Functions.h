@@ -105,6 +105,20 @@ struct TICK
 	int m_nAsk;
 	int m_nClose;
 	int m_nQty;
+
+	const bool operator == (const int &a) {
+		if ( m_nPtr == a)
+			return true;
+		else
+			return false;
+	}
+
+	const bool operator == (const TICK &a)  {
+		if ( a.m_nPtr == m_nPtr && a.m_nTime == m_nTime )
+			return true;
+		else
+			return false;
+	}
 };
 
 typedef STOCK TStock;

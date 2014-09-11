@@ -11,7 +11,6 @@ CKLineStream::CKLineStream(int time_frame) {
 	//ios::binary=
 	nTimeFrame = time_frame;
 	txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
-	GetSystemTime(&start_run_time);
 }
 
 CKLineStream::~CKLineStream() {
@@ -36,7 +35,7 @@ CKLineStream::~CKLineStream() {
 			delete (*itr1).second;
 	}
 
-	for ( map<string, vector<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
+	for ( map<string, list<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
 		delete (*itr).second;
 
 	}
@@ -455,8 +454,8 @@ int CKLineStream::Push_Tick_Data( string symbol, int nPtr, int nTime,int nBid, i
 /*tick output format
 TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66 
 */
-	vector<TICK> *pVector_TickData;
-	vector<TICK>::iterator  itr1, itr2;
+	list<TICK> *pList_TickData;
+	list<TICK>::iterator  itr1, itr2;
 	int n_VecCap, n_VecSize;
 	TTickData_FileInfo *pTick_file_info;
 	string m_str_filename;
@@ -464,11 +463,27 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	long f_size;
 	int nSize = sizeof(TICK), nRead_ticks;
 	TICK m_file_tick;
-
-	m_str_filename = "C:\\temp\\" + symbol;
+	
+	list<TCandleStick> *pList_KLineData;
+	int next_trading_date = -1, next_kline_close_time, m_open_time, m_open_hour, m_open_min, m_open_sec;
+	int m_tick_hour, m_tick_min, m_tick_sec;
+	SYSTEMTIME ti; 
+	if ( mMap_stock_kline.count( symbol ) ) {
+		pList_KLineData = mMap_stock_kline [ symbol ];
+		m_candlestick = pList_KLineData->back();
+		next_trading_date = m_candlestick.mDate + 1;
+		m_candlestick.mDate = next_trading_date;
+	}
+	else {
+		GetSystemTime(&ti);
+		m_candlestick.mDate = next_trading_date = ti.wDay + ti.wMonth * 100 + ti.wYear * 10000;
+	}
+	
+	char str_buf [ 100 ];
+	m_str_filename = "C:\\temp\\" + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
 	if ( !mMap_stock_ticks.count( symbol ) ) {
-		pVector_TickData = new vector<TICK>;
-		mMap_stock_ticks[ symbol ] = pVector_TickData;
+		pList_TickData = new list<TICK>;
+		mMap_stock_ticks[ symbol ] = pList_TickData;
 
 		p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 		if ( p_fs->is_open() == true ) {
@@ -496,7 +511,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		while ( ( f_size - nRead_ticks * nSize ) >= 0 &&  nRead_ticks <= 1000 ) {
 			p_fs->seekg ( ( f_size - nRead_ticks * nSize ), ios::beg );
 			p_fs->read ( (char *) &m_file_tick, nSize );
-			pVector_TickData->insert ( pVector_TickData->begin(), m_file_tick );
+			pList_TickData->insert ( pList_TickData->begin(), m_file_tick );
 			nRead_ticks++;
 
 			//if ( pKLine_file_info->n_list_end == -1 )
@@ -504,7 +519,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		}
 	}
 	else {
-		pVector_TickData = mMap_stock_ticks[ symbol ];
+		pList_TickData = mMap_stock_ticks[ symbol ];
 
 		pTick_file_info = mMap_tickfile_stream_info[ m_str_filename ];
 		p_fs = pTick_file_info->p_fs;
@@ -518,49 +533,41 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	m_tick.m_nQty = nQty;
 
 	TICK m_init_tick = { -1, 0, 0, 0, 0, 0 };
-	itr1 = pVector_TickData->begin();
-	itr2 = pVector_TickData->end();
+	itr1 = pList_TickData->begin();
+	itr2 = pList_TickData->end();
 
-	TICK m_vec_tick;
+	TICK m_list_tick;
 	bool found_in_vec = false;
-	int n_insert_pos, n_insert_pos1, i, j, n_pos;
+	int n_insert_pos = pTick_file_info->n_list_begin, n_insert_pos1, i, j, n_pos;
+#if 1
+	if ( std::find( pList_TickData->begin(), pList_TickData->end(), nPtr ) ==  pList_TickData->end() ) {
 	for ( n_pos = 0, n_insert_pos = pTick_file_info->n_list_begin ; itr1 != itr2; itr1++, n_pos++, n_insert_pos++ ) {
-		m_vec_tick = (*itr1);
-		if ( m_tick.m_nPtr == m_vec_tick.m_nPtr ) {
+		m_list_tick = (*itr1);
+		if ( m_tick.m_nPtr == m_list_tick.m_nPtr ) {
 			found_in_vec = true;
 			break;
 		}
 		else
-			if ( m_tick.m_nPtr > m_vec_tick.m_nPtr ) {
+			if ( m_tick.m_nPtr > m_list_tick.m_nPtr ) {
 			}
 			else
-				if ( m_tick.m_nPtr < m_vec_tick.m_nPtr ) {
+				if ( m_tick.m_nPtr < m_list_tick.m_nPtr ) {
 					break;
 				}
 	}
-
-	list<TCandleStick> *pList_KLineData;
-	int next_trading_date = -1, next_kline_close_time, m_open_time, m_open_hour, m_open_min, m_open_sec;
-	int m_tick_hour, m_tick_min, m_tick_sec, m_mins;
-	SYSTEMTIME ti; 
-	if ( mMap_stock_kline.count( symbol ) ) {
-		pList_KLineData = mMap_stock_kline [ symbol ];
-		m_candlestick = pList_KLineData->back();
-		next_trading_date = m_candlestick.mDate + 1;
-		m_candlestick.mDate = next_trading_date;
 	}
-	else {
-		GetSystemTime(&ti);
-		m_candlestick.mDate = next_trading_date = ti.wDay + ti.wMonth * 100 + ti.wYear * 10000;
-	}
+	else
+		found_in_vec = true;
+#endif
 
 	list<TCandleStick>::reverse_iterator itr3;
 	TCandleStick *m_pTick_candlestick;
 	bool found_tick_in_candlestick = false, found_in_file = false;
 	float new_price;
+#if 1
 	if ( found_in_vec == false) {
-		if ( itr1 == pVector_TickData->begin() ) {
-			for ( i = 0; i < n_insert_pos; i++ ) {
+		if ( itr1 == pList_TickData->begin() ) {
+			/*for ( i = 0; i < n_insert_pos; i++ ) {
 				p_fs->seekg ( i*nSize, ios::beg );
 				p_fs->read ( (char *) &m_file_tick, nSize );
 				if ( m_tick.m_nPtr == m_file_tick.m_nPtr ) {
@@ -574,7 +581,9 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 						if ( m_tick.m_nPtr < m_file_tick.m_nPtr ) {
 							break;
 						}
-			}
+			}*/
+			i = 0;
+			found_in_file = search_tick_in_file ( pTick_file_info, 0, n_insert_pos - 1, i );
 
 			if ( found_in_file == false ) {
 				n_insert_pos1 = i;
@@ -592,22 +601,23 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 				if ( n_insert_pos >= 0 && ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) < 1000 ) {
 					p_fs->seekg ( n_insert_pos*nSize, ios::beg );
 					p_fs->read ( (char *) &m_file_tick, nSize );
-					pVector_TickData->insert ( pVector_TickData->begin(), m_file_tick );
+					pList_TickData->insert ( pList_TickData->begin(), m_file_tick );
 					pTick_file_info->n_list_begin--;
 				}
 				else
 					if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) == 1 )
-						pVector_TickData->insert( itr1, m_tick );
+						pList_TickData->insert( itr1, m_tick );
 			}
 		}
 		else {
-			pVector_TickData->insert( itr1, m_tick );
+			pList_TickData->insert( itr1, m_tick );
 			/*sync ticks in vector with ticks in file*/
-			//itr1--;
-			//itr2 = pVector_TickData->end();
+			itr1--;
+			itr2 = pList_TickData->end();
 			
-			for ( i = n_pos; i < pVector_TickData->size(); n_insert_pos++, i++ ) {
-				m_file_tick = pVector_TickData->at(i);
+			for ( /*i = n_pos*/; itr1 != itr2 ; n_insert_pos++, /*i++*/ itr1++ ) {
+				//m_file_tick = pList_TickData->at(i);
+				m_file_tick = ( *itr1 );
 				p_fs->seekp ( n_insert_pos * nSize, ios::beg );
 				p_fs->write ( (char *) &m_file_tick, nSize );
 			}
@@ -615,10 +625,26 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 			pTick_file_info->n_fsize = ( pTick_file_info->n_list_end + 1 ) * nSize;
 			if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) > 1000 ) {
 				pTick_file_info->n_list_begin++;
-				pVector_TickData->erase( pVector_TickData->begin() );
+				//pList_TickData->erase( pVector_TickData->begin() );
+				pList_TickData->pop_front();
 			}
 		}
 	}
+#endif
+
+#if 0
+	if ( nPtr > pTick_file_info->n_list_end ) {
+		pList_TickData->insert( pList_TickData->end(), m_tick );
+		pTick_file_info->n_list_end++;
+		pTick_file_info->n_fsize = ( pTick_file_info->n_list_end + 1 ) * nSize;
+		if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) > 1000 ) {
+			pTick_file_info->n_list_begin++;
+			pList_TickData->erase( pList_TickData->begin() );
+		}
+		p_fs->seekp ( pTick_file_info->n_list_end * nSize, ios::beg );
+		p_fs->write ( (char *) &m_tick, nSize );
+	}
+#endif
 
 			if ( m_tick.m_nPtr == 0 ) {
 				mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
@@ -708,9 +734,103 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	return 0;
 }
 
+//search_tick_in_file( TTickData_FileInfo *pTick_file_info, 0, n_insert_pos )
+bool CKLineStream::search_tick_in_file( TTickData_FileInfo *pTick_file_info, int lower_bound, int upper_bound, int &ins_pos ) {
+	TICK m_first_tick, m_last_tick, m_middle_tick;
+	fstream *p_fs;
+	int middle;
+
+	if ( lower_bound > upper_bound ) {
+		return false;
+	}
+	else {
+		p_fs = pTick_file_info->p_fs;
+		p_fs->seekg ( lower_bound*sizeof(TICK), ios::beg );
+		p_fs->read ( (char *) &m_first_tick, sizeof(TICK) );
+
+		p_fs->seekg ( upper_bound*sizeof(TICK), ios::beg );
+		p_fs->read ( (char *) &m_last_tick, sizeof(TICK) );
+
+		middle = ( lower_bound + upper_bound ) / 2;
+		p_fs->seekg ( middle*sizeof(TICK), ios::beg );
+		p_fs->read ( (char *) &m_middle_tick, sizeof(TICK) );
+
+		if ( lower_bound == upper_bound ) {
+			if ( m_tick.m_nPtr == m_first_tick.m_nPtr ) {
+				/*found_in_file = true;
+				break;*/
+				//return -1;
+				ins_pos = lower_bound;
+				return true;
+			}
+			else
+				if ( m_tick.m_nPtr > m_first_tick.m_nPtr ) {
+					//return lower_bound + 1;
+					ins_pos = lower_bound + 1;
+					return false;
+
+				}
+				else
+					if ( m_tick.m_nPtr < m_first_tick.m_nPtr ) {
+						//return lower_bound;
+						ins_pos = lower_bound;
+						return false;
+					}
+		}
+		else {
+			if ( m_tick.m_nPtr <= m_middle_tick.m_nPtr && m_tick.m_nPtr >= m_first_tick.m_nPtr )
+				return search_tick_in_file ( pTick_file_info, lower_bound, middle, ins_pos );
+			else
+				return search_tick_in_file ( pTick_file_info, middle + 1, upper_bound, ins_pos );
+		}
+	}
+	//if ( m_tick.m_nPtr <= m_middle_tick && m_tick.m_nPtr >= m_first_tick.m_nPtr )
+/*
+	if ( m_tick.m_nPtr <= m_first_tick.m_nPtr )
+		return lower_bound;
+	else
+		if ( m_tick.m_nPtr >= m_last_tick.m_nPtr )
+			return upper_bound + 1;
+		else
+			if ( m_tick.m_nPtr == m_middle_tick.m_nPtr )
+				return middle;
+			else
+				if ( m_tick.m_nPtr <= m_middle_tick && m_tick.m_nPtr >= m_first_tick.m_nPtr )
+
+
+		if ( m_tick.m_nPtr == m_file_tick.m_nPtr ) {
+			found_in_file = true;
+			break;
+		}
+		else
+			if ( m_tick.m_nPtr > m_file_tick.m_nPtr ) {
+			}
+			else
+				if ( m_tick.m_nPtr < m_file_tick.m_nPtr ) {
+					break;
+				}
+*/
+}
+
+VOID CALLBACK OnTimerProc(
+  HWND hwnd,         // handle to window
+  UINT uMsg,         // WM_TIMER message
+  UINT_PTR idEvent,  // timer identifier
+  DWORD dwTime       // current system time
+  ) {
+	  ::KillTimer( AfxGetApp ()->GetMainWnd ()->m_hWnd, 198 );
+  //open_quote();
+}
 
 void CKLineStream::set_KLine_ready( char * ticker_symbol ) {
 	mMap_kline_ready [ ticker_symbol ] = true;
+}
+
+void CKLineStream::KLine_server_time( int total_secconds ) {
+    kline_fetch_server_time = total_secconds;
+    GetSystemTime( &kline_fetch_system_time );
+	if ( total_secconds < 15 * 60 * 60)
+	::SetTimer( AfxGetApp ()->GetMainWnd ()->m_hWnd, 198, ( 15 * 60 * 60 - total_secconds ) * 1000, (TIMERPROC)OnTimerProc );
 }
 
 bool CKLineStream::get_KLine_ready ( char * ticker_symbol ) {
