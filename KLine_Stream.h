@@ -99,7 +99,7 @@ public:
 	ofstream txt_out;
 	/*map stock symbol to reference it's vector<tick>*/
 	map<string, list<TICK>*> mMap_stock_ticks;
-	map<string, int> mMap_intraday_open_time;
+	map<string, int> mMap_intraday_open_time, mMap_KLine_open_time;
 	map<string, list<TCandleStick>*> mMap_tick_compose_kline;
 	map<string, TKLineData_FileInfo *> mMap_tickfile_stream_info;
 

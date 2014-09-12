@@ -352,6 +352,10 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 						pKLine_file_info->n_list_begin++;
 						pList_KLineData->pop_front();
 					}
+					else {
+						if ( m_candlestick.mTime < mMap_KLine_open_time [ m_str_symbol ] )
+							mMap_KLine_open_time [ m_str_symbol ] = m_file_candlestick.mTime;
+					}
 				}
 			}
 		}
@@ -424,6 +428,7 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 			pKLine_file_info->n_list_begin = -1;
 		pKLine_file_info->p_fs = p_fs;
 		file_stream_info.insert( std::pair<string, TKLineData_FileInfo *> ( m_str_filename, pKLine_file_info ));
+		mMap_KLine_open_time [ m_str_symbol ] = 24 * 60;
 		/*sync all TCandleStick in archive(p_fs) into pList_KLineData*/
 		nRead_candlesticks = 1;
 		while ( ( f_size - nRead_candlesticks*nSize ) >= 0 &&  nRead_candlesticks <= 1000 ) {
@@ -431,6 +436,9 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 			p_fs->read ( (char *) &m_file_candlestick, nSize );
 			pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );
 			nRead_candlesticks++;
+			if ( m_file_candlestick.mTime < mMap_KLine_open_time [ m_str_symbol ] ) {
+				mMap_KLine_open_time [ m_str_symbol ] = m_file_candlestick.mTime;
+			}
 
 			//if ( pKLine_file_info->n_list_end == -1 )
 				//pKLine_file_info->n_list_end
@@ -672,7 +680,7 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 				      case 0: //1min
 						  break;
 					  case 1: //5min
-						  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 5 + 1 ) );
+						  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 15 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 15 + 1 ) );
 						  for (  itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++ ) {
 							  m_pTick_candlestick = (TCandleStick *) &(*itr3);
 							  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
@@ -837,8 +845,9 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 	if ( n_sticks == 1 )
 		return;
 
-	int n_total_sticks, i, j;
+	int n_total_sticks, i, j, nRead_sticks;
 	TCandleStick m_raw_candlestick;
+	int m_open_time, m_open_hour, m_open_min, kline_start_index;
 	switch ( nTimeFrame ) {
 		case 0:
 			max_sticks = 180 / 1;
@@ -852,7 +861,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 				m_str_symbol = str_buf;
 				m_new_filename = "C:\\temp\\" + m_str_symbol;
 
-				if ( !mMap_stock_kline.count (m_str_symbol) ) {
+				if ( !mMap_stock_kline.count ( m_str_symbol ) ) {
 					pList_KLineData = new list<TCandleStick>;
 					mMap_stock_kline.insert ( pair<string, list<TCandleStick> *> ( m_str_symbol, pList_KLineData ) );
 
@@ -865,34 +874,96 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 						p_new_fs = new fstream( m_new_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
 					}
 					
-					n_total_sticks = pOrig_KLine_file_info->n_fsize / nSize;
-					for ( i = 0; i < n_total_sticks; i += n_sticks ) {
-						for ( j = i; j < ( i + n_sticks ); j++ ) {
-							p_orig_fs->seekg ( j*nSize, ios::beg );
-							p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
-							m_candlestick.mClose = m_raw_candlestick.mClose;
-							if ( !( j % n_sticks ) ) {
-								m_candlestick = m_raw_candlestick;
-							}
-							else {
-								m_candlestick.mVolumn += m_raw_candlestick.mVolumn;
-								if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
-									m_candlestick.mHigh = m_raw_candlestick.mHigh;
-								if ( m_raw_candlestick.mLow < m_candlestick.mLow )
-									m_candlestick.mClose = m_raw_candlestick.mLow;
-								if ( ( j % n_sticks ) == ( n_sticks - 1 ) ) {
-									m_candlestick.mDate = m_raw_candlestick.mDate;
-									m_candlestick.mTime = m_raw_candlestick.mTime;
-								}
-							}
-						}
-						p_new_fs->seekp ( ( i / n_sticks ) * nSize, ios::beg );
-						p_new_fs->write ( (char *) &m_candlestick, nSize );	
-					}
+					pNew_KLine_file_info->p_fs = p_new_fs;
+					file_stream_info.insert ( pair<string, TKLineData_FileInfo *> ( m_new_filename, pNew_KLine_file_info ) );
+					pNew_KLine_file_info->n_fsize = 0; i = 0;
 				}
 				else {
-					//pList_KLineData = mMap_stock_kline [ m_str_symbol ];
-					//pOrig_KLine_file_info = file_stream_info [ m_new_filename ];
+					pList_KLineData = mMap_stock_kline [ m_str_symbol ];
+					pNew_KLine_file_info = file_stream_info [ m_new_filename ];
+					p_new_fs = pNew_KLine_file_info->p_fs;
+
+					for ( i = 0; i <= pOrig_KLine_file_info->n_list_end; i++ ) {
+						p_orig_fs->seekg ( pOrig_KLine_file_info->n_fsize - (i+1)*nSize, ios::beg );
+						p_orig_fs->read ( (char *) &m_candlestick, nSize );
+						if ( pList_KLineData->back().mTime == m_candlestick.mTime && pList_KLineData->back().mDate == m_candlestick.mDate )
+							break;
+					}
+					i = pOrig_KLine_file_info->n_list_end - i + 1;
+				}
+
+				if ( mMap_intraday_open_time.count( ticker_symbol ) ) {
+					m_open_time = mMap_intraday_open_time[ ticker_symbol ];
+					m_open_hour = m_open_time / 10000;
+					m_open_min = ( m_open_time - m_open_hour * 10000 ) / 100;
+					m_open_time = m_open_hour * 60 + m_open_min;
+				}
+				else {
+					m_open_time = mMap_KLine_open_time [ ticker_symbol ] - 5;
+				}
+				n_total_sticks = pOrig_KLine_file_info->n_fsize / nSize;
+				m_candlestick.mDate = 0;
+				for ( ; i < n_total_sticks; /*i += n_sticks*/ ) {
+					/*sync the time frame*/
+					for ( ; i < n_total_sticks; i++) {
+						p_orig_fs->seekg ( i*nSize, ios::beg );
+						p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
+						if ( ( m_raw_candlestick.mTime - m_open_time ) % ( n_sticks * 5 ) == 5) {
+							if ( ( pNew_KLine_file_info->n_fsize - nSize ) >= 0 ) {
+								p_new_fs->seekp ( pNew_KLine_file_info->n_fsize - nSize, ios::beg );
+								p_new_fs->write ( (char *) &m_candlestick, nSize );
+							}
+							break;
+						}
+						else {
+							if ( m_candlestick.mDate == 0 ) {
+								if ( ( pNew_KLine_file_info->n_fsize - nSize ) >= 0 ) {
+									p_new_fs->seekg ( pNew_KLine_file_info->n_fsize - nSize, ios::beg );
+									p_new_fs->read ( (char *) &m_candlestick, nSize );
+								}
+							}
+							m_candlestick.mClose = m_raw_candlestick.mClose;
+							m_candlestick.mDate = m_raw_candlestick.mDate;
+							m_candlestick.mTime = m_raw_candlestick.mTime;
+							m_candlestick.mVolumn += m_raw_candlestick.mVolumn;
+							if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
+								m_candlestick.mHigh = m_raw_candlestick.mHigh;
+							if ( m_raw_candlestick.mLow < m_candlestick.mLow )
+								m_candlestick.mClose = m_raw_candlestick.mLow;
+						}
+					}
+					for ( j = i, kline_start_index = i; j < ( kline_start_index + n_sticks ) && j < n_total_sticks; j++, i++ ) {
+						p_orig_fs->seekg ( j*nSize, ios::beg );
+						p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
+						m_candlestick.mClose = m_raw_candlestick.mClose;
+						m_candlestick.mDate = m_raw_candlestick.mDate;
+						m_candlestick.mTime = m_raw_candlestick.mTime;
+						if ( j == kline_start_index ) {
+							m_candlestick = m_raw_candlestick;
+						}
+						else {
+							m_candlestick.mVolumn += m_raw_candlestick.mVolumn;
+							if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
+								m_candlestick.mHigh = m_raw_candlestick.mHigh;
+							if ( m_raw_candlestick.mLow < m_candlestick.mLow )
+								m_candlestick.mClose = m_raw_candlestick.mLow;
+						}
+					}
+					p_new_fs->seekp ( pNew_KLine_file_info->n_fsize, ios::beg );
+					p_new_fs->write ( (char *) &m_candlestick, nSize );	
+					pNew_KLine_file_info->n_fsize += nSize;
+
+					pList_KLineData->insert ( pList_KLineData->end(), m_candlestick );
+					if ( pNew_KLine_file_info->n_list_begin == -1 )
+						pNew_KLine_file_info->n_list_begin = pNew_KLine_file_info->n_list_end = 0;
+					else {
+						pNew_KLine_file_info->n_list_end++;
+
+						if ( ( pNew_KLine_file_info->n_list_end - pNew_KLine_file_info->n_list_begin + 1 ) > 1000 ) {
+							pNew_KLine_file_info->n_list_begin++;
+							pList_KLineData->pop_front();
+						}
+					}
 				}
 			}
 			break;
@@ -904,6 +975,13 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 			break;
 		default:
 			return;
+	}
+
+	list<TCandleStick>::reverse_iterator itr;
+	//pNew_KLine_file_info->
+	int n_MA_Groups;
+	n_MA_Groups = pList_KLineData->size() - 15 + 1;
+	for ( itr = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups; itr++, i++ ) {
 	}
 }
 
