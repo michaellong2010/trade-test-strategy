@@ -6,11 +6,13 @@ TCandleStick m_candlestick;
 TICK m_tick;
 
 map<int, string> CKLineStream::mTimeFrameName = init_timeframe_map();
-CKLineStream::CKLineStream(int time_frame) {
+CKLineStream::CKLineStream(int time_frame, int n_sticks ) {
 	stream_file = "";
 	//ios::binary=
 	nTimeFrame = time_frame;
 	txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
+	n_collapse_sticks = n_sticks;
+	is_tick_in_kline = false;
 }
 
 CKLineStream::~CKLineStream() {
@@ -282,7 +284,9 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 
 			if ( found_in_list == false) {
 				if ( itr1 == pList_KLineData->begin() ) {
-					for ( i = 0; i < n_insert_pos; i++ ) {
+					i = 0;
+					found_in_file = search_KLine_in_file( pKLine_file_info, 0, n_insert_pos - 1, i );
+					/*for ( i = 0; i < n_insert_pos; i++ ) {
 						p_fs->seekg ( i*n_bytes, ios::beg );
 						p_fs->read ( (char *) &m_file_candlestick, n_bytes );
 						if ( m_candlestick.mDate == m_file_candlestick.mDate && m_candlestick.mTime == m_file_candlestick.mTime ) {
@@ -296,7 +300,7 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 								if ( m_candlestick.mDate < m_file_candlestick.mDate || ( m_candlestick.mDate == m_file_candlestick.mDate && m_candlestick.mTime < m_file_candlestick.mTime ) ) {
 									break;
 								}
-					}
+					}*/
 					if ( found_in_file == false ) {
 						n_insert_pos1 = i;
 						for ( j = pKLine_file_info->n_list_end; j >= i; j-- ) {
@@ -366,6 +370,48 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 
 	pStock = new TStock();*/
 	return 0;
+}
+
+bool CKLineStream::search_KLine_in_file( TKLineData_FileInfo *pKLine_file_info, int lower_bound, int upper_bound, int &ins_pos ) {
+	TCandleStick m_middle_candletick;
+	fstream *p_fs;
+	int middle;
+
+	p_fs = pKLine_file_info->p_fs;
+	if ( lower_bound > upper_bound ) {
+		return false;
+	}
+	else {
+		middle = ( lower_bound + upper_bound ) / 2;
+		p_fs->seekg ( middle*sizeof(TCandleStick), ios::beg );
+		p_fs->read ( (char *) &m_middle_candletick, sizeof(TCandleStick) );
+
+		if ( lower_bound == upper_bound ) {
+			if ( m_candlestick.mDate == m_middle_candletick.mDate && m_candlestick.mTime == m_middle_candletick.mTime ) {
+				ins_pos = lower_bound;
+				return true;
+			}
+			else
+				if ( m_candlestick.mDate > m_middle_candletick.mDate || ( m_candlestick.mDate == m_middle_candletick.mDate && m_candlestick.mTime > m_middle_candletick.mTime ) ) {
+					//return lower_bound + 1;
+					ins_pos = lower_bound + 1;
+					return false;
+
+				}
+				else
+					if ( m_candlestick.mDate < m_middle_candletick.mDate || ( m_candlestick.mDate == m_middle_candletick.mDate && m_candlestick.mTime < m_middle_candletick.mTime ) ) {
+						//return lower_bound;
+						ins_pos = lower_bound;
+						return false;
+					}
+		}
+		else {
+			if ( m_candlestick.mDate < m_middle_candletick.mDate || ( m_candlestick.mDate == m_middle_candletick.mDate && m_candlestick.mTime <= m_middle_candletick.mTime ) )
+				return search_KLine_in_file ( pKLine_file_info, lower_bound, middle, ins_pos );
+			else
+				return search_KLine_in_file ( pKLine_file_info, middle + 1, upper_bound, ins_pos );
+		}
+	}
 }
 
 vector<string> CKLineStream::tokenize( const char *input_str, char *delimiter ) {
@@ -472,15 +518,19 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	int nSize = sizeof(TICK), nRead_ticks;
 	TICK m_file_tick;
 	
-	list<TCandleStick> *pList_KLineData;
+	list<TCandleStick> *pList_KLineData, *pList_KLineData1;
 	int next_trading_date = -1, next_kline_close_time, m_open_time, m_open_hour, m_open_min, m_open_sec;
 	int m_tick_hour, m_tick_min, m_tick_sec;
 	SYSTEMTIME ti; 
 	if ( mMap_stock_kline.count( symbol ) ) {
 		pList_KLineData = mMap_stock_kline [ symbol ];
 		m_candlestick = pList_KLineData->back();
-		next_trading_date = m_candlestick.mDate + 1;
-		m_candlestick.mDate = next_trading_date;
+		if ( is_tick_in_kline == true ) {
+		}
+		else {
+			next_trading_date = m_candlestick.mDate + 1;
+			m_candlestick.mDate = next_trading_date;
+		}
 	}
 	else {
 		GetSystemTime(&ti);
@@ -655,17 +705,68 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	}
 #endif
 
+	string m_new_filename, m_str_symbol;
+	list<double> *pList_MA15, *pList_MA22;
+	double sum, mean;
+	static int is_last_tick_backfill = 1;
+	int n_MA_Groups, n_rev_ins_pos;
+	static bool MA15_list_ready = false, MA22_list_ready = false;
+	list <TCandleStick>::reverse_iterator itr5, itr6, itr7;
+	list <double>::reverse_iterator itr9;
 			if ( m_tick.m_nPtr == 0 ) {
 				mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
 			}
 
-			if ( !mMap_tick_compose_kline.count( symbol ) ) {
-				pList_KLineData = new list<TCandleStick>;
-				mMap_tick_compose_kline.insert( pair<string, list<TCandleStick>*> ( symbol, pList_KLineData ) );
+			if ( n_collapse_sticks == 1 ) {
+				if ( !mMap_tick_compose_kline.count( symbol ) ) {
+					pList_KLineData = new list<TCandleStick>;
+					mMap_tick_compose_kline.insert( pair<string, list<TCandleStick>*> ( symbol, pList_KLineData ) );
+				}
+				else {
+					pList_KLineData = mMap_tick_compose_kline[ symbol ];
+				}
+				
+				if ( !mMap_stock_kline.count( symbol ) ) {
+					pList_KLineData1 = NULL;
+				}
+				else {
+					pList_KLineData1 = mMap_stock_kline[ symbol ];
+				}
 			}
 			else {
-				pList_KLineData = mMap_tick_compose_kline[ symbol ];
+				switch ( nTimeFrame ) {
+					case 1:
+						sprintf( str_buf, "%s_%dmin", symbol.c_str(), 5 * n_collapse_sticks );
+						m_str_symbol = str_buf;
+						m_new_filename = "C:\\temp\\" + m_str_symbol;
+						break;
+				}
+				if ( !mMap_tick_compose_kline.count( m_str_symbol ) ) {
+					pList_KLineData = new list<TCandleStick>;
+					mMap_tick_compose_kline.insert( pair<string, list<TCandleStick>*> ( m_str_symbol, pList_KLineData ) );
+				}
+				else {
+					pList_KLineData = mMap_tick_compose_kline[ m_str_symbol ];
+				}
+				if ( !mMap_stock_kline.count( m_str_symbol ) ) {
+					pList_KLineData1 = NULL;
+				}
+				else {
+					pList_KLineData1 = mMap_stock_kline[ m_str_symbol ];
+				}
 			}
+			if ( !mMap_MA15.count ( m_str_symbol ) ) {
+				pList_MA15 = new list<double>;
+				mMap_MA15.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA15 ) );
+			}
+			else
+				pList_MA15 = mMap_MA15 [ m_str_symbol ];
+			if ( !mMap_MA22.count ( m_str_symbol ) ) {
+				pList_MA22 = new list<double>;
+				mMap_MA22.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA22 ) );
+			}
+			else
+				pList_MA22 = mMap_MA22 [ m_str_symbol ];
 /*collapse tick data into appropriate candlestick*/
 			if ( nTimeFrame <= 2 ) {
 /*intraday timeframetake the first tick time as start within the day*/
@@ -680,8 +781,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 				      case 0: //1min
 						  break;
 					  case 1: //5min
-						  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 15 * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / 15 + 1 ) );
-						  for (  itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++ ) {
+						  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * n_collapse_sticks * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / ( 5 * n_collapse_sticks ) + 1 ) );
+						  for (  n_rev_ins_pos = 0, itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++, n_rev_ins_pos++ ) {
 							  m_pTick_candlestick = (TCandleStick *) &(*itr3);
 							  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
 								  found_tick_in_candlestick = true;
@@ -706,9 +807,293 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 							  m_candlestick.mClose = new_price;
 							  m_candlestick.mVolumn = nQty;
 							  pList_KLineData->insert( itr3.base(), m_candlestick );
+#if 1
+							  if ( /*is_last_tick_backfill == 1 && is_BackFill == 0*/ MA15_list_ready == false ) {
+								  if ( pList_KLineData1 == NULL ) {
+									  /*if ( is_tick_in_kline == false && pList_KLineData->size() >= 15 ) {
+										  n_MA_Groups = pList_KLineData->size() - 15 + 1;
+										  for ( itr5 = itr6 = pList_KLineData->rbegin(), sum = 0, j = 0; j < 15; j++, itr6++ ) {
+											  sum += itr6->mClose;
+										  }
+										  mean = sum / 15;
+										  pList_MA15->insert ( pList_MA15->begin(), mean );
+										  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
+											  sum = sum + itr6->mClose - itr5->mClose;
+											  mean = sum / 15;
+											  pList_MA15->insert ( pList_MA15->begin(), mean );
+										  }
+									  }*/
+								  }
+								  else
+									  if ( is_tick_in_kline == false ) {
+										  //MA15
+										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 15 ) {
+											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - 15 + 1;
+											  for ( itr5 = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000 && i < pList_KLineData->size(); itr5++, i++ ) {
+												  for ( itr6 = itr5, sum = 0, j = 0; j < 15 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  for ( itr6 = pList_KLineData1->rbegin(); j < 15; j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  mean = sum / 15;
+												  pList_MA15->insert ( pList_MA15->begin(), mean );
+											  }
+											  if ( pList_KLineData1->size() >= 15 ) {
+												  n_MA_Groups = pList_KLineData1->size() - 15 + 1;
+												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 15; j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  mean = sum / 15;
+												  pList_MA15->insert ( pList_MA15->begin(), mean );
+												  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
+													  sum = sum + itr6->mClose - itr5->mClose;
+													  mean = sum / 15;
+													  pList_MA15->insert ( pList_MA15->begin(), mean );
+												  }
+											  }
+										  }
+									  }
+									  else {
+										  //MA15
+										  if ( pList_KLineData1->size() >= 15 ) {
+											  n_MA_Groups = pList_KLineData1->size() - 15 + 1;
+											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 15; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 15;
+											  pList_MA15->insert ( pList_MA15->begin(), mean );
+											  for ( i = 1; i < n_MA_Groups && i < 1000; i++, itr6++, itr5++ ) {
+												  sum = sum + itr6->mClose - itr5->mClose;
+												  mean = sum / 15;
+												  pList_MA15->insert ( pList_MA15->begin(), mean );
+											  }
+										  }
+									  }
+									  
+									  MA15_list_ready = true;
+							  }
+							  else
+								  if ( MA15_list_ready == true /*&& is_BackFill == 0*/ ) {
+									  if ( pList_KLineData1 == NULL ) {
+										  if ( is_tick_in_kline == false && pList_KLineData->size() >= 15 ) {
+											  pList_MA15->insert ( pList_MA15->end(), mean );
+											  for ( itr9 = pList_MA15->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < 15; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 15;												 
+											  (*itr9) = mean;											  
+											  for ( i = 1; i < (n_rev_ins_pos + 1); i++, itr5++, itr9++ ) {
+												  sum = sum + itr6->mClose - itr5->mClose;
+												  mean = sum / 15;												 
+												  (*itr9) = mean;
+											  }
+										  }
+									  }
+									  else
+										  if ( is_tick_in_kline == false ) {
+											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 15 ) {
+												  pList_MA15->insert ( pList_MA15->end(), mean );
+												  for ( itr9 = pList_MA15->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
+													  for ( itr6 = itr5, sum = 0, j = 0; j < 15 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  for ( itr6 = pList_KLineData1->rbegin(); j < 15; j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  mean = sum / 15;
+													  (*itr9) = mean;
+												  }
+											  }
+										  }
+								  }
+#endif
+
+#if 1
+							  if ( MA22_list_ready == false ) {
+								  if ( pList_KLineData1 == NULL ) {
+								  }
+								  else
+									  if ( is_tick_in_kline == false ) {
+										  //MA22
+										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 22 ) {
+											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - 22 + 1;
+											  for ( itr5 = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000 && i < pList_KLineData->size(); itr5++, i++ ) {
+												  for ( itr6 = itr5, sum = 0, j = 0; j < 22 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  for ( itr6 = pList_KLineData1->rbegin(); j < 22; j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  mean = sum / 22;
+												  pList_MA22->insert ( pList_MA22->begin(), mean );
+											  }
+											  if ( pList_KLineData1->size() >= 22 ) {
+												  n_MA_Groups = pList_KLineData1->size() - 22 + 1;
+												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+													  sum += itr6->mClose;
+												  }
+												  mean = sum / 22;
+												  pList_MA22->insert ( pList_MA22->begin(), mean );
+												  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
+													  sum = sum + itr6->mClose - itr5->mClose;
+													  mean = sum / 22;
+													  pList_MA22->insert ( pList_MA22->begin(), mean );
+												  }
+											  }
+										  }
+									  }
+									  else {
+										  //MA22
+										  if ( pList_KLineData1->size() >= 22 ) {
+											  n_MA_Groups = pList_KLineData1->size() - 22 + 1;
+											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 22;
+											  pList_MA22->insert ( pList_MA22->begin(), mean );
+											  for ( i = 1; i < n_MA_Groups && i < 1000; i++, itr6++, itr5++ ) {
+												  sum = sum + itr6->mClose - itr5->mClose;
+												  mean = sum / 22;
+												  pList_MA22->insert ( pList_MA22->begin(), mean );
+											  }
+										  }
+									  }
+									  
+									  MA22_list_ready = true;
+							  }
+							  else
+								  if ( MA22_list_ready == true /*&& is_BackFill == 0*/ ) {
+									  if ( pList_KLineData1 == NULL ) {
+										  if ( is_tick_in_kline == false && pList_KLineData->size() >= 22 ) {
+											  pList_MA22->insert ( pList_MA22->end(), mean );
+											  for ( itr9 = pList_MA22->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 22;												 
+											  (*itr9) = mean;											  
+											  for ( i = 1; i < (n_rev_ins_pos + 1); i++, itr5++, itr9++ ) {
+												  sum = sum + itr6->mClose - itr5->mClose;
+												  mean = sum / 22;												 
+												  (*itr9) = mean;
+											  }
+										  }
+									  }
+									  else
+										  if ( is_tick_in_kline == false ) {
+											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 22 ) {
+												  pList_MA22->insert ( pList_MA22->end(), mean );
+												  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
+													  for ( itr6 = itr5, sum = 0, j = 0; j < 22 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  for ( itr6 = pList_KLineData1->rbegin(); j < 22; j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  mean = sum / 22;
+													  (*itr9) = mean;
+												  }
+											  }
+										  }
+								  }
+#endif
+
 						  }
 						  else {
 							  new_price = ( float ) nClose / 100;
+
+#if 1
+							  if ( MA15_list_ready == true && is_tick_in_kline == false ) {
+								  if ( pList_KLineData1 == NULL ) {
+									  for ( itr9 = pList_MA15->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 15 ); i++, itr5++, itr9++ ) {
+									  }
+									  if ( ( pList_KLineData->size() - i ) >= 15 ) {
+										  //pList_MA15->insert ( pList_MA15->end(), mean );
+										  //for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ); j++, itr6++ );
+										  for ( ; i < ( n_rev_ins_pos + 1 ); i++, itr5++, itr9++ ) {
+											  /*for ( itr6 = itr5, sum = 0, j = 0; j < 15; j++, itr6++ ) {
+											  sum += itr6->mClose;
+											  }
+											  mean = sum / 15;*/
+
+											  mean = (*itr9);
+											  sum = 15 * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / 15;
+										  }
+									  }
+								  }
+								  else {
+									  for ( itr9 = pList_MA15->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 15 ); i++, itr5++, itr9++ ) {
+									  }
+									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= 15 ) {
+
+										  //pList_MA15->insert ( pList_MA15->end(), mean );
+										  for ( ; i < ( n_rev_ins_pos + 1 ); itr5++, i++, itr9++ ) {
+											  /*for ( itr6 = itr5, sum = 0, j = 0; j < 15; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  for ( itr6 = pList_KLineData1->rbegin(); j < 15; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 15;*/
+											  /*for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ) && itr6 != pList_KLineData->rend(); j++, itr6++ );
+											  if ( itr6 == pList_KLineData->rend() )
+												  for ( itr6 = pList_KLineData->rbegin(); j < ( n_rev_ins_pos - i ); j++, itr6++ );*/
+											  mean = (*itr9);
+											  sum = 15 * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / 15;
+										  }
+									  }
+								  }
+							  }
+#endif
+
+							  //MA22
+#if 1
+							  if ( MA22_list_ready == true && is_tick_in_kline == false ) {
+								  if ( pList_KLineData1 == NULL ) {
+									  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 22 ); i++, itr5++, itr9++ ) {
+									  }
+									  if ( ( pList_KLineData->size() - i ) >= 22 ) {
+										  //pList_MA22->insert ( pList_MA22->end(), mean );
+										  //for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ); j++, itr6++ );
+										  for ( ; i < ( n_rev_ins_pos + 1 ); i++, itr5++, itr9++ ) {
+											  /*for ( itr6 = itr5, sum = 0, j = 0; j < 22; j++, itr6++ ) {
+											  sum += itr6->mClose;
+											  }
+											  mean = sum / 22;*/
+
+											  mean = (*itr9);
+											  sum = 22 * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / 22;
+										  }
+									  }
+								  }
+								  else {
+									  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 22 ); i++, itr5++, itr9++ ) {
+									  }
+									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= 22 ) {
+
+										  //pList_MA22->insert ( pList_MA22->end(), mean );
+										  for ( ; i < ( n_rev_ins_pos + 1 ); itr5++, i++, itr9++ ) {
+											  /*for ( itr6 = itr5, sum = 0, j = 0; j < 22; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  for ( itr6 = pList_KLineData1->rbegin(); j < 22; j++, itr6++ ) {
+												  sum += itr6->mClose;
+											  }
+											  mean = sum / 22;*/
+											  /*for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ) && itr6 != pList_KLineData->rend(); j++, itr6++ );
+											  if ( itr6 == pList_KLineData->rend() )
+												  for ( itr6 = pList_KLineData->rbegin(); j < ( n_rev_ins_pos - i ); j++, itr6++ );*/
+											  mean = (*itr9);
+											  sum = 22 * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / 22;
+										  }
+									  }
+								  }
+							  }
+#endif
 							  m_pTick_candlestick->mClose = new_price;
 							  if ( m_pTick_candlestick->mHigh < new_price )
 								  m_pTick_candlestick->mHigh = new_price;
@@ -717,6 +1102,23 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 									  m_pTick_candlestick->mLow = new_price;
 							  m_pTick_candlestick->mVolumn += nQty;
 						  }
+
+						  							  /*if ( ( pList_KLineData1 != NULL && ( pList_KLineData->size() + pList_KLineData1->size() ) >= 15 )  ||
+								  ( pList_KLineData1 == NULL && pList_KLineData->size() >= 15 )) {
+								  for ( 
+							  }*/
+							  /*if ( pList_KLineData->size() >= 15 ) {
+							  
+							  }
+							  else
+								  if ( ( pList_KLineData1 != NULL && ( pList_KLineData->size() + pList_KLineData1->size() ) >= 15 ) ) {
+									  for ( sum = 0, i =0, itr5 = pList_KLineData->rbegin(); i < 15 && itr5 != pList_KLineData->rend(); i++, itr5++ ) {
+										  sum += itr5->mClose;
+									  }
+									  for ( itr5 = pList_KLineData1->rbegin(); itr5 != pList_KLineData1->rend() && i < 15; i++, itr5++ ) {
+										  sum += itr5->mClose;
+									  }
+								  }*/
 						  break;
 					  case 2: //30min
 						  break;
@@ -740,6 +1142,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	//pVector_TickData->at( nPtr ) = m_tick;
 	//n_VecSize = pVector_TickData->capacity();
 
+	is_last_tick_backfill = is_BackFill;
 	return 0;
 }
 
@@ -822,7 +1225,7 @@ bool CKLineStream::search_tick_in_file( TTickData_FileInfo *pTick_file_info, int
 }
 
 /*group several sticks into single stick*/
-void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
+void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	list<TCandleStick> *pList_KLineData;
 	TKLineData_FileInfo *pOrig_KLine_file_info, *pNew_KLine_file_info;
 	string m_str_symbol, m_orig_filename, m_new_filename;
@@ -830,6 +1233,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 	int max_sticks;
 	fstream *p_orig_fs, *p_new_fs;
 	int nSize = sizeof ( TCandleStick );
+	int n_sticks = this->n_collapse_sticks;
 
 	if ( !mMap_stock_kline.count ( ticker_symbol ) )
 		return;
@@ -848,6 +1252,11 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 	int n_total_sticks, i, j, nRead_sticks;
 	TCandleStick m_raw_candlestick;
 	int m_open_time, m_open_hour, m_open_min, kline_start_index;
+	/*calculate MA15*/
+	/*list<TCandleStick>::reverse_iterator itr, itr1;
+	list<TCandleStick>::iterator itr2, itr3;
+	double mean, sum;
+	list<double> *pList_MA15;*/
 	switch ( nTimeFrame ) {
 		case 0:
 			max_sticks = 180 / 1;
@@ -959,6 +1368,39 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 					else {
 						pNew_KLine_file_info->n_list_end++;
 
+						/*if ( pList_KLineData->size() >= 15 ) {
+							if ( !mMap_MA15.count ( m_str_symbol ) ) {
+								pList_MA15 = new list<double>;
+								mMap_MA15.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA15 ) );
+							}
+							else {
+								pList_MA15 = mMap_MA15 [ m_str_symbol ];
+							}
+							if ( pList_KLineData->size() == 15 ) {
+								itr = pList_KLineData->rbegin();
+								for ( sum = 0, j = 0, itr1 = itr; j < 15; j++, itr1++ ) {
+									sum += itr1->mClose;
+								}
+							}
+							else {
+								//itr = pList_KLineData->rbegin();
+								//itr3 = itr1.base();
+								itr1 = itr = pList_KLineData->rbegin();
+								j = 0;
+								while ( j++ < 15 )
+									itr1++;
+								//itr1 = itr + 15;
+								//if (  itr == pList_KLineData->rbegin() ) {
+								sum = sum + itr->mClose - itr1->mClose;
+								//sum = sum + itr->mClose - itr3->mClose;
+								//}
+							}
+							//sum = mean;
+							mean = sum / 15;
+							pList_MA15->insert ( pList_MA15->end(), mean );
+							if ( pList_MA15->size() == 1001 )
+								pList_MA15->pop_front();
+						}*/
 						if ( ( pNew_KLine_file_info->n_list_end - pNew_KLine_file_info->n_list_begin + 1 ) > 1000 ) {
 							pNew_KLine_file_info->n_list_begin++;
 							pList_KLineData->pop_front();
@@ -977,12 +1419,19 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol, int n_sticks ) {
 			return;
 	}
 
-	list<TCandleStick>::reverse_iterator itr;
-	//pNew_KLine_file_info->
-	int n_MA_Groups;
-	n_MA_Groups = pList_KLineData->size() - 15 + 1;
-	for ( itr = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups; itr++, i++ ) {
-	}
+
+
+	/*int n_MA_Groups;
+	if ( pList_KLineData->size() >= 15 ) {
+
+		n_MA_Groups = pList_KLineData->size() - 15 + 1;
+		for ( itr = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000; itr++, i++ ) {
+			for ( itr1 = itr, mean = 0, j = 0; j < 15; j++, itr1++ ) {
+				mean += itr1->mClose;
+			}
+			
+		}
+	}*/
 }
 
 VOID CALLBACK OnTimerProc(
@@ -1014,4 +1463,12 @@ void CKLineStream::KLine_server_time( int total_secconds ) {
 
 bool CKLineStream::get_KLine_ready ( char * ticker_symbol ) {
 	return mMap_kline_ready [ ticker_symbol ];
+}
+
+void CKLineStream::sync_server_time ( int total_secconds ) {
+	server_escape_seconds = total_secconds;
+	if ( server_escape_seconds >= ( ( 8 * 60 + 30 ) * 60 ) && server_escape_seconds <= ( 15 * 60 * 60 ) )
+		this->is_tick_in_kline = false;
+	else
+		this->is_tick_in_kline = true; //true
 }

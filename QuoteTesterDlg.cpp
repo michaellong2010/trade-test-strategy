@@ -28,7 +28,7 @@ DWORD t_id = 0;
 CQuoteTesterDlg *m_pDialog;
 
 CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1 )
+	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3 )
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -122,9 +122,9 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	mKline_stream.Push_KLine_Data("1402", "06/05/2014, 08:50, 913800, 914800, 913700, 914600, 3964");
 	mKline_stream.Push_KLine_Data("1402", "06/12/2014, 08:50, 913800, 914800, 913700, 914600, 3964");*/
 	/*mKline_stream.Push_Tick_Data( "1402", 0, 90003, -999999, 999999, 3255, 66, 1 );
-	mKline_stream.Push_Tick_Data( "1402", 5, 90212, 3270, 3275, 3275, 105, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 5, 90212, 3270, 3275, 3275, 105, 0 );
 	mKline_stream.Push_Tick_Data( "1402", 8, 90507, 3215, 3220, 3215, 70, 1 );
-	mKline_stream.Push_Tick_Data( "1402", 3, 90123, 3220, 3230, 3225, 69, 1 );
+	mKline_stream.Push_Tick_Data( "1402", 3, 90123, 3220, 3230, 3225, 69, 0 );
 	mKline_stream.Push_Tick_Data( "1402", 18, 90845, 3270, 3275, 3270, 75, 1 );
 	mKline_stream.Push_Tick_Data( "1402", 15, 90615, 3255, 3260, 3260, 35, 1 );
 	mKline_stream.Push_Tick_Data( "1402", 7, 90435, 3230, 3235, 3230, 19, 1 );
@@ -316,31 +316,31 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	TTick* tTick;
 	DWORD dwWaitResult;
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
-	TRACE("Run in thread: %x\n", GetCurrentThreadId());
+	//TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	//if( m_nType == 2 )
 	{
-		if ( !m_pDialog->m_Queue_pTTick.empty() ) {
+		//if ( !m_pDialog->m_Queue_pTTick.empty() ) {
 			/*dwWaitResult = WaitForSingleObject( 
 				m_pDialog->ghMutex,    // handle to mutex
 				INFINITE);  // no time-out interval*/
-			tTick = m_pDialog->m_Queue_pTTick.front();
-			m_pDialog->m_Queue_pTTick.pop_front();
+			//tTick = m_pDialog->m_Queue_pTTick.front();
+			//m_pDialog->m_Queue_pTTick.pop_front();
 			//ReleaseMutex(m_pDialog->ghMutex);
-		}
-		else {
+		//}
+		//else {
 			//ReleaseMutex(m_pDialog->ghMutex);
-			tTick = new TTick();
-		}
+			//tTick = new TTick();
+		//}
 
 		CString strMsg;
 
-		strMsg.Format(_T("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d "),
+		/*strMsg.Format(_T("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d "),
 			nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty);
+			nQty);*/
 		/*TRACE("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d ",
 			nPtr,
 			nTime,
@@ -348,6 +348,12 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty);*/
+		/*TRACE("%d\n", nPtr);
+		short	sPageNo = 1;
+		if ( nPtr == 1000 ) {*/
+			//SKQuoteLib_RequestTicks(&sPageNo, "");
+			//m_pDialog->OnBnClickedButton14();
+		//}
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -363,7 +369,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 
 		//BSTR bstrMsg = strMsg.AllocSysString();
 
-		m_pDialog->m_Queue_pTTick.push_back(tTick);
+		//m_pDialog->m_Queue_pTTick.push_back(tTick);
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
 			//SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 			//SysFreeString(bstrMsg);
@@ -532,6 +538,10 @@ void _stdcall OnNotifyStrikePrices( BSTR BProduct, BSTR BName, BSTR BCall, BSTR 
 	}
 }
 
+void _stdcall OnNotifyServerTime1( short sHour, short sMinute, short sSecond, int nTotal) {
+	m_pDialog->mKline_stream.sync_server_time ( nTotal );
+}
+
 void _stdcall OnNotifyServerTime( short sHour, short sMinute, short sSecond, int nTotal)
 {
 	CString strMsg;
@@ -542,14 +552,15 @@ void _stdcall OnNotifyServerTime( short sHour, short sMinute, short sSecond, int
 	SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,99,(int)bstrMsg);
 		
 	SysFreeString(bstrMsg);
-	SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)NULL );
+	//SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)NULL );
+	SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime1 );
 	m_pDialog->mKline_stream.KLine_server_time( nTotal );
 }
 
 void _stdcall OnNotifyProductsReady()
 {
 	CQuoteTesterDlg *pDialog = (CQuoteTesterDlg *) AfxGetMainWnd();
-	AfxMessageBox(_T("坝珇更ЧΘ!"));
+	//AfxMessageBox(_T("坝珇更ЧΘ!"));
 	if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID)
 		SetEvent(pDialog->Wait_ProductsReady_Event);
 	TRACE("Run in UI thread: %x\n", GetCurrentThreadId());
@@ -760,7 +771,7 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 		SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
 		//OnBnClickedButton7(); //request server time;
 		mKline_stream.set_KLine_ready( "TX00" );
-		mKline_stream.candlestick_collapse( "TX00", 3 );
+		mKline_stream.candlestick_collapse( "TX00" );
 	}
 	//SKQuoteLib_GetKLine("TX00", 2);
 }
@@ -993,11 +1004,11 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 		nCode = SKQuoteLib_AttachMarketBuySellCallBack( (UINT_PTR)OnNotifyMarketBuySell );
 		nCode = SKQuoteLib_AttachMarketHighLowCallBack( (UINT_PTR)OnNotifyMarketHighLow );
 		nCode = SKQuoteLib_AttachStrikePricesCallBack( (UINT_PTR)OnNotifyStrikePrices );
-		//nCode = SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+		nCode = SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime1 );
 		nCode = SKQuoteLib_AttachHistoryTicksGetCallBack( (UINT_PTR) OnNotifyHistoryTicksGet);
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 
-		AfxMessageBox(_T("﹍Θ"));
+		//AfxMessageBox(_T("﹍Θ"));
 	}
 
 	//OnBnClickedButton1();

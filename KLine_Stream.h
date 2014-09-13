@@ -68,8 +68,11 @@ private:
 	int nTimeFrame;
 
 	bool search_tick_in_file( TTickData_FileInfo *, int, int, int & );
+	bool search_KLine_in_file( TKLineData_FileInfo *pKLine_file_info, int lower_bound, int upper_bound, int &ins_pos );
+	int n_collapse_sticks;
+	int server_escape_seconds;
 public:
-	CKLineStream(int time_frame);	// 標準建構函式
+	CKLineStream(int time_frame, int n_sticks);	// 標準建構函式
 	~CKLineStream();
 
 	/*current focus stream file name synopsis： <stock_NO>_<year>_<time period of time frame>*/
@@ -109,5 +112,11 @@ public:
 	int kline_fetch_server_time;
 
 	/*collapse multiple candlestick form another time frame KLine*/
-	void candlestick_collapse ( char * ticker_symbol, int n_sticks );
+	void candlestick_collapse ( char * ticker_symbol );
+
+	/*calculate mean average of KLine data MA15&MA22*/
+	map<string, list<double>*> mMap_MA15, mMap_MA22;
+
+	bool is_tick_in_kline;
+	void sync_server_time ( int total_secconds );
 };
