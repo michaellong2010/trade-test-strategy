@@ -26,9 +26,11 @@ HANDLE t_hnd = NULL;
 DWORD t_id = 0;
 /*point to main dialog*/
 CQuoteTesterDlg *m_pDialog;
+HANDLE g_hThreads_KLine [ 3 ], g_hEvent_KLine;
+DWORD g_ThreadID_KLine [ 3 ];
 
 CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3 )
+	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false )
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -114,7 +116,7 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	pComboBox->SetCurSel(0);
 
 	//Wait_Connection_Event = CreateEvent(NULL, FALSE, FALSE, NULL);
-	Wait_ProductsReady_Event = CreateEvent(NULL, TRUE, FALSE, NULL);		
+	Wait_ProductsReady_Event = CreateEvent(NULL, TRUE, FALSE, NULL);
 	//mKline_stream.Push_KLine_Data(CString("1402"), CString("5+2+3"));
 	//mpKline_stream = NULL;
 	/*mKline_stream.load_KLine_from_archive( "1402" );
@@ -280,7 +282,7 @@ void _stdcall OnNotifyTicks( short sMarketNo, short sStockidx, int nPtr)
 void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty)
 {
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
-	TRACE("Run in thread: %x\n", GetCurrentThreadId());
+	//TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	//if( m_nType == 2 )
 	{
 		CString strMsg;
@@ -298,7 +300,12 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty, 0 );
-
+		m_pDialog->mKline_stream_day.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0 );
 		/*BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
@@ -360,6 +367,13 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty, 1 );
+		m_pDialog->mKline_stream_day.Push_Tick_Data ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 1 );
+		m_pDialog->account_A.Place_Pending_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr );
 		/*tTick->m_nAsk = nAsk;
 		tTick->m_nBid = nBid;
 		tTick->m_nClose = nClose;
@@ -422,8 +436,9 @@ void _stdcall OnNotifyBest5( short sMarketNo, short sStockidx)
 
 void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 {
+	DWORD cur_tid;
 	/*running in the same thread with thread issue SKQuoteLib_GetKLine()*/
-	TRACE("Run in thread: %x\n", GetCurrentThreadId());
+	//TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	
 	//CQuoteTesterDlg *pDialog;
@@ -440,7 +455,19 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 		CString strMsg;
 		strMsg.Format(_T("%s %s"),strStockNo,strData);
 		//pDialog->mKline_stream.Push_KLine_Data(strStockNo, strData);
-		m_pDialog->mKline_stream.Push_KLine_Data( caStockNo, caData );
+		//cur_tid = GetCurrentThreadId();
+		if ( GetCurrentThreadId() == g_ThreadID_KLine[ 0 ])  //thread 5min KLine
+		{
+			m_pDialog->mKline_stream.Push_KLine_Data( caStockNo, caData );
+		}
+		else 
+			if ( GetCurrentThreadId() == g_ThreadID_KLine[ 1 ] )  //thread day KLine
+			{
+				m_pDialog->mKline_stream_day.Push_KLine_Data( caStockNo, caData );
+			}
+			else 
+				if ( GetCurrentThreadId() == g_ThreadID_KLine[ 2 ]) {  //post message only
+
 		//TRACE("%s %s \n", caStockNo, caData );
 		
 		BSTR bstrMsg = strMsg.AllocSysString();
@@ -453,6 +480,7 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
 		//PostThreadMessage(AfxGetApp()->m_nThreadID, WM_DATA,m_nType,(int)bstrMsg);
 		//PostThreadMessage(t_id, WM_DATA,m_nType,(int)bstrMsg);
+		}
 	}
 }
 
@@ -540,6 +568,7 @@ void _stdcall OnNotifyStrikePrices( BSTR BProduct, BSTR BName, BSTR BCall, BSTR 
 
 void _stdcall OnNotifyServerTime1( short sHour, short sMinute, short sSecond, int nTotal) {
 	m_pDialog->mKline_stream.sync_server_time ( nTotal );
+	m_pDialog->mKline_stream_day.sync_server_time ( nTotal );
 }
 
 void _stdcall OnNotifyServerTime( short sHour, short sMinute, short sSecond, int nTotal)
@@ -555,6 +584,7 @@ void _stdcall OnNotifyServerTime( short sHour, short sMinute, short sSecond, int
 	//SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)NULL );
 	SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime1 );
 	m_pDialog->mKline_stream.KLine_server_time( nTotal );
+	m_pDialog->mKline_stream_day.KLine_server_time( nTotal );
 }
 
 void _stdcall OnNotifyProductsReady()
@@ -773,6 +803,15 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 		mKline_stream.set_KLine_ready( "TX00" );
 		mKline_stream.candlestick_collapse( "TX00" );
 	}
+
+	/*if ( mKline_stream_day.get_KLine_ready( "TX00" ) == false ) {
+	//pDialog->mKline_stream_day.load_KLine_from_archive( "1402" );
+	SKQuoteLib_GetKLine( "TX00", 4 );
+	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+	//OnBnClickedButton7(); //request server time;
+	mKline_stream_day.set_KLine_ready( "TX00" );
+	mKline_stream_day.candlestick_collapse( "TX00" );*/
+	//}
 	//SKQuoteLib_GetKLine("TX00", 2);
 }
 
@@ -866,8 +905,56 @@ void CQuoteTesterDlg::OnBnClickedButton12()
 	}
 }
 
+/*20140914 added by michael*/
+DWORD WINAPI ThreadProc_15m_KLine ( LPVOID lpParam ) {
+	CQuoteTesterDlg *pDialog;
+	DWORD dwWaitResult;
+
+	pDialog = (CQuoteTesterDlg *) lpParam;
+#if 1
+	if ( pDialog->mKline_stream.get_KLine_ready( "TX00" ) == false ) {
+		pDialog->mKline_stream.load_KLine_from_archive( "TX00" );
+		dwWaitResult = ::WaitForSingleObject ( g_hEvent_KLine, INFINITE );
+		SKQuoteLib_GetKLine("TX00", 1);
+		::SetEvent ( g_hEvent_KLine );
+	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+	//OnBnClickedButton7(); //request server time;*/
+		pDialog->mKline_stream.set_KLine_ready( "TX00" );
+		pDialog->mKline_stream.candlestick_collapse( "TX00" );
+	}
+#endif
+	return 0;
+}
+
+DWORD WINAPI ThreadProc_show_KLine ( LPVOID lpParam ) {
+	//SKQuoteLib_GetKLine("TX00", 1);
+	//SKQuoteLib_GetKLine("TX00", 4);
+	return 0;
+}
+
+DWORD WINAPI ThreadProc_Day_KLine ( LPVOID lpParam ) {
+	CQuoteTesterDlg *pDialog;
+	DWORD dwWaitResult;
+
+	pDialog = (CQuoteTesterDlg *) lpParam;
+#if 1
+	//SKQuoteLib_GetKLine(caText,nType); nType is combo-box selection which is zero-base
+	if ( pDialog->mKline_stream_day.get_KLine_ready( "TX00" ) == false ) {
+		pDialog->mKline_stream_day.load_KLine_from_archive( "TX00" );
+		dwWaitResult = ::WaitForSingleObject ( g_hEvent_KLine, INFINITE );
+		SKQuoteLib_GetKLine( "TX00", 4 );
+		::SetEvent ( g_hEvent_KLine );
+	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
+	//OnBnClickedButton7(); //request server time;*/
+		pDialog->mKline_stream_day.set_KLine_ready( "TX00" );
+	//mKline_stream_day.candlestick_collapse( "TX00" );
+	}
+#endif
+	return 0;
+}
+
 /*20140825 added by michael*/
-DWORD WINAPI do_quote(PVOID dlg) {
+DWORD WINAPI do_quote(LPVOID dlg) {
 	int  nCode = 0;
 	DWORD dwEvent;
 	CWnd *pWnd;
@@ -933,18 +1020,28 @@ DWORD WINAPI do_quote(PVOID dlg) {
 	//pDialog->OnBnClickedButton2();
 		//dwEvent = WaitForSingleObject(pDialog->Wait_ProductsReady_Event, INFINITE);
 
+	DWORD dwThreadID, dwWaitResult;
 	if (pDialog->ReadyForTrading == true) {
 		/*K line data*/
 		TRACE("Run in thread: %x\n", GetCurrentThreadId());
 		TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 		//pDialog->mpKline_stream = new CKLineStream();
-		pDialog->OnBnClickedButton6();
-		//pDialog->OnBnClickedButton5();
+		//pDialog->OnBnClickedButton6();
+		g_hEvent_KLine = ::CreateEvent(NULL, FALSE, TRUE, NULL);
+		g_hThreads_KLine [ 0 ] = ::CreateThread(NULL, 0, ThreadProc_15m_KLine, (LPVOID) dlg, 0, g_ThreadID_KLine);
+		g_hThreads_KLine [ 1 ] = ::CreateThread(NULL, 0, ThreadProc_Day_KLine, (LPVOID) dlg, 0, g_ThreadID_KLine+1);
+		g_hThreads_KLine [ 2 ] = ::CreateThread(NULL, 0, ThreadProc_show_KLine, (LPVOID) dlg, 0, g_ThreadID_KLine+2);
+		dwWaitResult = WaitForMultipleObjects(
+        2,   // number of handles in array
+        g_hThreads_KLine,     // array of thread handles
+        TRUE,          // wait until all are signaled
+        INFINITE);
+		pDialog->OnBnClickedButton5();
 	}
 
 #if 1
 	TTick *tTick;
-	DWORD dwWaitResult;
+	//DWORD dwWaitResult;
 	short sStockidx;
 	while(::GetMessage( &msg, NULL, 0, 0 )) {
 		if ( msg.message == WM_HISTORY_TICK ) {
@@ -1031,8 +1128,9 @@ void CQuoteTesterDlg::OnBnClickedButton14()
 	pWnd = GetDlgItem(IDC_BUTTON14);
 	pWnd->EnableWindow( FALSE );
 	
-	CloseHandle(t_hnd);
-	t_hnd = NULL;
+	TerminateThread( t_hnd, (DWORD) 0 );
+	//CloseHandle(t_hnd);
+	//t_hnd = NULL;
 	OnBnClickedButton3();
 }
 

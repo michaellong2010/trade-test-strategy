@@ -71,8 +71,10 @@ private:
 	bool search_KLine_in_file( TKLineData_FileInfo *pKLine_file_info, int lower_bound, int upper_bound, int &ins_pos );
 	int n_collapse_sticks;
 	int server_escape_seconds;
+	bool store_tick_file;
+	bool MA15_list_ready, MA22_list_ready;
 public:
-	CKLineStream(int time_frame, int n_sticks);	// 標準建構函式
+	CKLineStream(int time_frame, int n_sticks, bool need_store_tick);	// 標準建構函式
 	~CKLineStream();
 
 	/*current focus stream file name synopsis： <stock_NO>_<year>_<time period of time frame>*/

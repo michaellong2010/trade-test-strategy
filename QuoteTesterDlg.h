@@ -3,6 +3,7 @@
 //
 #include "KLine_Stream.h"
 #include "Functions.h"
+#include "Account.h"
 #include <deque>
 #pragma once
 
@@ -65,8 +66,8 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra,
 		AFX_CMDHANDLERINFO* pHandlerInfo);
 
-	/*fstream only be accessed by belong thread*/
-	CKLineStream mKline_stream;
+	/*fstream only be accessed by belong thread¡ACKLineStream feature in multiple symbols single time frame*/
+	CKLineStream mKline_stream, mKline_stream_day;
 
 	/*implement object pointer queue to reduce dynamic alloc and improve efficiency*/
 	deque <TStock *> m_Queue_pTStock;
@@ -77,4 +78,8 @@ public:
 	map <short, string> mMap_stockidx_stockNo;
 
 	HANDLE ghMutex;
+
+	/*build account*/
+	CAccount account_A;
+	int trading_date;
 };
