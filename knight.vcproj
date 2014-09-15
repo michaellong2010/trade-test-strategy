@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\KLine_Stream.h"
+				>
+			</File>
+			<File
 				RelativePath=".\QuoteTester.h"
 				>
 			</File>

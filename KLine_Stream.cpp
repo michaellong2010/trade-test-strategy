@@ -59,6 +59,11 @@ CKLineStream::~CKLineStream() {
 			delete (*itr1).second;
 	}
 
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA15.begin(); itr1 != mMap_MA15.end(); itr1++ )
+		delete (*itr1).second;
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA22.begin(); itr1 != mMap_MA22.end(); itr1++ )
+		delete (*itr1).second;
+
 	if ( txt_out.is_open() ) {
 		txt_out.flush();
 		txt_out.close();
@@ -568,7 +573,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		else {
 			delete p_fs;
 			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
-		} 
+		}
 		pTick_file_info = new TTickData_FileInfo;
 		pTick_file_info->n_fsize = f_size = p_fs->tellg();
 		pTick_file_info->n_list_end = ( pTick_file_info->n_fsize / nSize ) - 1;
@@ -920,6 +925,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 												  mean = sum / 15;												 
 												  (*itr9) = mean;
 											  }
+											  if ( pList_MA15->size() > 1000 )
+												  pList_MA15->pop_front();
 										  }
 									  }
 									  else
@@ -936,6 +943,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 													  mean = sum / 15;
 													  (*itr9) = mean;
 												  }
+												  if ( pList_MA15->size() > 1000 )
+													  pList_MA15->pop_front();
 											  }
 										  }
 								  }
@@ -1009,6 +1018,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 												  mean = sum / 22;												 
 												  (*itr9) = mean;
 											  }
+											  if ( pList_MA15->size() > 1000 )
+												  pList_MA15->pop_front();
 										  }
 									  }
 									  else
@@ -1025,6 +1036,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 													  mean = sum / 22;
 													  (*itr9) = mean;
 												  }
+												  if ( pList_MA15->size() > 1000 )
+													  pList_MA15->pop_front();
 											  }
 										  }
 								  }

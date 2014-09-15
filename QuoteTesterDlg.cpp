@@ -134,6 +134,21 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	/*mKline_stream.set_KLine_ready ( "1402" );
 	mKline_stream.set_KLine_ready ( "TX00" );
 	mKline_stream.get_KLine_ready ( "2903" );*/
+	int back_fill = 1;
+	account_A.Place_Open_Order ( "TX00", 0, 90012, 905700, 905800, 905800, 3, back_fill, Long_position );
+	account_A.Place_Open_Order ( "TX00", 1, 90040, 904600, 904900, 904600, 7, back_fill, Long_position );
+	account_A.Place_Open_Order ( "TX00", 2, 90122, 905100, 905200, 905200, 2, back_fill, Long_position );
+	account_A.Place_Open_Order ( "TX00", 3, 90143, 904400, 904500, 904500, 8, back_fill, Long_position );
+	account_A.Place_Open_Order ( "TX00", 4, 90239, 903900, 904000, 903900, 11, back_fill,  Short_position );
+	account_A.Place_Open_Order ( "TX00", 5, 90258, 904700, 904800, 904800, 20, back_fill,  Long_position );
+	account_A.Place_Open_Order ( "TX00", 6, 90320, 904200, 904300, 904200, 28, back_fill, Short_position );
+	account_A.Place_Open_Order ( "TX00", 7, 90342, 903700, 903800, 903700, 21, back_fill, Short_position );
+	account_A.Place_Open_Order ( "TX00", 8, 90405, 903100, 903200, 903200, 105, back_fill, Short_position );
+	account_A.Place_Open_Order ( "TX00", 9, 90422, 903500, 903600, 903600, 78, back_fill, Short_position );
+	account_A.Place_Open_Order ( "TX00", 10, 90447, 903800, 903900, 903900, 65, back_fill, Short_position );
+	account_A.Place_Open_Order ( "TX00", 11, 90456, 904300, 904400, 904400, 125, back_fill, Long_position );
+	account_A.Place_Open_Order ( "TX00", 12, 90517, 904000, 904100, 904000, 26, back_fill, Long_position );
+	account_A.refresh_portfolio();
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	ghMutex = CreateMutex( 
 		NULL,              // default security attributes
@@ -373,7 +388,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty, 1 );
-		m_pDialog->account_A.Place_Pending_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr );
+		//m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr, 1 );
 		/*tTick->m_nAsk = nAsk;
 		tTick->m_nBid = nBid;
 		tTick->m_nClose = nClose;
