@@ -30,7 +30,7 @@ HANDLE g_hThreads_KLine [ 3 ], g_hEvent_KLine;
 DWORD g_ThreadID_KLine [ 3 ];
 
 CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false )
+	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false ), account_A( "capital_A" ), account_B ( "capital_B" )
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -134,7 +134,7 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	/*mKline_stream.set_KLine_ready ( "1402" );
 	mKline_stream.set_KLine_ready ( "TX00" );
 	mKline_stream.get_KLine_ready ( "2903" );*/
-	int back_fill = 1;
+	/*int back_fill = 1;
 	account_A.Place_Open_Order ( "TX00", 0, 90012, 905700, 905800, 905800, 3, back_fill, Long_position );
 	account_A.Place_Open_Order ( "TX00", 1, 90040, 904600, 904900, 904600, 7, back_fill, Long_position );
 	account_A.Place_Open_Order ( "TX00", 2, 90122, 905100, 905200, 905200, 2, back_fill, Long_position );
@@ -148,7 +148,7 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 	account_A.Place_Open_Order ( "TX00", 10, 90447, 903800, 903900, 903900, 65, back_fill, Short_position );
 	account_A.Place_Open_Order ( "TX00", 11, 90456, 904300, 904400, 904400, 125, back_fill, Long_position );
 	account_A.Place_Open_Order ( "TX00", 12, 90517, 904000, 904100, 904000, 26, back_fill, Long_position );
-	account_A.refresh_portfolio();
+	account_A.refresh_portfolio();*/
 	m_pDialog = (CQuoteTesterDlg *)AfxGetApp ()->GetMainWnd ();
 	ghMutex = CreateMutex( 
 		NULL,              // default security attributes
@@ -219,10 +219,16 @@ void _stdcall OnConnect( int nKind, int nErrorCode)
 void _stdcall OnNotifyQuote( short sMarketNo, short sStockidx)
 {
 	TStock *tStock;
-	TRACE("Run in thread: %x\n", GetCurrentThreadId());
+	//TRACE("Run in thread: %x\n", GetCurrentThreadId());
 
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
+	int get_stock_no;
+	if ( ! m_pDialog->mMap_stockidx_stockNo.count ( sStockidx ) )
+		get_stock_no = 1;
+	else
+		get_stock_no = 0;
 	//if( m_nType == 1 )
+	if ( get_stock_no == 1 )
 	{
 		//TStock* tStock = new TStock();
 		if ( !m_pDialog->m_Queue_pTStock.empty() ) {
@@ -302,13 +308,13 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 	{
 		CString strMsg;
 
-		strMsg.Format(_T("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d "),
+		/*strMsg.Format(_T("TICK 絪腹:%d 丁:%d 禦基:%d 芥基:%d Θユ基:%d 秖:%d "),
 			nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty);
+			nQty);*/
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -321,6 +327,63 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty, 0 );
+		string symbol;
+		int position_type = -1;
+		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
+		double MA10_15min, MA22_15min, MA10_day, MA22_day;
+		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
+		pList_15min_MA10 = m_pDialog->mKline_stream.mMap_MA10[ symbol ];
+		pList_15min_MA22 = m_pDialog->mKline_stream.mMap_MA22[ symbol ];
+		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_full_day";
+		pList_day_MA10 = m_pDialog->mKline_stream_day.mMap_MA10[ symbol ];
+		pList_day_MA22 = m_pDialog->mKline_stream_day.mMap_MA22[ symbol ];
+		MA10_15min = *( pList_15min_MA10->rbegin() );
+		MA22_15min = *( pList_15min_MA22->rbegin() );
+		MA10_day = *( pList_day_MA10->rbegin() );
+		MA22_day = *( pList_day_MA22->rbegin() );
+		if ( nClose > MA10_15min && nClose > MA22_15min ) { //account_A hold long position
+			position_type = Long_position;
+		}
+		else
+			if ( nClose < MA10_15min && nClose < MA22_15min ) { //account_A hold short position
+				position_type = Short_position;
+			}
+			else
+				if ( nClose < MA10_15min && nClose > MA22_15min ) { //account_A exit long position
+					//position_type = Close_all_position;
+					position_type = Close_long_position;
+				}
+				else
+					if ( nClose > MA10_15min && nClose < MA22_15min ) { //account_A exit short position
+						//position_type = Close_all_position;
+						position_type = Close_short_position;
+					}
+		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0, position_type );
+		if ( ! ( nPtr % 200 ) )
+			m_pDialog->account_A.refresh_portfolio();
+		/*if ( nClose > pList_day_MA10 && nCLose > pList_day_MA22 ) { //account_B hold long position
+		}
+		else
+			if ( nClose < pList_day_MA10 && nCLose < pList_day_MA22 ) { //account_B hold short position
+			}
+			else
+				if ( nClose < pList_day_MA10 && nCLose > pList_day_MA22 ) { //account_B exit long position
+				}
+				else
+					if ( nClose > pList_day_MA10 && nCLose < pList_day_MA22 ) { //account_B exit short position
+					}
+		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0, position_type );*/
+
 		/*BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
@@ -388,7 +451,47 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nAsk,
 			nClose,
 			nQty, 1 );
-		//m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr, 1 );
+		string symbol;
+		int position_type = -1;
+		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
+		double MA10_15min, MA22_15min, MA10_day, MA22_day;
+		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
+		pList_15min_MA10 = m_pDialog->mKline_stream.mMap_MA10[ symbol ];
+		pList_15min_MA22 = m_pDialog->mKline_stream.mMap_MA22[ symbol ];
+		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_full_day";
+		pList_day_MA10 = m_pDialog->mKline_stream_day.mMap_MA10[ symbol ];
+		pList_day_MA22 = m_pDialog->mKline_stream_day.mMap_MA22[ symbol ];
+		MA10_15min = *( pList_15min_MA10->rbegin() );
+		MA22_15min = *( pList_15min_MA22->rbegin() );
+		MA10_day = *( pList_day_MA10->rbegin() );
+		MA22_day = *( pList_day_MA22->rbegin() );
+		double close_price = 0;
+		close_price = nClose / 100;
+		if ( close_price > MA10_15min && close_price > MA22_15min ) { //account_A hold long position
+			position_type = Long_position;
+		}
+		else
+			if ( close_price < MA10_15min && close_price < MA22_15min ) { //account_A hold short position
+				position_type = Short_position;
+			}
+			else
+				if ( close_price < MA10_15min && close_price > MA22_15min ) { //account_A exit long position
+					//position_type = Close_all_position;
+					//position_type = Close_long_position;
+				}
+				else
+					if ( close_price > MA10_15min && close_price < MA22_15min ) { //account_A exit short position
+						//position_type = Close_all_position;
+						//position_type = Close_short_position;
+					}
+		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0, position_type );
+		if ( ! ( nPtr % 200 ) )
+			m_pDialog->account_A.refresh_portfolio();
 		/*tTick->m_nAsk = nAsk;
 		tTick->m_nBid = nBid;
 		tTick->m_nClose = nClose;
@@ -471,6 +574,7 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 		strMsg.Format(_T("%s %s"),strStockNo,strData);
 		//pDialog->mKline_stream.Push_KLine_Data(strStockNo, strData);
 		//cur_tid = GetCurrentThreadId();
+		//m_pDialog->mKline_stream_day.Push_KLine_Data( caStockNo, caData );
 		if ( GetCurrentThreadId() == g_ThreadID_KLine[ 0 ])  //thread 5min KLine
 		{
 			m_pDialog->mKline_stream.Push_KLine_Data( caStockNo, caData );
@@ -810,23 +914,23 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 	//strcpy(caText, "TX00");
 	//nType = 1;
 	//SKQuoteLib_GetKLine(caText,nType);
-	if ( mKline_stream.get_KLine_ready( "TX00" ) == false ) {
+	/*if ( mKline_stream.get_KLine_ready( "TX00" ) == false ) {
 		mKline_stream.load_KLine_from_archive( "TX00" );
 		SKQuoteLib_GetKLine("TX00", 1);
 		SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
 		//OnBnClickedButton7(); //request server time;
 		mKline_stream.set_KLine_ready( "TX00" );
 		mKline_stream.candlestick_collapse( "TX00" );
-	}
+	}*/
 
-	/*if ( mKline_stream_day.get_KLine_ready( "TX00" ) == false ) {
-	//pDialog->mKline_stream_day.load_KLine_from_archive( "1402" );
+	if ( mKline_stream_day.get_KLine_ready( "TX00" ) == false ) {
+	mKline_stream_day.load_KLine_from_archive( "TX00" );
 	SKQuoteLib_GetKLine( "TX00", 4 );
 	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
-	//OnBnClickedButton7(); //request server time;
+	//OnBnClickedButton7(); //request server time;*/
 	mKline_stream_day.set_KLine_ready( "TX00" );
-	mKline_stream_day.candlestick_collapse( "TX00" );*/
-	//}
+	//mKline_stream_day.candlestick_collapse( "TX00" );
+	}
 	//SKQuoteLib_GetKLine("TX00", 2);
 }
 

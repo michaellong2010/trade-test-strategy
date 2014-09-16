@@ -1,7 +1,8 @@
 #include "Account.h"
 
 TOrder_info m_order;
-CAccount::CAccount() {
+/*account_name is a unique identifier for each account*/
+CAccount::CAccount( string account_name ) {
 	string m_portfolio_filename, m_txt_portfolio_filename;
 	long f_size;
 	int nRead_orders;
@@ -11,8 +12,8 @@ CAccount::CAccount() {
 	margin = free_margin = equity = 300000;
 
 	list<TOrder_info> *pList_open_order, *pList_close_order;
-	m_portfolio_filename = "C:\\temp\\account_portfolio_summary.bin";
-	m_txt_portfolio_filename = "C:\\temp\\account_portfolio_summary.txt";
+	m_portfolio_filename = "C:\\temp\\" + account_name + ".bin";
+	m_txt_portfolio_filename = "C:\\temp\\" + account_name + ".txt";
 	p_portfolio_fs = new fstream( m_portfolio_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 	txt_portfolio_fs.open( m_txt_portfolio_filename.c_str(), ios::out | ios::ate | ios::trunc );
 	if ( p_portfolio_fs->is_open() == true ) {
@@ -63,6 +64,7 @@ CAccount::CAccount() {
 			p_portfolio_fs->write ( (char *) &free_margin, sizeof( double ) );
 			p_portfolio_fs->seekp ( 2 * sizeof( double ), ios::beg );
 			p_portfolio_fs->write ( (char *) &equity, sizeof( double ) );
+			p_portfolio_fs->flush();
 		}
 	}
 	else {
@@ -75,6 +77,7 @@ CAccount::CAccount() {
 			p_portfolio_fs->write ( (char *) &free_margin, sizeof( double ) );
 			p_portfolio_fs->seekp ( 2 * sizeof( double ), ios::beg );
 			p_portfolio_fs->write ( (char *) &equity, sizeof( double ) );
+			p_portfolio_fs->flush();
 		}
 	}
 }
@@ -106,7 +109,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 
 	list<TOrder_info> *pList_open_order, *pList_close_order;
 
-	if ( is_BackFill == 1)
+	if ( is_BackFill == 1 || position_type == -1)
 		return 0;
 
 	if ( itr == mMap_open_order.end() ) {
@@ -138,10 +141,15 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				if ( m_order.position_type == Short_position ) {
 					m_order.open_price = nBid / 100;
 				}
+				m_order.open_time = nTime;
 				m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
 		}
 		else {
-			profit_loss = m_order.lots * ( nClose / 100 - m_order.open_price ) * pip_value;
+			if ( m_order.position_type == Long_position )
+				profit_loss = m_order.lots * ( nClose / 100 - m_order.open_price ) * pip_value;
+			else
+				if ( m_order.position_type == Short_position )
+					profit_loss = m_order.lots * ( m_order.open_price - nClose / 100 ) * pip_value;
 			equity = equity - m_order.profit_loss + profit_loss;
 			m_order.profit_loss = profit_loss;
 
@@ -155,8 +163,11 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				m_order.max_loss = profit_loss;
 		}
 
-		if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
+		//if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
+		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
+			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) ) {
 			m_order.exit_tick = nPtr + 1;
+			m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
 			pList_open_order->erase ( itr1++ );
 
@@ -180,7 +191,12 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 					m_order.close_price = nAsk / 100;
 				}
 
-				profit_loss = m_order.lots * ( m_order.close_price - m_order.open_price ) * pip_value - trading_fee;
+				if ( m_order.position_type == Long_position )
+					profit_loss = m_order.lots * ( m_order.close_price - m_order.open_price ) * pip_value - trading_fee;
+				else
+					if ( m_order.position_type == Short_position )
+						profit_loss = m_order.lots * ( m_order.open_price - m_order.close_price ) * pip_value - trading_fee;
+				equity = equity - m_order.profit_loss + profit_loss;
 				m_order.profit_loss = profit_loss;
 				free_margin = free_margin  + profit_loss;
 				if ( profit_loss > m_order.max_profit )
@@ -193,7 +209,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	}
 
 	/*create new order with position_type*/
-	if ( pList_open_order->size() == 0 ) {
+	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) ) {
 		new_free_margin = free_margin - ticker_margin;
 
 		if ( new_free_margin > 0 && 100 * ( new_free_margin / margin ) > 30.0 ) {
@@ -225,10 +241,16 @@ void CAccount::refresh_portfolio() {
 	list<TOrder_info>::iterator itr2;
 	int n_orders = 0;
 
+	txt_portfolio_fs.seekp( 0 );
+	//txt_portfolio_fs.seekg( 0, os:beg );
 #if 1
 	txt_portfolio_fs << "margin: " << margin << "\n";
 	txt_portfolio_fs << "free_margin: " << free_margin << "\n";
 	txt_portfolio_fs << "equity: " << equity << "\n";
+
+	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
+					", " << "entry_tick" << ", " << "exit_tick" << ", " << "lots" << ", " << "position_type: " << m_order.position_type << \
+					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << "\n";
 #endif
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
 		p_portfolio_fs->seekp ( 0, ios::beg );
@@ -247,7 +269,7 @@ void CAccount::refresh_portfolio() {
 				p_portfolio_fs->seekp ( 3 * sizeof ( double ) + n_orders * sizeof ( TOrder_info ), ios::beg );
 				p_portfolio_fs->write ( (char *) &m_order, sizeof( TOrder_info ) );
 #if 1
-				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  "open order===========\n";
+				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " open order===========\n";
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << "\n";
@@ -255,7 +277,7 @@ void CAccount::refresh_portfolio() {
 			}
 
 #if 1
-				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  "close order===========\n";
+				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " close order===========\n";
 #endif
 			for ( itr2 = pList_close_order->begin(); itr2 != pList_close_order->end(); itr2++, n_orders++ ) {
 				m_order = *itr2;
@@ -264,8 +286,8 @@ void CAccount::refresh_portfolio() {
 #if 1
 
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
-					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
-					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << "\n";
+					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << m_order.lots << ", " << "position_type: " << m_order.position_type << \
+					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << "\n";
 #endif
 			}
 #if 1
@@ -273,4 +295,7 @@ void CAccount::refresh_portfolio() {
 #endif
 		}
 	}
+
+	p_portfolio_fs->flush();
+	txt_portfolio_fs.flush();
 }

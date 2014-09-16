@@ -6,16 +6,20 @@
 using namespace std;
 #define Long_position 0
 #define Short_position 1
+#define Close_long_position 2
+#define Close_short_position 3
+#define Close_all_position 4
 
 enum Order_Type { OP_BUY = 0, OP_SHORT, OP_BUYLIMIT, OP_SHORTLIMIT, OP_BUYSTOP, OP_SHORTSTOP };
 
 struct TOrder_info {
 	int order_type, position_type;
-	int lots;
+	int lots, open_time;
 	int entry_tick, exit_tick;
 	double open_price, close_price;
 	double max_profit, max_loss, profit_loss;
 	char ticker_symbol [ 15 ];
+	int exit_reason;
 
 	TOrder_info() {
 		entry_tick = exit_tick = -1;
@@ -28,7 +32,7 @@ private:
 	/*margin, free-margin, equity*/
 	double margin, free_margin, equity;
 public:
-	CAccount();
+	CAccount( string account_name );
 	~CAccount();
 
 	/*place a order with market price¡Astage into pending status at tick==nPtr and deal at next tick*/

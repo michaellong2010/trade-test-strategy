@@ -80,6 +80,6 @@ public:
 	HANDLE ghMutex;
 
 	/*build account*/
-	CAccount account_A;
+	CAccount account_A, account_B;
 	int trading_date;
 };
