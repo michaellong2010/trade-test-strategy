@@ -164,8 +164,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		}
 
 		//if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
-		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
-			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) ) {
+		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) && ( nPtr - m_order.entry_tick ) > 5 ) ||
+			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) && ( nPtr - m_order.entry_tick ) > 5 ) {
 			m_order.exit_tick = nPtr + 1;
 			m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
@@ -249,7 +249,7 @@ void CAccount::refresh_portfolio() {
 	txt_portfolio_fs << "equity: " << equity << "\n";
 
 	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
-					", " << "entry_tick" << ", " << "exit_tick" << ", " << "lots" << ", " << "position_type: " << m_order.position_type << \
+					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "lots" << ", " << "position_type: " << m_order.position_type << \
 					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << "\n";
 #endif
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
@@ -271,7 +271,7 @@ void CAccount::refresh_portfolio() {
 #if 1
 				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " open order===========\n";
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
-					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
+					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << "\n";
 #endif
 			}
@@ -286,7 +286,7 @@ void CAccount::refresh_portfolio() {
 #if 1
 
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
-					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << m_order.lots << ", " << "position_type: " << m_order.position_type << \
+					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << "\n";
 #endif
 			}

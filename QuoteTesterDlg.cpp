@@ -328,7 +328,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nClose,
 			nQty, 0 );
 		string symbol;
-		int position_type = -1;
+		int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
 		double MA10_15min, MA22_15min, MA10_day, MA22_day;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
@@ -341,22 +341,24 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		MA22_15min = *( pList_15min_MA22->rbegin() );
 		MA10_day = *( pList_day_MA10->rbegin() );
 		MA22_day = *( pList_day_MA22->rbegin() );
-		if ( nClose > MA10_15min && nClose > MA22_15min ) { //account_A hold long position
+		double close_price = 0;
+		close_price = nClose / 100;
+		if ( close_price > MA10_15min && close_price > MA22_15min ) { //account_A hold long position
 			position_type = Long_position;
 		}
 		else
-			if ( nClose < MA10_15min && nClose < MA22_15min ) { //account_A hold short position
+			if ( close_price < MA10_15min && close_price < MA22_15min ) { //account_A hold short position
 				position_type = Short_position;
 			}
 			else
-				if ( nClose < MA10_15min && nClose > MA22_15min ) { //account_A exit long position
+				if ( close_price < MA10_15min && close_price > MA22_15min ) { //account_A exit long position
 					//position_type = Close_all_position;
-					position_type = Close_long_position;
+					//position_type = Close_long_position;
 				}
 				else
-					if ( nClose > MA10_15min && nClose < MA22_15min ) { //account_A exit short position
+					if ( close_price > MA10_15min && close_price < MA22_15min ) { //account_A exit short position
 						//position_type = Close_all_position;
-						position_type = Close_short_position;
+						//position_type = Close_short_position;
 					}
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
@@ -366,23 +368,23 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nQty, 0, position_type );
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio();
-		/*if ( nClose > pList_day_MA10 && nCLose > pList_day_MA22 ) { //account_B hold long position
+		if ( close_price > MA10_day && close_price > MA22_day ) { //account_B hold long position
 		}
 		else
-			if ( nClose < pList_day_MA10 && nCLose < pList_day_MA22 ) { //account_B hold short position
+			if ( close_price < MA10_day && close_price < MA22_day ) { //account_B hold short position
 			}
 			else
-				if ( nClose < pList_day_MA10 && nCLose > pList_day_MA22 ) { //account_B exit long position
+				if ( close_price < MA10_day && close_price > MA22_day ) { //account_B exit long position
 				}
 				else
-					if ( nClose > pList_day_MA10 && nCLose < pList_day_MA22 ) { //account_B exit short position
+					if ( close_price > MA10_day && close_price < MA22_day ) { //account_B exit short position
 					}
 		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
-			nQty, 0, position_type );*/
+			nQty, 0, position_type1 );
 
 		/*BSTR bstrMsg = strMsg.AllocSysString();
 
@@ -452,7 +454,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nClose,
 			nQty, 1 );
 		string symbol;
-		int position_type = -1;
+		static int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
 		double MA10_15min, MA22_15min, MA10_day, MA22_day;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
@@ -478,12 +480,16 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 				if ( close_price < MA10_15min && close_price > MA22_15min ) { //account_A exit long position
 					//position_type = Close_all_position;
 					//position_type = Close_long_position;
+					//position_type = Close_short_position;
 				}
 				else
 					if ( close_price > MA10_15min && close_price < MA22_15min ) { //account_A exit short position
 						//position_type = Close_all_position;
 						//position_type = Close_short_position;
+						//position_type = Close_long_position;
 					}
+		if ( nTime > 134400)
+			position_type = Close_all_position;
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -492,6 +498,38 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nQty, 0, position_type );
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio();
+		
+		if ( close_price > MA10_day && close_price > MA22_day ) { //account_B hold long position
+			position_type1 = Long_position;
+		}
+		else
+			if ( close_price < MA10_day && close_price < MA22_day ) { //account_B hold short position
+				position_type1 = Short_position;
+			}
+			else
+				if ( close_price < MA10_day && close_price > MA22_day ) { //account_B exit long position
+				}
+				else
+					if ( close_price > MA10_day && close_price < MA22_day ) { //account_B exit short position
+					}
+
+		if ( nTime > 134400)
+			position_type1 = Close_all_position;
+		/*int final_position =-1;
+		if ( position_type == Long_position && position_type1 == Long_position )
+			final_position = Long_position;
+		else
+			if ( position_type == Short_position && position_type1 == Short_position )
+				final_position = Long_position;*/
+
+		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
+			nTime,
+			nBid,
+			nAsk,
+			nClose,
+			nQty, 0, position_type1 );
+		if ( ! ( nPtr % 200 ) )
+			m_pDialog->account_B.refresh_portfolio();
 		/*tTick->m_nAsk = nAsk;
 		tTick->m_nBid = nBid;
 		tTick->m_nClose = nClose;
@@ -1126,10 +1164,10 @@ DWORD WINAPI do_quote(LPVOID dlg) {
 			dwEvent = WaitForSingleObject(pDialog->Wait_ProductsReady_Event, INFINITE);
 			if ( dwEvent == WAIT_OBJECT_0 ) {
 				pDialog->ReadyForTrading = true;
-				pWnd = pDialog->GetDlgItem(IDC_BUTTON13);
+				/*pWnd = pDialog->GetDlgItem(IDC_BUTTON13);
 				pWnd->EnableWindow( FALSE );
 				pWnd = pDialog->GetDlgItem(IDC_BUTTON14);
-				pWnd->EnableWindow( TRUE );
+				pWnd->EnableWindow( TRUE );*/
 			}			
 		}
 		else {
@@ -1187,6 +1225,8 @@ DWORD WINAPI do_quote(LPVOID dlg) {
 void CQuoteTesterDlg::OnBnClickedButton13()
 {
 	// TODO: Add your control notification handler code here
+	GetDlgItem(IDC_BUTTON13)->EnableWindow( FALSE );
+	GetDlgItem(IDC_BUTTON14)->EnableWindow( TRUE );
 	int  nCode = 0;
 	t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
 
