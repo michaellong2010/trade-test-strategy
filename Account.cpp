@@ -101,7 +101,7 @@ CAccount::~CAccount() {
 	}
 }
 
-int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type )
+int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day )
 {
 #if 1
 	map< string, list<TOrder_info>* >::iterator itr;
@@ -216,6 +216,10 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			strcpy ( m_order.ticker_symbol, symbol.c_str() );
 			m_order.entry_tick = nPtr + 1;
 			m_order.exit_tick = -1;
+			m_order.MA10_15min = MA10_15min;
+			m_order.MA22_15min = MA22_15min;
+			m_order.MA10_day = MA10_day;
+			m_order.MA22_day = MA22_day;
 			if ( position_type == Long_position ) {
 				m_order.order_type = OP_BUY;
 				m_order.position_type = Long_position;
@@ -250,7 +254,7 @@ void CAccount::refresh_portfolio() {
 
 	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
 					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "lots" << ", " << "position_type: " << m_order.position_type << \
-					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << "\n";
+					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << ", " << "MA10_min" << ", " << "MA22_min" << ", " << "MA10_day" << ", " << "MA22_day" << "\n";
 #endif
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
 		p_portfolio_fs->seekp ( 0, ios::beg );
@@ -272,7 +276,7 @@ void CAccount::refresh_portfolio() {
 				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " open order===========\n";
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
-					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << "\n";
+					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << ", " << m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << "\n";
 #endif
 			}
 
@@ -287,7 +291,7 @@ void CAccount::refresh_portfolio() {
 
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
-					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << "\n";
+					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << ", "<< m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << "\n";
 #endif
 			}
 #if 1

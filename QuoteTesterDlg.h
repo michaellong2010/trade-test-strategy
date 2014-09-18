@@ -5,6 +5,8 @@
 #include "Functions.h"
 #include "Account.h"
 #include <deque>
+#include <cmath>
+#include <math.h>
 #pragma once
 
 using namespace std; 

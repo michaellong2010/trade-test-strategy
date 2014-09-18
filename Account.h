@@ -20,10 +20,12 @@ struct TOrder_info {
 	double max_profit, max_loss, profit_loss;
 	char ticker_symbol [ 15 ];
 	int exit_reason;
+	double MA10_15min, MA22_15min, MA10_day, MA22_day;
 
 	TOrder_info() {
 		entry_tick = exit_tick = -1;
 		open_price = close_price = 0;
+		MA10_15min = MA22_15min = MA10_day = MA22_day = 0;
 	}
 };
 
@@ -36,7 +38,7 @@ public:
 	~CAccount();
 
 	/*place a order with market price¡Astage into pending status at tick==nPtr and deal at next tick*/
-	int Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type );
+	int Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day );
 	map< string, list<TOrder_info>* > mMap_open_order, mMap_close_order;
 	map< string, double > mMap_origin_margin, mMap_keep_margin, mMap_perpip_value;
 
