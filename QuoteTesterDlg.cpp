@@ -28,6 +28,7 @@ DWORD t_id = 0;
 CQuoteTesterDlg *m_pDialog;
 HANDLE g_hThreads_KLine [ 3 ], g_hEvent_KLine;
 DWORD g_ThreadID_KLine [ 3 ];
+int position_type = -1, position_type1 = -1;
 
 CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false ), account_A( "capital_A" ), account_B ( "capital_B" )
@@ -328,7 +329,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nClose,
 			nQty, 0 );
 		string symbol;
-		int position_type = -1, position_type1 = -1;
+		//int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
 		double MA10_15min, MA22_15min, MA10_day, MA22_day;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
@@ -360,6 +361,8 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 						//position_type = Close_all_position;
 						//position_type = Close_short_position;
 					}
+		/*if ( nTime > 134400)
+			position_type = Close_all_position;*/
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -369,9 +372,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio();
 		if ( close_price > MA10_day && close_price > MA22_day ) { //account_B hold long position
+			position_type1 = Long_position;
 		}
 		else
 			if ( close_price < MA10_day && close_price < MA22_day ) { //account_B hold short position
+				position_type1 = Short_position;
 			}
 			else
 				if ( close_price < MA10_day && close_price > MA22_day ) { //account_B exit long position
@@ -379,13 +384,16 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 				else
 					if ( close_price > MA10_day && close_price < MA22_day ) { //account_B exit short position
 					}
+		/*if ( nTime > 134400)
+			position_type1 = Close_all_position;*/
 		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
 			nQty, 0, position_type1 );
-
+		if ( ! ( nPtr % 200 ) )
+			m_pDialog->account_B.refresh_portfolio();
 		/*BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
@@ -454,7 +462,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nClose,
 			nQty, 1 );
 		string symbol;
-		static int position_type = -1, position_type1 = -1;
+		//static int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA10, *pList_15min_MA22, *pList_day_MA10, *pList_day_MA22;
 		double MA10_15min, MA22_15min, MA10_day, MA22_day;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
@@ -488,8 +496,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						//position_type = Close_short_position;
 						//position_type = Close_long_position;
 					}
-		if ( nTime > 134400)
-			position_type = Close_all_position;
+		/*if ( nTime > 134400)
+			position_type = Close_all_position;*/
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -513,8 +521,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					if ( close_price > MA10_day && close_price < MA22_day ) { //account_B exit short position
 					}
 
-		if ( nTime > 134400)
-			position_type1 = Close_all_position;
+		/*if ( nTime > 134400)
+			position_type1 = Close_all_position;*/
 		/*int final_position =-1;
 		if ( position_type == Long_position && position_type1 == Long_position )
 			final_position = Long_position;
@@ -554,6 +562,7 @@ void _stdcall OnNotifyBest5( short sMarketNo, short sStockidx)
 {
 	TBest5* tBest5;
 	//TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
+	return;
 	TRACE("Run in thread: %x\n", GetCurrentThreadId());
 	if( m_nType == 2 )
 	{
