@@ -83,6 +83,7 @@ CAccount::CAccount( string account_name ) {
 }
 
 CAccount::~CAccount() {
+	refresh_portfolio();
 	for ( map< string, list<TOrder_info>* >::iterator itr1 = mMap_open_order.begin(); itr1 != mMap_open_order.end(); itr1++ )
 		delete (*itr1).second;
 

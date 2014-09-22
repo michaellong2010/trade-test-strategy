@@ -562,7 +562,6 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		}
 		else
 			if ( close_price < MA10_15min && close_price < MA22_15min ) { //account_A hold short position
-				position_type = Short_position;
 				if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type = Short_position;
 				else
