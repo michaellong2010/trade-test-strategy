@@ -15,7 +15,7 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 	n_collapse_sticks = n_sticks;
 	is_tick_in_kline = false;
 	store_tick_file = need_store_tick;
-	MA10_list_ready = MA22_list_ready = false;
+	MA1_list_ready = MA2_list_ready = false;
 }
 
 CKLineStream::~CKLineStream() {
@@ -59,9 +59,9 @@ CKLineStream::~CKLineStream() {
 			delete (*itr1).second;
 	}
 
-	for ( map<string, list<double>*>::iterator itr1 = mMap_MA10.begin(); itr1 != mMap_MA10.end(); itr1++ )
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA1.begin(); itr1 != mMap_MA1.end(); itr1++ )
 		delete (*itr1).second;
-	for ( map<string, list<double>*>::iterator itr1 = mMap_MA22.begin(); itr1 != mMap_MA22.end(); itr1++ )
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA2.begin(); itr1 != mMap_MA2.end(); itr1++ )
 		delete (*itr1).second;
 
 	if ( txt_out.is_open() ) {
@@ -749,7 +749,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 #endif
 
 	string m_new_filename, m_str_symbol;
-	list<double> *pList_MA10, *pList_MA22;
+	list<double> *pList_MA1, *pList_MA2;
 	double sum, mean;
 	static int is_last_tick_backfill = 1;
 	int n_MA_Groups, n_rev_ins_pos;
@@ -801,18 +801,18 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 					pList_KLineData1 = mMap_stock_kline[ m_str_symbol ];
 				}
 			}
-			if ( !mMap_MA10.count ( m_str_symbol ) ) {
-				pList_MA10 = new list<double>;
-				mMap_MA10.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA10 ) );
+			if ( !mMap_MA1.count ( m_str_symbol ) ) {
+				pList_MA1 = new list<double>;
+				mMap_MA1.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA1 ) );
 			}
 			else
-				pList_MA10 = mMap_MA10 [ m_str_symbol ];
-			if ( !mMap_MA22.count ( m_str_symbol ) ) {
-				pList_MA22 = new list<double>;
-				mMap_MA22.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA22 ) );
+				pList_MA1 = mMap_MA1 [ m_str_symbol ];
+			if ( !mMap_MA2.count ( m_str_symbol ) ) {
+				pList_MA2 = new list<double>;
+				mMap_MA2.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA2 ) );
 			}
 			else
-				pList_MA22 = mMap_MA22 [ m_str_symbol ];
+				pList_MA2 = mMap_MA2 [ m_str_symbol ];
 /*collapse tick data into appropriate candlestick*/
 			if ( nTimeFrame <= 4 ) {
 /*intraday timeframetake the first tick time as start within the day*/
@@ -859,7 +859,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 							  m_candlestick.mVolumn = nQty;
 							  pList_KLineData->insert( itr3.base(), m_candlestick );
 #if 1
-							  if ( /*is_last_tick_backfill == 1 && is_BackFill == 0*/ MA10_list_ready == false ) {
+							  if ( /*is_last_tick_backfill == 1 && is_BackFill == 0*/ MA1_list_ready == false ) {
 								  if ( pList_KLineData1 == NULL ) {
 									  /*if ( is_tick_in_kline == false && pList_KLineData->size() >= 15 ) {
 										  n_MA_Groups = pList_KLineData->size() - 15 + 1;
@@ -878,180 +878,180 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 								  else
 									  if ( is_tick_in_kline == false ) {
 										  //MA10
-										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 10 ) {
-											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - 10 + 1;
+										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA1_period ) {
+											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - mMA1_period + 1;
 											  for ( itr5 = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000 && i < pList_KLineData->size(); itr5++, i++ ) {
-												  for ( itr6 = itr5, sum = 0, j = 0; j < 10 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+												  for ( itr6 = itr5, sum = 0, j = 0; j < mMA1_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  for ( itr6 = pList_KLineData1->rbegin(); j < 10; j++, itr6++ ) {
+												  for ( itr6 = pList_KLineData1->rbegin(); j < mMA1_period; j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  mean = sum / 10;
-												  pList_MA10->insert ( pList_MA10->begin(), mean );
+												  mean = sum / mMA1_period;
+												  pList_MA1->insert ( pList_MA1->begin(), mean );
 											  }
-											  if ( pList_KLineData1->size() >= 10 ) {
-												  n_MA_Groups = pList_KLineData1->size() - 10 + 1;
-												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 10; j++, itr6++ ) {
+											  if ( pList_KLineData1->size() >= mMA1_period ) {
+												  n_MA_Groups = pList_KLineData1->size() - mMA1_period + 1;
+												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA1_period; j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  mean = sum / 10;
-												  pList_MA10->insert ( pList_MA10->begin(), mean );
+												  mean = sum / mMA1_period;
+												  pList_MA1->insert ( pList_MA1->begin(), mean );
 												  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
 													  sum = sum + itr6->mClose - itr5->mClose;
-													  mean = sum / 10;
-													  pList_MA10->insert ( pList_MA10->begin(), mean );
+													  mean = sum / mMA1_period;
+													  pList_MA1->insert ( pList_MA1->begin(), mean );
 												  }
 											  }
 										  }
 									  }
 									  else {
 										  //MA10
-										  if ( pList_KLineData1->size() >= 10 ) {
-											  n_MA_Groups = pList_KLineData1->size() - 10 + 1;
-											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 10; j++, itr6++ ) {
+										  if ( pList_KLineData1->size() >= mMA1_period ) {
+											  n_MA_Groups = pList_KLineData1->size() - mMA1_period + 1;
+											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA1_period; j++, itr6++ ) {
 												  sum += itr6->mClose;
 											  }
-											  mean = sum / 10;
-											  pList_MA10->insert ( pList_MA10->begin(), mean );
+											  mean = sum / mMA1_period;
+											  pList_MA1->insert ( pList_MA1->begin(), mean );
 											  for ( i = 1; i < n_MA_Groups && i < 1000; i++, itr6++, itr5++ ) {
 												  sum = sum + itr6->mClose - itr5->mClose;
-												  mean = sum / 10;
-												  pList_MA10->insert ( pList_MA10->begin(), mean );
+												  mean = sum / mMA1_period;
+												  pList_MA1->insert ( pList_MA1->begin(), mean );
 											  }
 										  }
 									  }
 									  
-									  MA10_list_ready = true;
+									  MA1_list_ready = true;
 							  }
 							  else
-								  if ( MA10_list_ready == true /*&& is_BackFill == 0*/ ) {
+								  if ( MA1_list_ready == true /*&& is_BackFill == 0*/ ) {
 									  if ( pList_KLineData1 == NULL ) {
-										  if ( is_tick_in_kline == false && pList_KLineData->size() >= 10 ) {
-											  pList_MA10->insert ( pList_MA10->end(), mean );
-											  for ( itr9 = pList_MA10->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < 10; j++, itr6++ ) {
+										  if ( is_tick_in_kline == false && pList_KLineData->size() >= mMA1_period ) {
+											  pList_MA1->insert ( pList_MA1->end(), mean );
+											  for ( itr9 = pList_MA1->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < mMA1_period; j++, itr6++ ) {
 												  sum += itr6->mClose;
 											  }
-											  mean = sum / 10;												 
+											  mean = sum / mMA1_period;												 
 											  (*itr9) = mean;											  
 											  for ( i = 1; i < (n_rev_ins_pos + 1); i++, itr5++, itr9++ ) {
 												  sum = sum + itr6->mClose - itr5->mClose;
-												  mean = sum / 10;												 
+												  mean = sum / mMA1_period;												 
 												  (*itr9) = mean;
 											  }
-											  if ( pList_MA10->size() > 1000 )
-												  pList_MA10->pop_front();
+											  if ( pList_MA1->size() > 1000 )
+												  pList_MA1->pop_front();
 										  }
 									  }
 									  else
 										  if ( is_tick_in_kline == false ) {
-											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 10 ) {
-												  pList_MA10->insert ( pList_MA10->end(), mean );
-												  for ( itr9 = pList_MA10->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
-													  for ( itr6 = itr5, sum = 0, j = 0; j < 10 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA1_period ) {
+												  pList_MA1->insert ( pList_MA1->end(), mean );
+												  for ( itr9 = pList_MA1->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
+													  for ( itr6 = itr5, sum = 0, j = 0; j < mMA1_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
 														  sum += itr6->mClose;
 													  }
-													  for ( itr6 = pList_KLineData1->rbegin(); j < 10; j++, itr6++ ) {
+													  for ( itr6 = pList_KLineData1->rbegin(); j < mMA1_period; j++, itr6++ ) {
 														  sum += itr6->mClose;
 													  }
-													  mean = sum / 10;
+													  mean = sum / mMA1_period;
 													  (*itr9) = mean;
 												  }
-												  if ( pList_MA10->size() > 1000 )
-													  pList_MA10->pop_front();
+												  if ( pList_MA1->size() > 1000 )
+													  pList_MA1->pop_front();
 											  }
 										  }
 								  }
 #endif
 
 #if 1
-							  if ( MA22_list_ready == false ) {
+							  if ( MA2_list_ready == false ) {
 								  if ( pList_KLineData1 == NULL ) {
 								  }
 								  else
 									  if ( is_tick_in_kline == false ) {
 										  //MA22
-										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 22 ) {
-											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - 22 + 1;
+										  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA2_period ) {
+											  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - mMA2_period + 1;
 											  for ( itr5 = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000 && i < pList_KLineData->size(); itr5++, i++ ) {
-												  for ( itr6 = itr5, sum = 0, j = 0; j < 22 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+												  for ( itr6 = itr5, sum = 0, j = 0; j < mMA2_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  for ( itr6 = pList_KLineData1->rbegin(); j < 22; j++, itr6++ ) {
+												  for ( itr6 = pList_KLineData1->rbegin(); j < mMA2_period; j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  mean = sum / 22;
-												  pList_MA22->insert ( pList_MA22->begin(), mean );
+												  mean = sum / mMA2_period;
+												  pList_MA2->insert ( pList_MA2->begin(), mean );
 											  }
-											  if ( pList_KLineData1->size() >= 22 ) {
-												  n_MA_Groups = pList_KLineData1->size() - 22 + 1;
-												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+											  if ( pList_KLineData1->size() >= mMA2_period ) {
+												  n_MA_Groups = pList_KLineData1->size() - mMA2_period + 1;
+												  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA2_period; j++, itr6++ ) {
 													  sum += itr6->mClose;
 												  }
-												  mean = sum / 22;
-												  pList_MA22->insert ( pList_MA22->begin(), mean );
+												  mean = sum / mMA2_period;
+												  pList_MA2->insert ( pList_MA2->begin(), mean );
 												  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
 													  sum = sum + itr6->mClose - itr5->mClose;
-													  mean = sum / 22;
-													  pList_MA22->insert ( pList_MA22->begin(), mean );
+													  mean = sum / mMA2_period;
+													  pList_MA2->insert ( pList_MA2->begin(), mean );
 												  }
 											  }
 										  }
 									  }
 									  else {
 										  //MA22
-										  if ( pList_KLineData1->size() >= 22 ) {
-											  n_MA_Groups = pList_KLineData1->size() - 22 + 1;
-											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+										  if ( pList_KLineData1->size() >= mMA2_period ) {
+											  n_MA_Groups = pList_KLineData1->size() - mMA2_period + 1;
+											  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA2_period; j++, itr6++ ) {
 												  sum += itr6->mClose;
 											  }
-											  mean = sum / 22;
-											  pList_MA22->insert ( pList_MA22->begin(), mean );
+											  mean = sum / mMA2_period;
+											  pList_MA2->insert ( pList_MA2->begin(), mean );
 											  for ( i = 1; i < n_MA_Groups && i < 1000; i++, itr6++, itr5++ ) {
 												  sum = sum + itr6->mClose - itr5->mClose;
-												  mean = sum / 22;
-												  pList_MA22->insert ( pList_MA22->begin(), mean );
+												  mean = sum / mMA2_period;
+												  pList_MA2->insert ( pList_MA2->begin(), mean );
 											  }
 										  }
 									  }
 									  
-									  MA22_list_ready = true;
+									  MA2_list_ready = true;
 							  }
 							  else
-								  if ( MA22_list_ready == true /*&& is_BackFill == 0*/ ) {
+								  if ( MA2_list_ready == true /*&& is_BackFill == 0*/ ) {
 									  if ( pList_KLineData1 == NULL ) {
-										  if ( is_tick_in_kline == false && pList_KLineData->size() >= 22 ) {
-											  pList_MA22->insert ( pList_MA22->end(), mean );
-											  for ( itr9 = pList_MA22->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < 22; j++, itr6++ ) {
+										  if ( is_tick_in_kline == false && pList_KLineData->size() >= mMA2_period ) {
+											  pList_MA2->insert ( pList_MA2->end(), mean );
+											  for ( itr9 = pList_MA2->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < mMA2_period; j++, itr6++ ) {
 												  sum += itr6->mClose;
 											  }
-											  mean = sum / 22;												 
+											  mean = sum / mMA2_period;												 
 											  (*itr9) = mean;											  
 											  for ( i = 1; i < (n_rev_ins_pos + 1); i++, itr5++, itr9++ ) {
 												  sum = sum + itr6->mClose - itr5->mClose;
-												  mean = sum / 22;												 
+												  mean = sum / mMA2_period;												 
 												  (*itr9) = mean;
 											  }
-											  if ( pList_MA10->size() > 1000 )
-												  pList_MA10->pop_front();
+											  if ( pList_MA1->size() > 1000 )
+												  pList_MA1->pop_front();
 										  }
 									  }
 									  else
 										  if ( is_tick_in_kline == false ) {
-											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= 22 ) {
-												  pList_MA22->insert ( pList_MA22->end(), mean );
-												  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
-													  for ( itr6 = itr5, sum = 0, j = 0; j < 22 && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+											  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA2_period ) {
+												  pList_MA2->insert ( pList_MA2->end(), mean );
+												  for ( itr9 = pList_MA2->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
+													  for ( itr6 = itr5, sum = 0, j = 0; j < mMA2_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
 														  sum += itr6->mClose;
 													  }
-													  for ( itr6 = pList_KLineData1->rbegin(); j < 22; j++, itr6++ ) {
+													  for ( itr6 = pList_KLineData1->rbegin(); j < mMA2_period; j++, itr6++ ) {
 														  sum += itr6->mClose;
 													  }
-													  mean = sum / 22;
+													  mean = sum / mMA2_period;
 													  (*itr9) = mean;
 												  }
-												  if ( pList_MA10->size() > 1000 )
-													  pList_MA10->pop_front();
+												  if ( pList_MA1->size() > 1000 )
+													  pList_MA1->pop_front();
 											  }
 										  }
 								  }
@@ -1062,11 +1062,11 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 							  new_price = ( float ) nClose / 100;
 
 #if 1
-							  if ( MA10_list_ready == true && is_tick_in_kline == false ) {
+							  if ( MA1_list_ready == true && is_tick_in_kline == false ) {
 								  if ( pList_KLineData1 == NULL ) {
-									  for ( itr9 = pList_MA10->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 10 ); i++, itr5++, itr9++ ) {
+									  for ( itr9 = pList_MA1->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - mMA1_period ); i++, itr5++, itr9++ ) {
 									  }
-									  if ( ( pList_KLineData->size() - i ) >= 10 ) {
+									  if ( ( pList_KLineData->size() - i ) >= mMA1_period ) {
 										  //pList_MA15->insert ( pList_MA15->end(), mean );
 										  //for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ); j++, itr6++ );
 										  for ( ; i < ( n_rev_ins_pos + 1 ); i++, itr5++, itr9++ ) {
@@ -1076,15 +1076,15 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 											  mean = sum / 15;*/
 
 											  mean = (*itr9);
-											  sum = 10 * mean - m_pTick_candlestick->mClose + new_price;
-											  (*itr9) = sum / 10;
+											  sum = mMA1_period * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / mMA1_period;
 										  }
 									  }
 								  }
 								  else {
-									  for ( itr9 = pList_MA10->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 10 ); i++, itr5++, itr9++ ) {
+									  for ( itr9 = pList_MA1->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - mMA1_period ); i++, itr5++, itr9++ ) {
 									  }
-									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= 10 ) {
+									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= mMA1_period ) {
 
 										  //pList_MA15->insert ( pList_MA15->end(), mean );
 										  for ( ; i < ( n_rev_ins_pos + 1 ); itr5++, i++, itr9++ ) {
@@ -1099,8 +1099,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 											  if ( itr6 == pList_KLineData->rend() )
 												  for ( itr6 = pList_KLineData->rbegin(); j < ( n_rev_ins_pos - i ); j++, itr6++ );*/
 											  mean = (*itr9);
-											  sum = 10 * mean - m_pTick_candlestick->mClose + new_price;
-											  (*itr9) = sum / 10;
+											  sum = mMA1_period * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / mMA1_period;
 										  }
 									  }
 								  }
@@ -1109,11 +1109,11 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 
 							  //MA22
 #if 1
-							  if ( MA22_list_ready == true && is_tick_in_kline == false ) {
+							  if ( MA2_list_ready == true && is_tick_in_kline == false ) {
 								  if ( pList_KLineData1 == NULL ) {
-									  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 22 ); i++, itr5++, itr9++ ) {
+									  for ( itr9 = pList_MA2->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - mMA2_period ); i++, itr5++, itr9++ ) {
 									  }
-									  if ( ( pList_KLineData->size() - i ) >= 22 ) {
+									  if ( ( pList_KLineData->size() - i ) >= mMA2_period ) {
 										  //pList_MA22->insert ( pList_MA22->end(), mean );
 										  //for ( itr6 = itr5, j = 0; j < ( n_rev_ins_pos - i ); j++, itr6++ );
 										  for ( ; i < ( n_rev_ins_pos + 1 ); i++, itr5++, itr9++ ) {
@@ -1123,15 +1123,15 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 											  mean = sum / 22;*/
 
 											  mean = (*itr9);
-											  sum = 22 * mean - m_pTick_candlestick->mClose + new_price;
-											  (*itr9) = sum / 22;
+											  sum = mMA2_period * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / mMA2_period;
 										  }
 									  }
 								  }
 								  else {
-									  for ( itr9 = pList_MA22->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - 22 ); i++, itr5++, itr9++ ) {
+									  for ( itr9 = pList_MA2->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < ( n_rev_ins_pos + 1 - mMA2_period ); i++, itr5++, itr9++ ) {
 									  }
-									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= 22 ) {
+									  if ( ( pList_KLineData->size() + pList_KLineData1->size() - i ) >= mMA2_period ) {
 
 										  //pList_MA22->insert ( pList_MA22->end(), mean );
 										  for ( ; i < ( n_rev_ins_pos + 1 ); itr5++, i++, itr9++ ) {
@@ -1146,8 +1146,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 											  if ( itr6 == pList_KLineData->rend() )
 												  for ( itr6 = pList_KLineData->rbegin(); j < ( n_rev_ins_pos - i ); j++, itr6++ );*/
 											  mean = (*itr9);
-											  sum = 22 * mean - m_pTick_candlestick->mClose + new_price;
-											  (*itr9) = sum / 22;
+											  sum = mMA2_period * mean - m_pTick_candlestick->mClose + new_price;
+											  (*itr9) = sum / mMA2_period;
 										  }
 									  }
 								  }
@@ -1530,4 +1530,9 @@ void CKLineStream::sync_server_time ( int total_secconds ) {
 		this->is_tick_in_kline = false;
 	else
 		this->is_tick_in_kline = false; //true
+}
+
+void CKLineStream::setting_MA ( int MA1_period, int MA2_period ) {
+	mMA1_period = (double) MA1_period;
+	mMA2_period = (double) MA2_period;
 }

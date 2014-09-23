@@ -62,6 +62,8 @@ public:
 	HANDLE Wait_Connection_Event, Wait_ProductsReady_Event;
 	afx_msg void OnDestroy();
 	afx_msg void OnNcDestroy();
+	afx_msg void OnChange_MA1_Period();
+	afx_msg void OnKillfocus_MA1_Period();
 
 	boolean ReadyForTrading;
 
@@ -84,4 +86,9 @@ public:
 	/*build account*/
 	CAccount account_A, account_B;
 	int trading_date;
+
+	/*user-defined MA paramter¡Ainclude MA period(candlestick number)
+	MA margin=MA*(1+N%)*/
+	int mMA1_period, mMA2_period, mMA3_period;
+	double mMA1_margin, mMA2_margin, mMA3_margin;
 };

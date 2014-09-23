@@ -72,7 +72,7 @@ private:
 	int n_collapse_sticks;
 	int server_escape_seconds;
 	bool store_tick_file;
-	bool MA10_list_ready, MA22_list_ready;
+	bool MA1_list_ready, MA2_list_ready;
 public:
 	CKLineStream(int time_frame, int n_sticks, bool need_store_tick);	// 標準建構函式
 	~CKLineStream();
@@ -117,8 +117,11 @@ public:
 	void candlestick_collapse ( char * ticker_symbol );
 
 	/*calculate mean average of KLine data MA15&MA22*/
-	map<string, list<double>*> mMap_MA10, mMap_MA22;
+	map<string, list<double>*> mMap_MA1, mMap_MA2;
 
 	bool is_tick_in_kline;
 	void sync_server_time ( int total_secconds );
+
+	double mMA1_period, mMA2_period;
+	void setting_MA ( int MA1_period, int MA2_period );
 };
