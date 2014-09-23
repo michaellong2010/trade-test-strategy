@@ -3,6 +3,9 @@
 #include <map>
 #include <list>
 #include <fstream>
+#include <tchar.h>
+#include "stdafx.h"
+#include <direct.h>
 using namespace std;
 #define Long_position 0
 #define Short_position 1

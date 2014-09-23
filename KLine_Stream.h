@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "Functions.h"
 #include <math.h>
+#include <direct.h>
 
 using namespace std;
 using namespace std::tr1;
@@ -73,6 +74,7 @@ private:
 	int server_escape_seconds;
 	bool store_tick_file;
 	bool MA1_list_ready, MA2_list_ready;
+	char path_buf [ 200 ];
 public:
 	CKLineStream(int time_frame, int n_sticks, bool need_store_tick);	// 標準建構函式
 	~CKLineStream();

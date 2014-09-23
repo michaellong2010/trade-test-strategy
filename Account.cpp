@@ -11,9 +11,18 @@ CAccount::CAccount( string account_name ) {
 	mMap_perpip_value.insert ( pair <string, double> ( "TX00", 200 ) );
 	margin = free_margin = equity = 300000;
 
+	TCHAR path [ 200 ];
+	char path_buf [ 200 ];
+	GetCurrentDirectory(200, path);
+	//AfxMessageBox( path );
+	wcstombs( path_buf, path, sizeof(path_buf) );
 	list<TOrder_info> *pList_open_order, *pList_close_order;
-	m_portfolio_filename = "C:\\temp\\" + account_name + ".bin";
-	m_txt_portfolio_filename = "C:\\temp\\" + account_name + ".txt";
+	//m_portfolio_filename = "C:\\temp\\" + account_name + ".bin";
+	//m_txt_portfolio_filename = "C:\\temp\\" + account_name + ".txt";
+	strcat ( path_buf, "\\report\\");
+	_mkdir ( path_buf );
+	m_portfolio_filename = path_buf + account_name + ".bin";
+	m_txt_portfolio_filename = path_buf + account_name + ".txt";
 	p_portfolio_fs = new fstream( m_portfolio_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 	txt_portfolio_fs.open( m_txt_portfolio_filename.c_str(), ios::out | ios::ate | ios::trunc );
 	if ( p_portfolio_fs->is_open() == true ) {
@@ -134,7 +143,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	list<TOrder_info>::iterator itr1;
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
 		m_order = *itr1;
-		if ( m_order.entry_tick == nPtr ) {
+		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
 			if ( m_order.position_type == Long_position ) {
 				m_order.open_price = nAsk / 100;
 			}
@@ -183,7 +192,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	/*fill with the close price*/
 	for ( itr1 = pList_close_order->begin(); itr1 != pList_close_order->end(); itr1++ ) {
 		m_order = *itr1;
-		if (  m_order.exit_tick == nPtr ) {
+		if (  m_order.exit_tick == nPtr && m_order.close_price == 0 ) {
 			if ( m_order.position_type == Long_position ) {
 				m_order.close_price = nBid / 100;
 			}
@@ -216,6 +225,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		if ( new_free_margin > 0 && 100 * ( new_free_margin / margin ) > 30.0 ) {
 			strcpy ( m_order.ticker_symbol, symbol.c_str() );
 			m_order.entry_tick = nPtr + 1;
+			m_order.open_price = m_order.close_price = 0;
 			m_order.exit_tick = -1;
 			m_order.MA10_15min = MA10_15min;
 			m_order.MA22_15min = MA22_15min;

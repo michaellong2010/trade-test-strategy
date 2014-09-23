@@ -7,6 +7,7 @@ TICK m_tick;
 extern DWORD g_ThreadID_KLine [ 3 ];
 
 map<int, string> CKLineStream::mTimeFrameName = init_timeframe_map();
+int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 );
 CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick ) {
 	stream_file = "";
 	//ios::binary=
@@ -16,6 +17,14 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 	is_tick_in_kline = false;
 	store_tick_file = need_store_tick;
 	MA1_list_ready = MA2_list_ready = false;
+
+	TCHAR path [ 200 ];
+	GetCurrentDirectory ( 200, path );	
+	wcstombs( path_buf, path, sizeof(path_buf) );
+	strcat ( path_buf, "\\data\\");
+	_mkdir ( path_buf );
+	int n = days_difference ( 1, 1, 2012, 31, 12, 2012 );
+	n = days_difference ( 30, 12, 2012, 31, 12, 2012 );
 }
 
 CKLineStream::~CKLineStream() {
@@ -128,16 +137,24 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	}*/
 
 	i = 0;
-	GetSystemTime ( &ti ) ;
+	//GetSystemTime ( &ti ) ;
+	::GetLocalTime ( &ti );
 	current_date = 10000 * ti.wYear + 100 * ti.wMonth + ti.wDay;
+	int day, month, year;
 	for ( vector<string>::iterator itr = mData_Element.begin(); itr != mData_Element.end(); ) {
 	   m_get_str = (*itr).c_str();
 	   switch (i) {
 		 case 0:  //parse date mm/dd/yyyy
              mTok_date = tokenize( m_get_str, " \/" );
-			 m_candlestick.mDate = 100 * atoi(mTok_date.at(0).c_str()) + atoi(mTok_date.at(1).c_str()) + 10000 * atoi(mTok_date.at(2).c_str());
+			 day = atoi(mTok_date.at(1).c_str());
+			 month = atoi(mTok_date.at(0).c_str());
+			 year = atoi(mTok_date.at(2).c_str());
+			 m_candlestick.mDate = 100 * month + day + 10000 * year;
 			 if ( current_date == m_candlestick.mDate )
 				 return 0;
+			 else
+				 if ( current_date > m_candlestick.mDate && days_difference ( day, month, year, ti.wDay, ti.wMonth, ti.wYear ) == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) )
+					 return 0;
 			 break;
 		 case 1:  //parse time hh:mm
 			 if ( !strchr( m_get_str, ':' ) ) {
@@ -212,7 +229,8 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 		//pList_KLineData->push_back(m_candlestick);
 		/*sync list<TCandleStick> with KLine data file stream*/
 		//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-		m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		if ( !file_stream_info.count( m_str_filename ) ) {
 			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
 			pKLine_file_info = new TKLineData_FileInfo();
@@ -468,15 +486,22 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	DWORD cur_tid;
 	int current_date, i;
 	SYSTEMTIME ti;
+	int year, month, day;
+	string txt_out_filename;
 	
-	GetSystemTime ( &ti ) ;
+	//GetSystemTime ( &ti ) ;
+	::GetLocalTime ( &ti );
 	current_date = ti.wYear * 10000 + ti.wMonth * 100 + ti.wDay;
 	cur_tid = GetCurrentThreadId();
+	txt_out_filename = path_buf;
+	txt_out_filename =  txt_out_filename + "TX00_txt";
 	if ( GetCurrentThreadId() == g_ThreadID_KLine[ 0 ] )
-		txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
+		//txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
+		txt_out.open( txt_out_filename.c_str(), ios::out | ios::ate | ios::trunc );
 	m_str_symbol = ticker_symbol;
 	//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-	m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 	//m_str_filename = ".\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 
 	map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.find( m_str_symbol );
@@ -513,7 +538,11 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 			p_fs->seekg ( ( f_size - i*nSize ), ios::beg );
 			p_fs->read ( (char *) &m_file_candlestick, nSize );
 			i++;
-			if ( current_date == m_file_candlestick.mDate )
+			//if ( current_date == m_file_candlestick.mDate )
+			year = m_file_candlestick.mDate / 10000;
+			month = ( m_file_candlestick.mDate - 10000 * year ) / 100;
+			day = m_file_candlestick.mDate - 10000 * year - 100 * month;
+			if ( current_date == m_file_candlestick.mDate || ( current_date > m_file_candlestick.mDate && days_difference ( day, month, year, ti.wDay, ti.wMonth, ti.wYear ) == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) )
 				continue;
 			else {
 				pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );
@@ -570,13 +599,16 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		}
 	}
 	else {
-		GetSystemTime(&ti);
+		//GetSystemTime(&ti);
+		GetLocalTime (&ti);
+		//if ( current_date == m_file_candlestick.mDate || ( current_date > m_candlestick.mDate && days_difference ( day, month, year, ti.wDay, ti.wMonth, ti.year ) == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) )
 		m_candlestick.mDate = next_trading_date = ti.wDay + ti.wMonth * 100 + ti.wYear * 10000;
 	}
 	
 	char str_buf [ 100 ];
 	if ( store_tick_file ==true ) {
-	m_str_filename = "C:\\temp\\" + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
+	//m_str_filename = "C:\\temp\\" + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
+	m_str_filename = path_buf + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
 	if ( !mMap_stock_ticks.count( symbol ) ) {
 		pList_TickData = new list<TICK>;
 		mMap_stock_ticks[ symbol ] = pList_TickData;
@@ -764,7 +796,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 					case 1:
 						sprintf( str_buf, "%s_%dmin", symbol.c_str(), 5 * n_collapse_sticks );
 						m_str_symbol = str_buf;
-						m_new_filename = "C:\\temp\\" + m_str_symbol;
+						//m_new_filename = "C:\\temp\\" + m_str_symbol;
+						m_new_filename = path_buf + m_str_symbol;
 						break;
 					case 4:
 						m_str_symbol = symbol + "_" + mTimeFrameName[ nTimeFrame ];
@@ -1298,7 +1331,8 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 		return;
 	else {
 		m_str_symbol = ticker_symbol;
-		m_orig_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		//m_orig_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		m_orig_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		pList_KLineData = mMap_stock_kline [ ticker_symbol ];
 		pOrig_KLine_file_info = file_stream_info [ m_orig_filename ];
 		p_orig_fs = pOrig_KLine_file_info->p_fs;
@@ -1327,7 +1361,8 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 			if ( n_sticks <= max_sticks ) {
 				sprintf( str_buf, "%s_%dmin", ticker_symbol, 5 * n_sticks );
 				m_str_symbol = str_buf;
-				m_new_filename = "C:\\temp\\" + m_str_symbol;
+				//m_new_filename = "C:\\temp\\" + m_str_symbol;
+				m_new_filename = path_buf + m_str_symbol;
 
 				if ( !mMap_stock_kline.count ( m_str_symbol ) ) {
 					pList_KLineData = new list<TCandleStick>;
@@ -1535,4 +1570,46 @@ void CKLineStream::sync_server_time ( int total_secconds ) {
 void CKLineStream::setting_MA ( int MA1_period, int MA2_period ) {
 	mMA1_period = (double) MA1_period;
 	mMA2_period = (double) MA2_period;
+}
+
+int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 ) {
+	int i,temp,sum=0,month[]={31,28,31,30,31,30,31,31,30,31,30,31};
+
+	//printf("Enter Date 1 : (DD-MM-YYYY) :");
+	//scanf("%d %d %d",&d1,&m1,&y1);
+
+	//printf("Enter Date 2 : (DD-MM-YYYY) :");
+	//scanf("%d %d %d",&d2,&m2,&y2);
+
+	temp=d1;
+
+	for(i=m1;i<m2+(y2-y1)*12;i++)
+	{
+		if(i>12)
+		{
+			i=1;
+			y1++;
+		}
+
+		if(i==2)
+		{
+			if(y1%4==0 && (y1%100!=0 || y1%400==0))
+				month[i-1]=29;
+			else
+				month[i-1]=28;
+		}
+
+		sum=sum+(month[i-1]-temp);
+		temp=0;
+
+		//printf("Month = %d\t Days = %d\t Sum = %d\n",i,month[i-1],sum);
+
+		//if(i%12==0)
+			//getch();
+
+	}
+
+	sum=sum+d2-temp;
+	//printf("\n Total Number of Days are : %5d",sum);
+	return sum;
 }
