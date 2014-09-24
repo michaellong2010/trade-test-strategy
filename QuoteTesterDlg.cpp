@@ -329,7 +329,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty);*/
-		double close_bid_diff, close_ask_diff;
+		/*double close_bid_diff, close_ask_diff;
 		close_bid_diff = fabs( double ( nClose - nBid ) / 100 );
 		close_ask_diff = fabs( double ( nClose - nAsk ) / 100 );
 		if ( nPtr > 0) {
@@ -352,7 +352,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 					bid_product += nQty * nClose;
 					bid_weight = bid_product / ( 100 * bid_vol );
 				}
-		}
+		}*/
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -382,20 +382,20 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min && close_price > MA2_15min ) { //account_A hold long position
-			if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type = Long_position;
-			else
-				position_type = Short_position;
+			//else
+				//position_type = Short_position;
 			/*else
 				if ( ask_vol < bid_vol )
 					position_type = Short_position;*/
 		}
 		else
 			if ( close_price < MA1_15min && close_price < MA2_15min ) { //account_A hold short position
-				if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type = Short_position;
-				else
-					position_type = Long_position;
+				//else
+					//position_type = Long_position;
 				/*else
 					if ( ask_vol > bid_vol )
 						position_type = Long_position;*/
@@ -410,8 +410,8 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 						//position_type = Close_all_position;
 						//position_type = Close_short_position;
 					}
-		if ( nTime > 134400)
-			position_type = Close_all_position;
+		//if ( nTime > 134400)
+			//position_type = Close_all_position;
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -419,22 +419,22 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nClose,
 			nQty, 0, position_type, MA1_15min, MA2_15min, MA1_day, MA2_day  );
 		if ( ! ( nPtr % 200 ) )
-			m_pDialog->account_A.refresh_portfolio();
+			m_pDialog->account_A.refresh_portfolio( false );
 		if ( close_price > MA1_day && close_price > MA2_day ) { //account_B hold long position
-			if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type1 = Long_position;
-			else
-				position_type1 = Short_position;
+			//else
+				//position_type1 = Short_position;
 			/*else
 				if ( ask_vol < bid_vol )
 					position_type1 = Short_position;*/
 		}
 		else
 			if ( close_price < MA1_day && close_price < MA2_day ) { //account_B hold short position
-				if ( ask_vol < bid_vol )
+				//if ( ask_vol < bid_vol )
 					position_type1 = Short_position;
-				else
-					position_type1 = Long_position;
+				//else
+					//position_type1 = Long_position;
 				/*else
 					if ( ask_vol > bid_vol )
 						position_type1 = Long_position;*/
@@ -445,8 +445,8 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 				else
 					if ( close_price > MA1_day && close_price < MA2_day ) { //account_B exit short position
 					}
-		if ( nTime > 134400)
-			position_type1 = Close_all_position;
+		//if ( nTime > 134400)
+			//position_type1 = Close_all_position;
 		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -454,7 +454,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nClose,
 			nQty, 0, position_type1, MA1_15min, MA2_15min, MA1_day, MA2_day  );
 		if ( ! ( nPtr % 200 ) )
-			m_pDialog->account_B.refresh_portfolio();
+			m_pDialog->account_B.refresh_portfolio( false );
 		/*BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
@@ -510,7 +510,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			//SKQuoteLib_RequestTicks(&sPageNo, "");
 			//m_pDialog->OnBnClickedButton14();
 		//}
-		double close_bid_diff, close_ask_diff;
+		/*double close_bid_diff, close_ask_diff;
 		close_bid_diff = fabs( double ( nClose - nBid ) / 100 );
 		close_ask_diff = fabs( double ( nClose - nAsk ) / 100 );
 		if ( nPtr > 0) {
@@ -533,8 +533,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					bid_product += nQty * nClose;
 					bid_weight = bid_product / ( 100 * bid_vol );
 				}
-		}
-
+		}*/
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -564,20 +563,20 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min && close_price > MA2_15min ) { //account_A hold long position
-			if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type = Long_position;
-			else
-				position_type = Short_position;
+			//else
+				//position_type = Short_position;
 			/*else
 				if ( ask_vol < bid_vol )
 					position_type = Short_position;*/
 		}
 		else
 			if ( close_price < MA1_15min && close_price < MA2_15min ) { //account_A hold short position
-				if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type = Short_position;
-				else
-					position_type = Long_position;
+				//else
+					//position_type = Long_position;
 				/*else
 					if ( ask_vol > bid_vol )
 						position_type = Long_position;*/
@@ -594,8 +593,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						//position_type = Close_short_position;
 						//position_type = Close_long_position;
 					}
-		if ( nTime > 134400)
-			position_type = Close_all_position;
+		//if ( nTime > 134400)
+			//position_type = Close_all_position;
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -603,23 +602,23 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nClose,
 			nQty, 0, position_type, MA1_15min, MA2_15min, MA1_day, MA2_day );
 		if ( ! ( nPtr % 200 ) )
-			m_pDialog->account_A.refresh_portfolio();
+			m_pDialog->account_A.refresh_portfolio( false );
 		
 		if ( close_price > MA1_day && close_price > MA2_day ) { //account_B hold long position
-			if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type1 = Long_position;
-			else
-				position_type1 = Short_position;
+			//else
+				//position_type1 = Short_position;
 			/*else
 				if ( ask_vol < bid_vol )
 					position_type1 = Short_position;*/
 		}
 		else
 			if ( close_price < MA1_day && close_price < MA2_day ) { //account_B hold short position
-				if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type1 = Short_position;
-				else
-					position_type1 = Long_position;
+				//else
+					//position_type1 = Long_position;
 				/*else
 					if ( ask_vol > bid_vol )
 						position_type1 = Long_position;*/
@@ -631,8 +630,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					if ( close_price > MA1_day && close_price < MA2_day ) { //account_B exit short position
 					}
 
-		if ( nTime > 134400)
-			position_type1 = Close_all_position;
+		//if ( nTime > 134400)
+			//position_type1 = Close_all_position;
 		/*int final_position =-1;
 		if ( position_type == Long_position && position_type1 == Long_position )
 			final_position = Long_position;
@@ -647,7 +646,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			nClose,
 			nQty, 0, position_type1, MA1_15min, MA2_15min, MA1_day, MA2_day  );
 		if ( ! ( nPtr % 200 ) )
-			m_pDialog->account_B.refresh_portfolio();
+			m_pDialog->account_B.refresh_portfolio( false );
 		/*tTick->m_nAsk = nAsk;
 		tTick->m_nBid = nBid;
 		tTick->m_nClose = nClose;

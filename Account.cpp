@@ -100,7 +100,7 @@ CAccount::CAccount( string account_name ) {
 }
 
 CAccount::~CAccount() {
-	refresh_portfolio();
+	refresh_portfolio( true );
 	for ( map< string, list<TOrder_info>* >::iterator itr1 = mMap_open_order.begin(); itr1 != mMap_open_order.end(); itr1++ )
 		delete (*itr1).second;
 
@@ -143,6 +143,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		pList_close_order = mMap_close_order [ symbol ];
 	}
 
+	final_close = (double) nClose / 100;
 	/*close opposite position in open order*/
 	double new_free_margin, ticker_margin, pip_value, profit_loss, keep_margin, trading_fee = 100;
 	pip_value = mMap_perpip_value [ symbol ];
@@ -258,7 +259,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	return 0;
 }
 
-void CAccount::refresh_portfolio() {
+void CAccount::refresh_portfolio(bool exit_trading) {
 	list<TOrder_info> *pList_open_order, *pList_close_order;
 	map < string, list<TOrder_info>* >::iterator itr, itr1;
 	list<TOrder_info>::iterator itr2;
@@ -286,6 +287,25 @@ void CAccount::refresh_portfolio() {
 		for ( itr = mMap_open_order.begin(), itr1 = mMap_close_order.begin(); itr != mMap_open_order.end(); itr++, itr1++ ) {
 			pList_open_order = (*itr).second;
 			pList_close_order = (*itr1).second;
+
+			if ( exit_trading == true ) {
+				for ( itr2 = pList_open_order->begin(); itr2 != pList_open_order->end(); ) {
+					m_order = *itr2;
+					/*give up the pending order at last tick*/
+					if ( m_order.open_price == 0 && m_order.close_price == 0 && m_order.entry_tick > 0 && m_order.exit_tick == -1 )
+						pList_open_order->erase ( itr2++ );
+					else
+						itr2++;
+				}
+
+				if ( pList_close_order->size() > 0 ) {
+					m_order = pList_close_order->back();
+					if ( m_order.close_price == 0 ) {
+						pList_open_order->insert ( pList_open_order->end(), m_order );
+						pList_close_order->pop_back();
+					}
+				}
+			}
 
 			for ( itr2 = pList_open_order->begin(); itr2 != pList_open_order->end(); itr2++, n_orders++ ) {
 				m_order = *itr2;

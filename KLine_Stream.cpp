@@ -1516,6 +1516,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 					}
 				}
 			}
+			p_new_fs->flush();
 			break;
 		case 2:
 			max_sticks = 180 / 30;

@@ -36,6 +36,7 @@ class CAccount {
 private:
 	/*margin, free-margin, equity*/
 	double margin, free_margin, equity;
+	double final_close;
 public:
 	CAccount( string account_name );
 	~CAccount();
@@ -47,5 +48,5 @@ public:
 
 	fstream *p_portfolio_fs;
 	ofstream txt_portfolio_fs;
-	void refresh_portfolio();
+	void refresh_portfolio( bool exit_trading );
 };
