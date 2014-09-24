@@ -12,19 +12,27 @@ CAccount::CAccount( string account_name ) {
 	margin = free_margin = equity = 300000;
 
 	TCHAR path [ 200 ];
-	char path_buf [ 200 ];
+    CStringW path_bufW, bin_filenameW, txt_filenameW;
+	CStringA path_bufA;
 	GetCurrentDirectory(200, path);
 	//AfxMessageBox( path );
-	wcstombs( path_buf, path, sizeof(path_buf) );
+	//wcstombs( path_buf, path, sizeof(path_buf) );
+	//strcpy ( path_buf, path );
+	path_bufW = path;
 	list<TOrder_info> *pList_open_order, *pList_close_order;
 	//m_portfolio_filename = "C:\\temp\\" + account_name + ".bin";
 	//m_txt_portfolio_filename = "C:\\temp\\" + account_name + ".txt";
-	strcat ( path_buf, "\\report\\");
-	_mkdir ( path_buf );
-	m_portfolio_filename = path_buf + account_name + ".bin";
-	m_txt_portfolio_filename = path_buf + account_name + ".txt";
-	p_portfolio_fs = new fstream( m_portfolio_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
-	txt_portfolio_fs.open( m_txt_portfolio_filename.c_str(), ios::out | ios::ate | ios::trunc );
+	//strcat ( path_buf, "\\report\\");
+	path_bufW = path_bufW + _T("\\report\\");
+	path_bufA = path_bufW;
+	_mkdir ( (char *)path_bufA.GetString() );
+	m_portfolio_filename = ((char *)path_bufA.GetString()) + account_name + ".bin";
+	m_txt_portfolio_filename = ((char *)path_bufA.GetString()) + account_name + ".txt";
+	//AfxMessageBox( m_portfolio_filename );
+	bin_filenameW = m_portfolio_filename.c_str();
+	p_portfolio_fs = new fstream( bin_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate );
+	txt_filenameW = m_txt_portfolio_filename.c_str();
+	txt_portfolio_fs.open( txt_filenameW.GetString(), ios::out | ios::ate | ios::trunc );
 	if ( p_portfolio_fs->is_open() == true ) {
 		f_size = p_portfolio_fs->tellg();
 		if ( f_size >= 3 * sizeof( double ) ) {
@@ -78,7 +86,7 @@ CAccount::CAccount( string account_name ) {
 	}
 	else {
 		delete p_portfolio_fs;
-		p_portfolio_fs = new fstream( m_portfolio_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+		p_portfolio_fs = new fstream( bin_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
 		if ( p_portfolio_fs->is_open() ) {
 			p_portfolio_fs->seekp ( 0, ios::beg );
 			p_portfolio_fs->write ( (char *) &margin, sizeof( double ) );
@@ -102,8 +110,8 @@ CAccount::~CAccount() {
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
 		p_portfolio_fs->flush();
 		p_portfolio_fs->close();
-		delete p_portfolio_fs;
 	}
+	delete p_portfolio_fs;
 
 	if ( txt_portfolio_fs.is_open() ) {
 		txt_portfolio_fs.flush();

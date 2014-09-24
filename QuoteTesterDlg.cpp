@@ -882,11 +882,11 @@ void CQuoteTesterDlg::OnBnClickedButton1()
 	CEdit* pEdit; 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_ID); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_Pass); 
 	CString strPassword;
-	pEdit->GetWindowTextW(strPassword);
+	pEdit->GetWindowText(strPassword);
 
 	CStringA strTempA(strText);
 	const CHAR* caText = (LPCSTR)strTempA;
@@ -955,7 +955,7 @@ LRESULT CQuoteTesterDlg::OnData(WPARAM wParam,LPARAM lParam)
 
 		CString strReport( bstrData);
 
-		GetDlgItem(IDC_STATIC_TIME)->SetWindowTextW(strReport); 
+		GetDlgItem(IDC_STATIC_TIME)->SetWindowText(strReport); 
 
 		SysFreeString(bstrData);
 	
@@ -1005,7 +1005,7 @@ void CQuoteTesterDlg::OnBnClickedButton4()
 	CEdit* pEdit; 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_Stock); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 
 	CStringA strTempA(strText);
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
@@ -1016,7 +1016,7 @@ void CQuoteTesterDlg::OnBnClickedButton4()
 	//knight
 #endif
 #ifdef _MBCS 
-	knight1
+	//knight1
 #endif
 }
 
@@ -1036,7 +1036,7 @@ void CQuoteTesterDlg::OnBnClickedButton5()
 	CEdit* pEdit; 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_Ticks); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 	
 	CStringA strTempA(strText);
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
@@ -1063,7 +1063,7 @@ void CQuoteTesterDlg::OnBnClickedButton6()
 	CEdit* pEdit; 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_KLine); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 	
 	CStringA strTempA(strText);
 	char*   caText   =   strTempA.GetBuffer(strTempA.GetLength()); 
@@ -1354,11 +1354,11 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	CEdit* pEdit; 
 	pEdit = (CEdit*) GetDlgItem(IDC_EDIT_ID); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 
     pEdit = (CEdit*) GetDlgItem(IDC_EDIT_Pass); 
 	CString strPassword;
-	pEdit->GetWindowTextW(strPassword);
+	pEdit->GetWindowText(strPassword);
 
 	CStringA strTempA(strText);
 	const CHAR* caText = strTempA.GetString();

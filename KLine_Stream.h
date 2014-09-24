@@ -74,7 +74,9 @@ private:
 	int server_escape_seconds;
 	bool store_tick_file;
 	bool MA1_list_ready, MA2_list_ready;
-	char path_buf [ 200 ];
+	//char path_buf [ 200 ];
+	CStringW path_bufW;
+	CStringA path_bufA;
 public:
 	CKLineStream(int time_frame, int n_sticks, bool need_store_tick);	// 標準建構函式
 	~CKLineStream();

@@ -20,9 +20,14 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 
 	TCHAR path [ 200 ];
 	GetCurrentDirectory ( 200, path );	
-	wcstombs( path_buf, path, sizeof(path_buf) );
-	strcat ( path_buf, "\\data\\");
-	_mkdir ( path_buf );
+	path_bufW = path;
+	path_bufW = path_bufW + _T("\\data\\");
+	path_bufA = path;
+	path_bufA = path_bufA + "\\data\\";
+	//wcstombs( path_buf, path, sizeof(path_buf) );
+	//strcpy ( path_buf, path );
+	//strcat ( path_buf, "\\data\\");
+	_mkdir ( path_bufA.GetString() );
 	int n = days_difference ( 1, 1, 2012, 31, 12, 2012 );
 	n = days_difference ( 30, 12, 2012, 31, 12, 2012 );
 }
@@ -223,6 +228,7 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	n_bytes = sizeof(TCandleStick);
 	DWORD cur_tid;
 	cur_tid = GetCurrentThreadId();
+	CStringW KLine_filenameW;
 
 	
 	//if ( dup_itr == pList_KLineData->end() ) {
@@ -230,9 +236,10 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 		/*sync list<TCandleStick> with KLine data file stream*/
 		//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-	m_str_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = path_bufA.GetString() + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	KLine_filenameW = m_str_filename.c_str();
 		if ( !file_stream_info.count( m_str_filename ) ) {
-			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+			p_fs = new fstream( KLine_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate );
 			pKLine_file_info = new TKLineData_FileInfo();
 			pKLine_file_info->p_fs = p_fs;
 			pKLine_file_info->n_fsize = f_size = p_fs->tellg();
@@ -488,20 +495,23 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	SYSTEMTIME ti;
 	int year, month, day;
 	string txt_out_filename;
+	CString txt_filenameW, KLine_filenameW;
 	
 	//GetSystemTime ( &ti ) ;
 	::GetLocalTime ( &ti );
 	current_date = ti.wYear * 10000 + ti.wMonth * 100 + ti.wDay;
 	cur_tid = GetCurrentThreadId();
-	txt_out_filename = path_buf;
+	txt_out_filename = path_bufA.GetString();
 	txt_out_filename =  txt_out_filename + "TX00_txt";
+	txt_filenameW = txt_out_filename.c_str();
 	if ( GetCurrentThreadId() == g_ThreadID_KLine[ 0 ] )
 		//txt_out.open( "c:\\temp\\TX00_txt", ios::out | ios::ate | ios::trunc );
-		txt_out.open( txt_out_filename.c_str(), ios::out | ios::ate | ios::trunc );
+		txt_out.open( txt_filenameW.GetString(), ios::out | ios::ate | ios::trunc );
 	m_str_symbol = ticker_symbol;
 	//m_str_filename = "I:\\2014 VC project\\Trade_Test\\Debug\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 	//m_str_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-	m_str_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	m_str_filename = path_bufA.GetString() + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+	KLine_filenameW = m_str_filename.c_str();
 	//m_str_filename = ".\\data\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 
 	map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.find( m_str_symbol );
@@ -511,12 +521,12 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 		pList_KLineData = new list<TCandleStick>;
 		mMap_stock_kline.insert(pair<string, list<TCandleStick>*>(m_str_symbol, pList_KLineData));
 
-		p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+		p_fs = new fstream( KLine_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate );
 		if ( p_fs->is_open() == true ) {
 		}
 		else {
 			delete p_fs;
-			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+			p_fs = new fstream( KLine_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
 		}
 		pKLine_file_info = new TKLineData_FileInfo();
 		pKLine_file_info->n_fsize = f_size = p_fs->tellg();
@@ -606,19 +616,21 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	}
 	
 	char str_buf [ 100 ];
+	CString tick_filenameW;
 	if ( store_tick_file ==true ) {
 	//m_str_filename = "C:\\temp\\" + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
-	m_str_filename = path_buf + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
+	m_str_filename = path_bufA.GetString() + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
+	tick_filenameW = m_str_filename.c_str();
 	if ( !mMap_stock_ticks.count( symbol ) ) {
 		pList_TickData = new list<TICK>;
 		mMap_stock_ticks[ symbol ] = pList_TickData;
 
-		p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+		p_fs = new fstream( tick_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate );
 		if ( p_fs->is_open() == true ) {
 		}
 		else {
 			delete p_fs;
-			p_fs = new fstream( m_str_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+			p_fs = new fstream( tick_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
 		}
 		pTick_file_info = new TTickData_FileInfo;
 		pTick_file_info->n_fsize = f_size = p_fs->tellg();
@@ -797,7 +809,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 						sprintf( str_buf, "%s_%dmin", symbol.c_str(), 5 * n_collapse_sticks );
 						m_str_symbol = str_buf;
 						//m_new_filename = "C:\\temp\\" + m_str_symbol;
-						m_new_filename = path_buf + m_str_symbol;
+						m_new_filename = path_bufA.GetString() + m_str_symbol;
 						break;
 					case 4:
 						m_str_symbol = symbol + "_" + mTimeFrameName[ nTimeFrame ];
@@ -1332,7 +1344,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	else {
 		m_str_symbol = ticker_symbol;
 		//m_orig_filename = "C:\\temp\\" + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
-		m_orig_filename = path_buf + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		m_orig_filename = path_bufA.GetString() + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
 		pList_KLineData = mMap_stock_kline [ ticker_symbol ];
 		pOrig_KLine_file_info = file_stream_info [ m_orig_filename ];
 		p_orig_fs = pOrig_KLine_file_info->p_fs;
@@ -1345,6 +1357,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	int n_total_sticks, i, j, nRead_sticks;
 	TCandleStick m_raw_candlestick;
 	int m_open_time, m_open_hour, m_open_min, kline_start_index;
+	CString collapsed_filenameW;
 	/*calculate MA15*/
 	/*list<TCandleStick>::reverse_iterator itr, itr1;
 	list<TCandleStick>::iterator itr2, itr3;
@@ -1362,19 +1375,20 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 				sprintf( str_buf, "%s_%dmin", ticker_symbol, 5 * n_sticks );
 				m_str_symbol = str_buf;
 				//m_new_filename = "C:\\temp\\" + m_str_symbol;
-				m_new_filename = path_buf + m_str_symbol;
+				m_new_filename = path_bufA.GetString() + m_str_symbol;
+				collapsed_filenameW = m_new_filename.c_str();
 
 				if ( !mMap_stock_kline.count ( m_str_symbol ) ) {
 					pList_KLineData = new list<TCandleStick>;
 					mMap_stock_kline.insert ( pair<string, list<TCandleStick> *> ( m_str_symbol, pList_KLineData ) );
 
 					pNew_KLine_file_info = new TKLineData_FileInfo;
-					p_new_fs = new fstream( m_new_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate );
+					p_new_fs = new fstream( collapsed_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate );
 					if ( p_new_fs->is_open() == true ) {
 					}
 					else {
 						delete p_new_fs;
-						p_new_fs = new fstream( m_new_filename.c_str(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
+						p_new_fs = new fstream( collapsed_filenameW.GetString(), ios::in | ios::out | ios::binary | ios::ate | ios::trunc );
 					}
 					
 					pNew_KLine_file_info->p_fs = p_new_fs;
