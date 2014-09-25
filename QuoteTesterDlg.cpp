@@ -38,7 +38,8 @@ CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
 	mMA1_period = 10;
 	mMA2_period = 22;
 	mMA3_period = 0;
-	mMA1_margin = mMA2_margin = mMA3_margin = 0;
+	mMA1_margin = 0.0003;
+	mMA2_margin = mMA3_margin = 0;
 }
 
 CQuoteTesterDlg::~CQuoteTesterDlg()
@@ -407,7 +408,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
-			//if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 1 )
 				position_type = Long_position;
 			//else
 				//position_type = Short_position;
@@ -417,7 +418,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		}
 		else
 			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
-				//if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 1 )
 					position_type = Short_position;
 				//else
 					//position_type = Long_position;
@@ -426,14 +427,20 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 						position_type = Long_position;*/
 			}
 			else
-				if ( close_price < MA1_15min && close_price > MA2_15min ) { //account_A exit long position
+				if ( close_price < MA1_15min_lower && close_price > MA2_15min_upper ) { //account_A exit long position
 					//position_type = Close_all_position;
-					//position_type = Close_long_position;
+					//if ( ( ask_vol / bid_vol ) < 1 )
+						position_type = Short_position;
+					//else
+						//position_type = Long_position;
 				}
 				else
-					if ( close_price > MA1_15min && close_price < MA2_15min ) { //account_A exit short position
+					if ( close_price > MA1_15min_upper && close_price < MA2_15min_lower ) { //account_A exit short position
 						//position_type = Close_all_position;
-						//position_type = Close_short_position;
+						//if ( ( ask_vol / bid_vol ) > 0.8 )
+							position_type1 = Long_position;
+						//else
+							//position_type1 = Short_position;
 					}
 		//if ( nTime > 134400)
 			//position_type = Close_all_position;
@@ -446,7 +453,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio( false );
 		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
-			//if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 1 )
 				position_type1 = Long_position;
 			//else
 				//position_type1 = Short_position;
@@ -465,10 +472,18 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 						position_type1 = Long_position;*/
 			}
 			else
-				if ( close_price < MA1_day && close_price > MA2_day ) { //account_B exit long position
+				if ( close_price < MA1_day_lower && close_price > MA2_day_upper ) { //account_B exit long position
+					//if ( ( ask_vol / bid_vol ) < 1 )
+						position_type = Short_position;
+					//else
+						//position_type = Long_position;
 				}
 				else
-					if ( close_price > MA1_day && close_price < MA2_day ) { //account_B exit short position
+					if ( close_price > MA1_day_upper && close_price < MA2_day_lower ) { //account_B exit short position
+						//if ( ( ask_vol / bid_vol ) > 0.8 )
+							position_type1 = Long_position;
+						//else
+							//position_type1 = Short_position;
 					}
 		//if ( nTime > 134400)
 			//position_type1 = Close_all_position;
@@ -598,7 +613,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
-			//if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 1 )
 				position_type = Long_position;
 			//else
 				//position_type = Short_position;
@@ -608,7 +623,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		}
 		else
 			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
-				//if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 1 )
 					position_type = Short_position;
 				//else
 					//position_type = Long_position;
@@ -617,15 +632,21 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						position_type = Long_position;*/
 			}
 			else
-				if ( close_price < MA1_15min && close_price > MA2_15min ) { //account_A exit long position
+				if ( close_price < MA1_15min_lower && close_price > MA2_15min_upper ) { //account_A exit long position
 					//position_type = Close_all_position;
-					//position_type = Close_long_position;
+					//if ( ( ask_vol / bid_vol ) < 0.8 )
+						position_type = Short_position;
+					//else
+						//position_type = Long_position;
 					//position_type = Close_short_position;
 				}
 				else
-					if ( close_price > MA1_15min && close_price < MA2_15min ) { //account_A exit short position
+					if ( close_price > MA1_15min_upper && close_price < MA2_15min_lower ) { //account_A exit short position
 						//position_type = Close_all_position;
-						//position_type = Close_short_position;
+						//if ( ( ask_vol / bid_vol ) > 0.8 )
+							position_type1 = Long_position;
+						//else
+							//position_type1 = Short_position;
 						//position_type = Close_long_position;
 					}
 		//if ( nTime > 134400)
@@ -640,7 +661,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			m_pDialog->account_A.refresh_portfolio( false );
 		
 		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
-			//if ( ( ask_vol / bid_vol ) > 0.8 )
+			//if ( ( ask_vol / bid_vol ) > 1 )
 				position_type1 = Long_position;
 			//else
 				//position_type1 = Short_position;
@@ -650,7 +671,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		}
 		else
 			if ( close_price < MA1_day_lower && close_price < MA2_day_lower ) { //account_B hold short position
-				//if ( ( ask_vol / bid_vol ) < 0.8 )
+				//if ( ( ask_vol / bid_vol ) < 1 )
 					position_type1 = Short_position;
 				//else
 					//position_type1 = Long_position;
@@ -659,10 +680,18 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						position_type1 = Long_position;*/
 			}
 			else
-				if ( close_price < MA1_day && close_price > MA2_day ) { //account_B exit long position
+				if ( close_price < MA1_day_lower && close_price > MA2_day_upper ) { //account_B exit long position
+					//if ( ( ask_vol / bid_vol ) < 0.8 )
+						position_type = Short_position;
+					//else
+						//position_type1 = Long_position;
 				}
 				else
-					if ( close_price > MA1_day && close_price < MA2_day ) { //account_B exit short position
+					if ( close_price > MA1_day_upper && close_price < MA2_day_lower ) { //account_B exit short position
+						//if ( ( ask_vol / bid_vol ) > 0.8 )
+							position_type1 = Long_position;
+						//else
+							//position_type1 = Short_position;
 					}
 
 		//if ( nTime > 134400)

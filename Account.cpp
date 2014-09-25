@@ -127,7 +127,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 
 	list<TOrder_info> *pList_open_order, *pList_close_order;
 
-	if ( is_BackFill == 1 || position_type == -1)
+	if ( is_BackFill == 1 /*|| position_type == -1*/ )
 		return 0;
 
 	if ( itr == mMap_open_order.end() ) {
@@ -301,6 +301,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 				if ( pList_close_order->size() > 0 ) {
 					m_order = pList_close_order->back();
 					if ( m_order.close_price == 0 ) {
+						m_order.exit_tick = -1;
 						pList_open_order->insert ( pList_open_order->end(), m_order );
 						pList_close_order->pop_back();
 					}

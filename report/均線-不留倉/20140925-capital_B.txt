@@ -1,0 +1,15 @@
+margin: 319200
+free_margin: 319200
+equity: 319200
+ticker_symbol, open_price, close_price, entry_tick, exit_tick, open_time, lots, position_type: 1, profit_loss, max_loss, max_profit, MA10_min, MA22_min, MA10_day, MA22_day
+
+============TX00 close order===========
+TX00, 9094, 9127, 1, 32068, 84500, 1, position_type: 1, -6700, -9600, 2600, exit_reason: 4, 9115.4, 9122.18, 9193.2, 9324.14
+TX00, 9157, 9027, 1, 50010, 84500, 1, position_type: 1, 25900, -2200, 32400, exit_reason: 4, 9125.4, 9118.86, 9182, 9314.95
+
+ symbol seperate=============================================================
+
+
+==============
+
+
