@@ -1,0 +1,27 @@
+S1-->S1  kepp long
+S1-->S2  long-->short
+S1-->S3  long-->short1
+S1-->S4
+S2-->S1
+S2-->S2
+S2-->S3
+S2-->S4
+S3-->S1
+S3-->S2
+S3-->S3
+S3-->S4
+S4-->S1
+S4-->S2
+S4-->S3
+S4-->S4
+
+
+更嚴格的定義tick價軌跡
+S1 MA2 < MA1 < close   續多
+S2 MA2 < close < MA1   中性偏多
+S3 close < MA2 < MA1   轉空
+S4 close < MA1 < MA2   續空
+S5 MA1 < close < MA2   中性偏空
+S6 MA1 < MA2 < close   轉多
+
+S1-->S2-->S3-->S4-->S5-->S6-->S1

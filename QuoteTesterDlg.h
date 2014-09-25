@@ -39,6 +39,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	int enable_MA_margin;
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -64,6 +65,12 @@ public:
 	afx_msg void OnNcDestroy();
 	afx_msg void OnChange_MA1_Period();
 	afx_msg void OnKillfocus_MA1_Period();
+	afx_msg void OnKillfocus_MA2_Period();
+	afx_msg void OnKillfocus_MA3_Period();
+	afx_msg void OnBnClickedCheck1();
+	afx_msg void OnKillfocus_MA1_margin();
+	afx_msg void OnKillfocus_MA2_margin();
+	afx_msg void OnKillfocus_MA3_margin();
 
 	boolean ReadyForTrading;
 
@@ -91,4 +98,5 @@ public:
 	MA margin=MA*(1+N%)*/
 	int mMA1_period, mMA2_period, mMA3_period;
 	double mMA1_margin, mMA2_margin, mMA3_margin;
+	double mMA1_margin_factor, mMA2_margin_factor, mMA3_margin_factor;
 };

@@ -183,8 +183,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		}
 
 		//if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
-		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) && ( nPtr - m_order.entry_tick ) > 5 ) ||
-			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) && ( nPtr - m_order.entry_tick ) > 5 ) {
+		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
+			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) ) {
 			m_order.exit_tick = nPtr + 1;
 			m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );

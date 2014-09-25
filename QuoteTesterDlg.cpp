@@ -38,6 +38,7 @@ CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
 	mMA1_period = 10;
 	mMA2_period = 22;
 	mMA3_period = 0;
+	mMA1_margin = mMA2_margin = mMA3_margin = 0;
 }
 
 CQuoteTesterDlg::~CQuoteTesterDlg()
@@ -77,6 +78,14 @@ void CQuoteTesterDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt( pDX, mMA2_period, 17, 35);
 	DDX_Text( pDX, IDC_EDIT_MA3_period, mMA3_period );
 	DDV_MinMaxInt( pDX, mMA3_period, 36, 70);
+
+	DDX_Check( pDX, IDC_CHECK1, enable_MA_margin );
+	DDX_Text( pDX, IDC_EDIT_MA1_margin, mMA1_margin );
+	DDV_MinMaxDouble( pDX, mMA1_margin, 0, 1.0 );
+	DDX_Text( pDX, IDC_EDIT_MA2_margin, mMA2_margin );
+	DDV_MinMaxDouble( pDX, mMA2_margin, 0, 1.0);
+	DDX_Text( pDX, IDC_EDIT_MA3_margin, mMA3_margin );
+	DDV_MinMaxDouble( pDX, mMA3_margin, 0, 1.0 );
 }
 
 BEGIN_MESSAGE_MAP(CQuoteTesterDlg, CDialogEx)
@@ -101,6 +110,12 @@ BEGIN_MESSAGE_MAP(CQuoteTesterDlg, CDialogEx)
 	ON_WM_NCDESTROY()
 	ON_EN_CHANGE( IDC_EDIT_MA1_period, OnChange_MA1_Period )
 	ON_EN_KILLFOCUS ( IDC_EDIT_MA1_period, OnKillfocus_MA1_Period )
+	ON_EN_KILLFOCUS ( IDC_EDIT_MA2_period, OnKillfocus_MA2_Period )
+	ON_EN_KILLFOCUS ( IDC_EDIT_MA3_period, OnKillfocus_MA3_Period )
+	ON_BN_CLICKED(IDC_CHECK1, &CQuoteTesterDlg::OnBnClickedCheck1)
+	ON_EN_KILLFOCUS ( IDC_EDIT_MA1_margin, OnKillfocus_MA1_margin )
+	ON_EN_KILLFOCUS ( IDC_EDIT_MA2_margin, OnKillfocus_MA2_margin )
+	ON_EN_KILLFOCUS ( IDC_EDIT_MA3_margin, OnKillfocus_MA3_margin )
 END_MESSAGE_MAP()
 
 
@@ -369,6 +384,8 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		//int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA1, *pList_15min_MA2, *pList_day_MA1, *pList_day_MA2;
 		double MA1_15min, MA2_15min, MA1_day, MA2_day;
+		double MA1_15min_upper, MA1_15min_lower, MA2_15min_upper, MA2_15min_lower;
+		double MA1_day_upper, MA1_day_lower, MA2_day_upper, MA2_day_lower;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
 		pList_15min_MA1 = m_pDialog->mKline_stream.mMap_MA1[ symbol ];
 		pList_15min_MA2 = m_pDialog->mKline_stream.mMap_MA2[ symbol ];
@@ -376,12 +393,20 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		pList_day_MA1 = m_pDialog->mKline_stream_day.mMap_MA1[ symbol ];
 		pList_day_MA2 = m_pDialog->mKline_stream_day.mMap_MA2[ symbol ];
 		MA1_15min = *( pList_15min_MA1->rbegin() );
+		MA1_15min_upper = MA1_15min * ( 1 + m_pDialog->mMA1_margin_factor );
+		MA1_15min_lower = MA1_15min * ( 1 - m_pDialog->mMA1_margin_factor );
 		MA2_15min = *( pList_15min_MA2->rbegin() );
+		MA2_15min_upper = MA2_15min * ( 1 + m_pDialog->mMA2_margin_factor );
+		MA2_15min_lower = MA2_15min * ( 1 - m_pDialog->mMA2_margin_factor );
 		MA1_day = *( pList_day_MA1->rbegin() );
+		MA1_day_upper = MA1_day * ( 1 + m_pDialog->mMA1_margin_factor );
+		MA1_day_lower = MA1_day * ( 1 - m_pDialog->mMA1_margin_factor );
 		MA2_day = *( pList_day_MA2->rbegin() );
+		MA2_day_upper = MA2_day * ( 1 + m_pDialog->mMA2_margin_factor );
+		MA2_day_lower = MA2_day * ( 1 - m_pDialog->mMA2_margin_factor );
 		double close_price = 0;
 		close_price = nClose / 100;
-		if ( close_price > MA1_15min && close_price > MA2_15min ) { //account_A hold long position
+		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
 			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type = Long_position;
 			//else
@@ -391,7 +416,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 					position_type = Short_position;*/
 		}
 		else
-			if ( close_price < MA1_15min && close_price < MA2_15min ) { //account_A hold short position
+			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
 				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type = Short_position;
 				//else
@@ -420,7 +445,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nQty, 0, position_type, MA1_15min, MA2_15min, MA1_day, MA2_day  );
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio( false );
-		if ( close_price > MA1_day && close_price > MA2_day ) { //account_B hold long position
+		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
 			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type1 = Long_position;
 			//else
@@ -430,7 +455,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 					position_type1 = Short_position;*/
 		}
 		else
-			if ( close_price < MA1_day && close_price < MA2_day ) { //account_B hold short position
+			if ( close_price < MA1_day_lower && close_price < MA2_day_lower ) { //account_B hold short position
 				//if ( ask_vol < bid_vol )
 					position_type1 = Short_position;
 				//else
@@ -550,6 +575,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		//static int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA1, *pList_15min_MA2, *pList_day_MA1, *pList_day_MA2;
 		double MA1_15min, MA2_15min, MA1_day, MA2_day;
+		double MA1_15min_upper, MA1_15min_lower, MA2_15min_upper, MA2_15min_lower;
+		double MA1_day_upper, MA1_day_lower, MA2_day_upper, MA2_day_lower;
 		symbol = m_pDialog->mMap_stockidx_stockNo[ sStockidx ] + "_15min";
 		pList_15min_MA1 = m_pDialog->mKline_stream.mMap_MA1[ symbol ];
 		pList_15min_MA2 = m_pDialog->mKline_stream.mMap_MA2[ symbol ];
@@ -557,12 +584,20 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		pList_day_MA1 = m_pDialog->mKline_stream_day.mMap_MA1[ symbol ];
 		pList_day_MA2 = m_pDialog->mKline_stream_day.mMap_MA2[ symbol ];
 		MA1_15min = *( pList_15min_MA1->rbegin() );
+		MA1_15min_upper = MA1_15min * ( 1 + m_pDialog->mMA1_margin_factor );
+		MA1_15min_lower = MA1_15min * ( 1 - m_pDialog->mMA1_margin_factor );
 		MA2_15min = *( pList_15min_MA2->rbegin() );
+		MA2_15min_upper = MA2_15min * ( 1 + m_pDialog->mMA2_margin_factor );
+		MA2_15min_lower = MA2_15min * ( 1 - m_pDialog->mMA2_margin_factor );
 		MA1_day = *( pList_day_MA1->rbegin() );
+		MA1_day_upper = MA1_day * ( 1 + m_pDialog->mMA1_margin_factor );
+		MA1_day_lower = MA1_day * ( 1 - m_pDialog->mMA1_margin_factor );
 		MA2_day = *( pList_day_MA2->rbegin() );
+		MA2_day_upper = MA2_day * ( 1 + m_pDialog->mMA2_margin_factor );
+		MA2_day_lower = MA2_day * ( 1 - m_pDialog->mMA2_margin_factor );
 		double close_price = 0;
 		close_price = nClose / 100;
-		if ( close_price > MA1_15min && close_price > MA2_15min ) { //account_A hold long position
+		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
 			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type = Long_position;
 			//else
@@ -572,7 +607,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					position_type = Short_position;*/
 		}
 		else
-			if ( close_price < MA1_15min && close_price < MA2_15min ) { //account_A hold short position
+			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
 				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type = Short_position;
 				//else
@@ -604,7 +639,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio( false );
 		
-		if ( close_price > MA1_day && close_price > MA2_day ) { //account_B hold long position
+		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
 			//if ( ( ask_vol / bid_vol ) > 0.8 )
 				position_type1 = Long_position;
 			//else
@@ -614,7 +649,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					position_type1 = Short_position;*/
 		}
 		else
-			if ( close_price < MA1_day && close_price < MA2_day ) { //account_B hold short position
+			if ( close_price < MA1_day_lower && close_price < MA2_day_lower ) { //account_B hold short position
 				//if ( ( ask_vol / bid_vol ) < 0.8 )
 					position_type1 = Short_position;
 				//else
@@ -1347,6 +1382,19 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	// TODO: Add your control notification handler code here
 	GetDlgItem(IDC_BUTTON13)->EnableWindow( FALSE );
 	GetDlgItem(IDC_BUTTON14)->EnableWindow( TRUE );
+	GetDlgItem(IDC_CHECK1)->EnableWindow( FALSE );
+	if ( enable_MA_margin == 0 ) {
+		mMA1_margin_factor = 0;
+		mMA2_margin_factor = 0;
+		mMA3_margin_factor = 0;
+	}
+	else
+		if ( enable_MA_margin == 1 ) {
+			mMA1_margin_factor = mMA1_margin;
+			mMA2_margin_factor = mMA2_margin;
+			mMA3_margin_factor = mMA3_margin;
+		}
+
 	int  nCode = 0;
 	t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
 
@@ -1406,6 +1454,7 @@ void CQuoteTesterDlg::OnBnClickedButton14()
 	pWnd->EnableWindow( TRUE );
 	pWnd = GetDlgItem(IDC_BUTTON14);
 	pWnd->EnableWindow( FALSE );
+	GetDlgItem(IDC_CHECK1)->EnableWindow( TRUE );
 	
 	TerminateThread( t_hnd, (DWORD) 0 );
 	//CloseHandle(t_hnd);
@@ -1486,5 +1535,31 @@ void CQuoteTesterDlg::OnChange_MA1_Period() {
 }
 
 void CQuoteTesterDlg::OnKillfocus_MA1_Period() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnKillfocus_MA2_Period() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnKillfocus_MA3_Period() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnKillfocus_MA1_margin() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnKillfocus_MA2_margin() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnKillfocus_MA3_margin() {
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnBnClickedCheck1()
+{
+	// TODO: Add your control notification handler code here
 	UpdateData( TRUE );
 }
