@@ -12,6 +12,7 @@ using namespace std;
 #define Close_long_position 2
 #define Close_short_position 3
 #define Close_all_position 4
+#define Close_stoploss_position 5
 
 enum Order_Type { OP_BUY = 0, OP_SHORT, OP_BUYLIMIT, OP_SHORTLIMIT, OP_BUYSTOP, OP_SHORTSTOP };
 
@@ -24,6 +25,7 @@ struct TOrder_info {
 	char ticker_symbol [ 15 ];
 	int exit_reason;
 	double MA10_15min, MA22_15min, MA10_day, MA22_day;
+	double stoploss;
 
 	TOrder_info() {
 		entry_tick = exit_tick = -1;
@@ -37,6 +39,8 @@ private:
 	/*margin, free-margin, equity*/
 	double margin, free_margin, equity;
 	double final_close;
+	boolean m_en_trailing_stop;
+	double m_trailing_stop_points;
 public:
 	CAccount( string account_name );
 	~CAccount();

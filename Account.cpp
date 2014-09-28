@@ -97,6 +97,8 @@ CAccount::CAccount( string account_name ) {
 			p_portfolio_fs->flush();
 		}
 	}
+	m_en_trailing_stop = false;
+	m_trailing_stop_points = 10;
 }
 
 CAccount::~CAccount() {
@@ -146,6 +148,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	final_close = (double) nClose / 100;
 	/*close opposite position in open order*/
 	double new_free_margin, ticker_margin, pip_value, profit_loss, keep_margin, trading_fee = 100;
+	boolean m_touch_stoploss = false;
 	pip_value = mMap_perpip_value [ symbol ];
 	ticker_margin = mMap_origin_margin [ symbol ];
 	keep_margin = mMap_keep_margin [ symbol ];
@@ -153,13 +156,14 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
 		m_order = *itr1;
 		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
-			if ( m_order.position_type == Long_position ) {
+			m_order.open_price = final_close;
+			/*if ( m_order.position_type == Long_position ) {
 				m_order.open_price = nAsk / 100;
 			}
 			else
 				if ( m_order.position_type == Short_position ) {
 					m_order.open_price = nBid / 100;
-				}
+				}*/
 				m_order.open_time = nTime;
 				m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
 		}
@@ -176,17 +180,33 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			if ( profit_loss < 0 && ( ticker_margin + profit_loss ) < keep_margin ) {
 			}
 				
-			if ( profit_loss > m_order.max_profit )
+			if ( profit_loss > m_order.max_profit ) {
 				m_order.max_profit = profit_loss;
-			if ( profit_loss < m_order.max_loss )
-				m_order.max_loss = profit_loss;
+				if ( m_en_trailing_stop == true ) {
+					if ( m_order.position_type == Long_position )
+						m_order.stoploss = final_close - m_trailing_stop_points;
+					else
+						if ( m_order.position_type == Short_position )
+							m_order.stoploss = final_close + m_trailing_stop_points;
+				}
+			}
+			else
+				if ( profit_loss < m_order.max_loss ) {
+					if ( ( m_order.position_type == Long_position && final_close <= m_order.stoploss ) || 
+						( m_order.position_type == Short_position && final_close >= m_order.stoploss ) )
+						m_touch_stoploss = true;
+					m_order.max_loss = profit_loss;
+				}
 		}
 
 		//if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
 		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
-			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) ) {
+			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) || m_touch_stoploss == true ) {
 			m_order.exit_tick = nPtr + 1;
-			m_order.exit_reason = position_type;
+			if ( m_touch_stoploss == true )
+				m_order.exit_reason = Close_stoploss_position;
+			else
+				m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
 			pList_open_order->erase ( itr1++ );
 
@@ -202,13 +222,14 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	for ( itr1 = pList_close_order->begin(); itr1 != pList_close_order->end(); itr1++ ) {
 		m_order = *itr1;
 		if (  m_order.exit_tick == nPtr && m_order.close_price == 0 ) {
-			if ( m_order.position_type == Long_position ) {
+			m_order.close_price = final_close;
+			/*if ( m_order.position_type == Long_position ) {
 				m_order.close_price = nBid / 100;
 			}
 			else
 				if ( m_order.position_type == Short_position ) {
 					m_order.close_price = nAsk / 100;
-				}
+				}*/
 
 				if ( m_order.position_type == Long_position )
 					profit_loss = m_order.lots * ( m_order.close_price - m_order.open_price ) * pip_value - trading_fee;
@@ -218,10 +239,12 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				equity = equity - m_order.profit_loss + profit_loss;
 				m_order.profit_loss = profit_loss;
 				free_margin = free_margin  + profit_loss;
-				if ( profit_loss > m_order.max_profit )
+				if ( profit_loss > m_order.max_profit ) {
 					m_order.max_profit = profit_loss;
-				if ( profit_loss < m_order.max_loss )
-					m_order.max_loss = profit_loss;
+				}
+				else
+					if ( profit_loss < m_order.max_loss )
+						m_order.max_loss = profit_loss;
 				margin = margin + profit_loss;
 				*itr1 = m_order;
 		}
@@ -243,10 +266,12 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			if ( position_type == Long_position ) {
 				m_order.order_type = OP_BUY;
 				m_order.position_type = Long_position;
+				m_order.stoploss = 0;
 			}
 			else {
 				m_order.order_type = OP_SHORT;
 				m_order.position_type = Short_position;
+				m_order.stoploss =100000;
 			}
 			m_order.lots = 1;
 

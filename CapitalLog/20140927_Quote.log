@@ -1,0 +1,16 @@
+[212] 2014/09/27 11:53:12.109 API InitInstance 
+[212] 2014/09/27 11:57:17.171 API ExitInstance 
+[3092] 2014/09/27 11:58:32.671 API InitInstance 
+[3092] 2014/09/27 11:58:34.921 API ExitInstance 
+[3784] 2014/09/27 14:32:18.015 API InitInstance 
+[3784] 2014/09/27 14:32:19.328 API ExitInstance 
+[260] 2014/09/27 14:39:33.546 API InitInstance 
+[260] 2014/09/27 14:39:39.421 SKQuoteLib_Initialize ¡GS122811334
+[260] 2014/09/27 14:39:39.437 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[260] 2014/09/27 14:40:00.875 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[260] 2014/09/27 14:41:50.843 API ExitInstance 
+[2376] 2014/09/27 14:42:13.500 API InitInstance 
+[2376] 2014/09/27 14:42:19.968 SKQuoteLib_Initialize ¡GS122811334
+[2376] 2014/09/27 14:42:19.968 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2376] 2014/09/27 14:42:41.312 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[2376] 2014/09/27 14:43:54.406 API ExitInstance 
