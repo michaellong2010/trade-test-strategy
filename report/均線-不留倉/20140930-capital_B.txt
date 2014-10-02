@@ -1,0 +1,19 @@
+margin: 309300
+free_margin: 309300
+equity: 309300
+ticker_symbol, open_price, close_price, entry_tick, exit_tick, open_time, lots, position_type: 1, profit_loss, max_loss, max_profit, MA10_min, MA22_min, MA10_day, MA22_day
+
+============TX00 close order===========
+TX00, 9094, 9127, 1, 32068, 84500, 1, position_type: 1, -6700, -9600, 2600, exit_reason: 4, 9115.4, 9122.18, 9193.2, 9324.14
+TX00, 9157, 9027, 1, 50010, 84500, 1, position_type: 1, 25900, -2200, 32400, exit_reason: 4, 9125.4, 9118.86, 9182, 9314.95
+TX00, 8958, 8986, 1, 43149, 84500, 1, position_type: 1, -5700, -12800, 4200, exit_reason: 4, 9015.9, 9054.68, 9140, 9289.32
+TX00, 8991, 8981, 1, 38967, 84500, 1, position_type: 1, 1900, -3400, 9600, exit_reason: 4, 8986, 8988.27, 9119.6, 9268.32
+TX00, 8961, 8991, 1, 56373, 84500, 1, position_type: 1, -6100, -12000, 18000, exit_reason: 4, 8968.9, 8971.95, 9099.4, 9244.36
+
+ symbol seperate=============================================================
+
+
+==============
+
+
+

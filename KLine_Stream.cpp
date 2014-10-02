@@ -8,6 +8,7 @@ extern DWORD g_ThreadID_KLine [ 3 ];
 
 map<int, string> CKLineStream::mTimeFrameName = init_timeframe_map();
 int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 );
+int next_trade_date ( int current_date );
 CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick ) {
 	stream_file = "";
 	//ios::binary=
@@ -597,14 +598,15 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 	list<TCandleStick> *pList_KLineData, *pList_KLineData1;
 	int next_trading_date = -1, next_kline_close_time, m_open_time, m_open_hour, m_open_min, m_open_sec;
 	int m_tick_hour, m_tick_min, m_tick_sec;
-	SYSTEMTIME ti; 
+	SYSTEMTIME ti;
 	if ( mMap_stock_kline.count( symbol ) ) {
 		pList_KLineData = mMap_stock_kline [ symbol ];
 		m_candlestick = pList_KLineData->back();
 		if ( is_tick_in_kline == true ) {
 		}
 		else {
-			next_trading_date = m_candlestick.mDate + 1;
+			//next_trading_date = m_candlestick.mDate + 1;
+			next_trading_date = next_trade_date ( m_candlestick.mDate );
 			m_candlestick.mDate = next_trading_date;
 		}
 	}
@@ -1627,4 +1629,54 @@ int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 ) {
 	sum=sum+d2-temp;
 	//printf("\n Total Number of Days are : %5d",sum);
 	return sum;
+}
+
+int next_trade_date ( int current_date ) {
+	int day, month, year;
+	int next_day, next_month, next_year, next_date;
+	year = current_date / 10000;
+	month = ( current_date - 10000 * year ) / 100;
+	day = current_date - 10000 * year - 100 * month;
+
+	int month_days[]={31,28,31,30,31,30,31,31,30,31,30,31};
+
+	if ( month == 2 ) {
+		if(year%4==0 && (year%100!=0 || year%400==0))
+			month_days[1]=29;
+		else
+			month_days[1]=28;
+	}
+
+	next_year = year;
+	next_month = month;
+	next_day = day;
+	if ( month_days [month-1] == day ) {
+		next_month = month + 1;
+		next_day = 1;
+		if ( next_month > 12 ) {
+			next_year = year + 1;
+		}
+		else {
+		}
+	}
+	else
+		if ( month_days [month-1] > day ) {
+			next_day = day + 1;
+		}
+
+	next_date = next_year * 10000 + next_month * 100 + next_day;
+	SYSTEMTIME t = { next_year, next_month, -1 /*ignored*/, next_day };
+	FILETIME ft;
+	HRESULT hrto   = SystemTimeToFileTime( &t, &ft );
+	HRESULT hrback = FileTimeToSystemTime( &ft, &t );
+	WORD dayofweek = t.wDayOfWeek;
+
+	if ( dayofweek == 0 )
+		next_date = next_trade_date ( next_date );
+	else
+		if ( dayofweek == 6 ) {
+			next_date = next_trade_date ( next_date );
+			//next_date = next_trade_date ( next_date );
+		}
+	return next_date;
 }

@@ -98,7 +98,7 @@ CAccount::CAccount( string account_name ) {
 		}
 	}
 	m_en_trailing_stop = false;
-	m_trailing_stop_points = 10;
+	m_trailing_stop_points = 100;
 }
 
 CAccount::~CAccount() {
@@ -158,14 +158,28 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
 			m_order.open_price = final_close;
 			/*if ( m_order.position_type == Long_position ) {
-				m_order.open_price = nAsk / 100;
+				//m_order.open_price = nAsk / 100;
 			}
 			else
 				if ( m_order.position_type == Short_position ) {
-					m_order.open_price = nBid / 100;
+					//m_order.open_price = nBid / 100;
 				}*/
-				m_order.open_time = nTime;
-				m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
+			if ( m_en_trailing_stop == true ) {
+				if ( m_order.position_type == Long_position )
+					m_order.stoploss = final_close - m_trailing_stop_points;
+				else
+					if ( m_order.position_type == Short_position )
+						m_order.stoploss = final_close + m_trailing_stop_points;
+			}
+			else {
+				if ( m_order.position_type == Long_position )
+					m_order.stoploss = 0;
+				else
+					if ( m_order.position_type == Short_position )
+						m_order.stoploss = 100000;
+			}
+			m_order.open_time = nTime;
+			m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
 		}
 		else {
 			if ( m_order.position_type == Long_position )
@@ -190,13 +204,14 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 							m_order.stoploss = final_close + m_trailing_stop_points;
 				}
 			}
-			else
+			else {
 				if ( profit_loss < m_order.max_loss ) {
-					if ( ( m_order.position_type == Long_position && final_close <= m_order.stoploss ) || 
-						( m_order.position_type == Short_position && final_close >= m_order.stoploss ) )
-						m_touch_stoploss = true;
 					m_order.max_loss = profit_loss;
 				}
+				if ( ( m_order.position_type == Long_position && final_close <= m_order.stoploss ) || 
+					( m_order.position_type == Short_position && final_close >= m_order.stoploss ) )
+					m_touch_stoploss = true;
+			}
 		}
 
 		//if ( m_order.position_type != position_type && m_order.exit_tick == -1) {
@@ -266,12 +281,12 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			if ( position_type == Long_position ) {
 				m_order.order_type = OP_BUY;
 				m_order.position_type = Long_position;
-				m_order.stoploss = 0;
+				//m_order.stoploss = 0;
 			}
 			else {
 				m_order.order_type = OP_SHORT;
 				m_order.position_type = Short_position;
-				m_order.stoploss =100000;
+				//m_order.stoploss =100000;
 			}
 			m_order.lots = 1;
 
