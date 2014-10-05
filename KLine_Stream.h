@@ -128,4 +128,8 @@ public:
 
 	double mMA1_period, mMA2_period;
 	void setting_MA ( int MA1_period, int MA2_period );
+
+	/*get current trading date*/
+	int get_trading_date ( string ticker_symbol );
+	int kline_close_time;
 };

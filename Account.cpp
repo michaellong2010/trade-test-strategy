@@ -2,7 +2,7 @@
 
 TOrder_info m_order;
 /*account_name is a unique identifier for each account*/
-CAccount::CAccount( string account_name ) {
+CAccount::CAccount( string account_name, int time_frame ) {
 	string m_portfolio_filename, m_txt_portfolio_filename;
 	long f_size;
 	int nRead_orders;
@@ -99,6 +99,8 @@ CAccount::CAccount( string account_name ) {
 	}
 	m_en_trailing_stop = false;
 	m_trailing_stop_points = 100;
+	kline_close_time = m_stoploss_count = tradable_time = 0;
+	nTimeFrame = time_frame;
 }
 
 CAccount::~CAccount() {
@@ -153,6 +155,10 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	ticker_margin = mMap_origin_margin [ symbol ];
 	keep_margin = mMap_keep_margin [ symbol ];
 	list<TOrder_info>::iterator itr1;
+	int m_tick_hour, m_tick_min, m_current_tick_time;
+	m_tick_hour = nTime / 10000;
+	m_tick_min = ( nTime - m_tick_hour * 10000 ) / 100;
+	m_current_tick_time = 60 * m_tick_hour + m_tick_min;
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
 		m_order = *itr1;
 		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
@@ -164,7 +170,17 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				if ( m_order.position_type == Short_position ) {
 					//m_order.open_price = nBid / 100;
 				}*/
-			if ( m_en_trailing_stop == true ) {
+
+			/*if total stoploss times larger than 2 in the current KLine then override the stoploss points*/
+			if ( m_stoploss_count >= 2 ) {
+				if ( m_order.position_type == Long_position )
+					m_order.stoploss = final_close - 5;
+				else
+					if ( m_order.position_type == Short_position )
+						m_order.stoploss = final_close + 5;
+			}
+			else
+			if ( m_en_stoploss == true ) {			
 				if ( m_order.position_type == Long_position )
 					m_order.stoploss = final_close - m_trailing_stop_points;
 				else
@@ -178,6 +194,29 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 					if ( m_order.position_type == Short_position )
 						m_order.stoploss = 100000;
 			}
+			/*if ( m_en_trailing_stop == true ) {
+				if ( m_order.position_type == Long_position )
+					m_order.stoploss = final_close - m_trailing_stop_points;
+				else
+					if ( m_order.position_type == Short_position )
+						m_order.stoploss = final_close + m_trailing_stop_points;
+			}
+			else {
+				if ( m_stoploss_count >= 2 ) {
+					if ( m_order.position_type == Long_position )
+						m_order.stoploss = final_close - 5;
+					else
+						if ( m_order.position_type == Short_position )
+							m_order.stoploss = final_close + 5;
+				}
+				else {
+					if ( m_order.position_type == Long_position )
+						m_order.stoploss = 0;
+					else
+						if ( m_order.position_type == Short_position )
+							m_order.stoploss = 100000;
+				}
+			}*/
 			m_order.open_time = nTime;
 			m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
 		}
@@ -218,8 +257,9 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
 			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) || m_touch_stoploss == true ) {
 			m_order.exit_tick = nPtr + 1;
-			if ( m_touch_stoploss == true )
+			if ( m_touch_stoploss == true ) {
 				m_order.exit_reason = Close_stoploss_position;
+			}
 			else
 				m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
@@ -262,14 +302,64 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 						m_order.max_loss = profit_loss;
 				margin = margin + profit_loss;
 				*itr1 = m_order;
+
+				if ( profit_loss < 0 && m_stoploss_count < 6 ) {
+					m_stoploss_count++;
+				}
+				if ( m_stoploss_count == 6 ) {
+					if ( kline_close_time == 0) {
+						tradable_time = m_current_tick_time + 60;
+						m_stoploss_count = 0;
+					}
+					else
+						tradable_time = kline_close_time;
+				}
 		}
 	}
 
 	/*create new order with position_type*/
-	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) ) {
+	boolean tradable = true;
+	double m_factor = 0, m_MA1;
+	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) && m_current_tick_time >= tradable_time ) {
 		new_free_margin = free_margin - ticker_margin;
 
 		if ( new_free_margin > 0 && 100 * ( new_free_margin / margin ) > 30.0 ) {
+			if ( nTimeFrame == 1 ) {
+				m_MA1 = MA10_15min;
+				if ( m_stoploss_count >= 2 && m_stoploss_count < 4 )
+					m_factor = 0.005;
+				else
+					if ( m_stoploss_count >= 4 && m_stoploss_count < 6 )
+						m_factor = 0.007;
+			}
+			else
+				if ( nTimeFrame == 4 ) {
+					m_MA1 = MA10_day;
+					if ( m_stoploss_count >= 2 && m_stoploss_count < 4 )
+						m_factor = 0.005;
+					else
+						if ( m_stoploss_count >= 4 && m_stoploss_count < 6 )
+							m_factor = 0.007;
+				}
+
+			if ( m_stoploss_count < 2 )
+			  tradable = true;
+			else {
+				if ( position_type == Long_position ) {
+					if ( nClose > ( m_MA1 * ( 1 + m_factor ) ) )
+						tradable = true;
+					else
+						tradable = false;
+				}
+				else
+					if ( position_type == Short_position ) {
+						if ( nClose < ( m_MA1 * ( 1 - m_factor ) ) )
+							tradable = true;
+						else
+							tradable = false;
+					}
+			}
+			if ( tradable == true ) {
 			strcpy ( m_order.ticker_symbol, symbol.c_str() );
 			m_order.entry_tick = nPtr + 1;
 			m_order.open_price = m_order.close_price = 0;
@@ -291,8 +381,9 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			m_order.lots = 1;
 
 			free_margin = new_free_margin;
+			pList_open_order->insert ( pList_open_order->end(), m_order );
+			}
 		}
-		pList_open_order->insert ( pList_open_order->end(), m_order );
 	}
 #endif
 
@@ -313,8 +404,9 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 	txt_portfolio_fs << "equity: " << equity << "\n";
 
 	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
-					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "lots" << ", " << "position_type: " << m_order.position_type << \
-					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << ", " << "MA10_min" << ", " << "MA22_min" << ", " << "MA10_day" << ", " << "MA22_day" << "\n";
+					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "lots" << ", " << "position_type: " << \
+					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << ", " << "MA10_min" << ", " << "MA22_min" << ", " << "MA10_day" << ", " << "MA22_day" << \
+					", " << "stoploss: " << "\n";
 #endif
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
 		p_portfolio_fs->seekp ( 0, ios::beg );
@@ -356,7 +448,8 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " open order===========\n";
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
-					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << ", " << m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << "\n";
+					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << ", " << m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
+					", " << m_order.stoploss << "\n";
 #endif
 			}
 
@@ -371,7 +464,8 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
-					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << ", "<< m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << "\n";
+					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << ", "<< m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
+					", " << m_order.stoploss << "\n";
 #endif
 			}
 #if 1
@@ -382,4 +476,25 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 
 	p_portfolio_fs->flush();
 	txt_portfolio_fs.flush();
+}
+
+void CAccount::update_kline_close_time ( int new_close_time ) {
+	if ( new_close_time > kline_close_time ) {
+		kline_close_time = new_close_time;
+		m_stoploss_count = 0;
+	}
+}
+
+void CAccount::set_stoploss ( int en_stoploss, int en_trailing_stop, int stoploss ) {
+	if ( en_stoploss )
+		m_en_stoploss = true;
+	else
+		m_en_stoploss = false;
+
+	if ( en_trailing_stop )
+		m_en_trailing_stop = true;
+	else
+		m_en_trailing_stop = false;
+
+	m_trailing_stop_points = stoploss;
 }

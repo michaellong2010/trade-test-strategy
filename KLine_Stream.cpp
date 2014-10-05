@@ -9,6 +9,7 @@ extern DWORD g_ThreadID_KLine [ 3 ];
 map<int, string> CKLineStream::mTimeFrameName = init_timeframe_map();
 int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 );
 int next_trade_date ( int current_date );
+int previous_nDay_date ( int current_date,  int days );
 CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick ) {
 	stream_file = "";
 	//ios::binary=
@@ -146,6 +147,17 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	//GetSystemTime ( &ti ) ;
 	::GetLocalTime ( &ti );
 	current_date = 10000 * ti.wYear + 100 * ti.wMonth + ti.wDay;
+	if ( ti.wDayOfWeek == 0 ) {
+		current_date = previous_nDay_date ( current_date, 2 );
+	}
+	else
+		if ( ti.wDayOfWeek == 6 ) {
+			current_date = previous_nDay_date ( current_date, 1 );
+		}
+		else
+			if ( ti.wDayOfWeek == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) {
+				current_date = previous_nDay_date ( current_date, 3 );
+			}
 	int day, month, year;
 	for ( vector<string>::iterator itr = mData_Element.begin(); itr != mData_Element.end(); ) {
 	   m_get_str = (*itr).c_str();
@@ -501,6 +513,17 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	//GetSystemTime ( &ti ) ;
 	::GetLocalTime ( &ti );
 	current_date = ti.wYear * 10000 + ti.wMonth * 100 + ti.wDay;
+	if ( ti.wDayOfWeek == 0 ) {
+		current_date = previous_nDay_date ( current_date, 2 );
+	}
+	else
+		if ( ti.wDayOfWeek == 6 ) {
+			current_date = previous_nDay_date ( current_date, 1 );
+		}
+		else
+			if ( ti.wDayOfWeek == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) {
+				current_date = previous_nDay_date ( current_date, 3 );
+			}
 	cur_tid = GetCurrentThreadId();
 	txt_out_filename = path_bufA.GetString();
 	txt_out_filename =  txt_out_filename + "TX00_txt";
@@ -876,10 +899,10 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 					  case 1: //5min
 					  case 4: //day
 						  if ( nTimeFrame == 1)
-							  next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * n_collapse_sticks * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / ( 5 * n_collapse_sticks ) + 1 ) );
+							  kline_close_time = next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * n_collapse_sticks * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / ( 5 * n_collapse_sticks ) + 1 ) );
 						  else
 							  if ( nTimeFrame == 4)
-								  next_kline_close_time = 0;
+								  kline_close_time = next_kline_close_time = 0;
 						  for (  n_rev_ins_pos = 0, itr3 = pList_KLineData->rbegin(); itr3 != pList_KLineData->rend(); itr3++, n_rev_ins_pos++ ) {
 							  m_pTick_candlestick = (TCandleStick *) &(*itr3);
 							  if ( m_pTick_candlestick->mTime == next_kline_close_time ) {
@@ -1360,6 +1383,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	TCandleStick m_raw_candlestick;
 	int m_open_time, m_open_hour, m_open_min, kline_start_index;
 	CString collapsed_filenameW;
+	int current_date = get_trading_date ( ticker_symbol );
 	/*calculate MA15*/
 	/*list<TCandleStick>::reverse_iterator itr, itr1;
 	list<TCandleStick>::iterator itr2, itr3;
@@ -1427,6 +1451,8 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 					for ( ; i < n_total_sticks; i++) {
 						p_orig_fs->seekg ( i*nSize, ios::beg );
 						p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
+						if ( m_raw_candlestick.mDate == current_date )
+							continue;
 						if ( ( m_raw_candlestick.mTime - m_open_time ) % ( n_sticks * 5 ) == 5) {
 							if ( ( pNew_KLine_file_info->n_fsize - nSize ) >= 0 ) {
 								p_new_fs->seekp ( pNew_KLine_file_info->n_fsize - nSize, ios::beg );
@@ -1454,6 +1480,8 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 					for ( j = i, kline_start_index = i; j < ( kline_start_index + n_sticks ) && j < n_total_sticks; j++, i++ ) {
 						p_orig_fs->seekg ( j*nSize, ios::beg );
 						p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
+						if ( m_raw_candlestick.mDate == current_date )
+							continue;
 						m_candlestick.mClose = m_raw_candlestick.mClose;
 						m_candlestick.mDate = m_raw_candlestick.mDate;
 						m_candlestick.mTime = m_raw_candlestick.mTime;
@@ -1468,6 +1496,8 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 								m_candlestick.mClose = m_raw_candlestick.mLow;
 						}
 					}
+					if ( m_raw_candlestick.mDate == current_date )
+						continue;
 					p_new_fs->seekp ( pNew_KLine_file_info->n_fsize, ios::beg );
 					p_new_fs->write ( (char *) &m_candlestick, nSize );	
 					pNew_KLine_file_info->n_fsize += nSize;
@@ -1589,6 +1619,43 @@ void CKLineStream::setting_MA ( int MA1_period, int MA2_period ) {
 	mMA2_period = (double) MA2_period;
 }
 
+int CKLineStream::get_trading_date ( string ticker_symbol ) {
+	list<TCandleStick> *pList_KLineData;
+	SYSTEMTIME ti;
+	int next_trading_date = -1;
+	if ( mMap_kline_ready.count( ticker_symbol ) ) {
+		if ( mMap_kline_ready [ ticker_symbol ] == true ) {
+			if ( mMap_stock_kline.count( ticker_symbol ) ) {
+				pList_KLineData = mMap_stock_kline [ ticker_symbol ];
+				m_candlestick = pList_KLineData->back();
+				if ( is_tick_in_kline == true ) {
+				}
+				else {
+					//next_trading_date = m_candlestick.mDate + 1;
+					next_trading_date = next_trade_date ( m_candlestick.mDate );
+					m_candlestick.mDate = next_trading_date;
+				}
+			}
+			else {
+				//GetSystemTime(&ti);
+				GetLocalTime (&ti);
+				//if ( current_date == m_file_candlestick.mDate || ( current_date > m_candlestick.mDate && days_difference ( day, month, year, ti.wDay, ti.wMonth, ti.year ) == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) )
+				m_candlestick.mDate = next_trading_date = ti.wDay + ti.wMonth * 100 + ti.wYear * 10000;
+			}
+		}
+		else {
+			AfxMessageBox(_T("Can't retrieve trading date!"));
+			return -1;
+		}
+	}
+	else {
+		AfxMessageBox(_T("Can't retrieve trading date!"));
+		return -1;
+	}
+		
+	return m_candlestick.mDate;
+}
+
 int days_difference ( int d1, int m1, int y1, int d2, int m2, int y2 ) {
 	int i,temp,sum=0,month[]={31,28,31,30,31,30,31,31,30,31,30,31};
 
@@ -1679,4 +1746,49 @@ int next_trade_date ( int current_date ) {
 			//next_date = next_trade_date ( next_date );
 		}
 	return next_date;
+}
+
+int previous_nDay_date ( int current_date,  int days ) {
+	int day, month, year;
+	int previous_day, previous_month, previous_year, previous_date;
+	year = current_date / 10000;
+	month = ( current_date - 10000 * year ) / 100;
+	day = current_date - 10000 * year - 100 * month;
+	int month_days[]={31,28,31,30,31,30,31,31,30,31,30,31};
+
+	if ( month == 2 || month == 3 || month == 1 ) {
+		if(year%4==0 && (year%100!=0 || year%400==0))
+			month_days[1]=29;
+		else
+			month_days[1]=28;
+	}
+
+	previous_year = year;
+	previous_month = month;
+	previous_day = day;
+
+	while ( days > 0 ) {
+		if ( previous_day == 1) {
+			if ( previous_month == 1) {
+				previous_day = 31;
+				previous_month = 12;
+				previous_year -= 1;
+				if(previous_year%4==0 && (previous_year%100!=0 || previous_year%400==0))
+					month_days[1]=29;
+				else
+					month_days[1]=28;
+			}
+			else {
+				previous_month -= 1;
+				previous_day = month_days [ previous_month ];
+			}
+		}
+		else {
+			previous_day -= 1;
+		}
+		days--;
+	}
+	previous_date = previous_year * 10000 + previous_month * 100 + previous_day;
+
+	return previous_date;
 }

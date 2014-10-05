@@ -32,14 +32,16 @@ int position_type = -1, position_type1 = -1;
 double bid_vol = 0, bid_weight = 0, ask_vol = 0, ask_weight = 0, bid_product, ask_product;
 
 CQuoteTesterDlg::CQuoteTesterDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false ), account_A( "capital_A" ), account_B ( "capital_B" )
+	: CDialogEx(CQuoteTesterDlg::IDD, pParent), mKline_stream( 1, 3, true ), mKline_stream_day( 4 , 1, false ), account_A( "capital_A", 1 ), account_B ( "capital_B", 4 )
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	mMA1_period = 10;
 	mMA2_period = 22;
 	mMA3_period = 39;
 	mMA1_margin = 0.003;
-	mMA2_margin = mMA3_margin = 0;
+	mMA2_margin = mMA3_margin = enable_MA_margin = 0;
+	m_stoploss = 15;
+	m_en_stoploss = m_en_trailing_stop = 0;
 }
 
 CQuoteTesterDlg::~CQuoteTesterDlg()
@@ -87,6 +89,12 @@ void CQuoteTesterDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxDouble( pDX, mMA2_margin, 0, 1.0);
 	DDX_Text( pDX, IDC_EDIT_MA3_margin, mMA3_margin );
 	DDV_MinMaxDouble( pDX, mMA3_margin, 0, 1.0 );
+
+	//DDX_Control( pDX, IDC_COMBO1, m_ComboBox1_strategy );
+	DDX_Text( pDX, IDC_EDIT_Stoploss, m_stoploss );
+	DDV_MinMaxInt( pDX, m_stoploss, 0, 50);
+	DDX_Check( pDX, IDC_CHECK2, m_en_stoploss );
+	DDX_Check( pDX, IDC_CHECK3, m_en_trailing_stop );
 }
 
 BEGIN_MESSAGE_MAP(CQuoteTesterDlg, CDialogEx)
@@ -117,6 +125,10 @@ BEGIN_MESSAGE_MAP(CQuoteTesterDlg, CDialogEx)
 	ON_EN_KILLFOCUS ( IDC_EDIT_MA1_margin, OnKillfocus_MA1_margin )
 	ON_EN_KILLFOCUS ( IDC_EDIT_MA2_margin, OnKillfocus_MA2_margin )
 	ON_EN_KILLFOCUS ( IDC_EDIT_MA3_margin, OnKillfocus_MA3_margin )
+	ON_EN_KILLFOCUS ( IDC_EDIT_Stoploss, OnKillfocus_Stoploss )
+	ON_CBN_SELCHANGE( IDC_COMBO1, &CQuoteTesterDlg::OnCbnSelchangeCombo1 )
+	ON_BN_CLICKED(IDC_CHECK2, &CQuoteTesterDlg::OnBnClickedCheck2)
+	ON_BN_CLICKED(IDC_CHECK3, &CQuoteTesterDlg::OnBnClickedCheck3)
 END_MESSAGE_MAP()
 
 
@@ -184,6 +196,14 @@ BOOL CQuoteTesterDlg::OnInitDialog()
 		NULL,              // default security attributes
 		FALSE,             // initially not owned
 		NULL);             // unnamed mutex
+/*20141003 added by michael*/
+	m_ComboBox1_strategy.SubclassDlgItem ( IDC_COMBO1, this );
+	m_ComboBox1_strategy.AddString ( _T("多空力道 & 不留倉") );
+	m_ComboBox1_strategy.AddString ( _T("多空力道 & 留倉") );
+	m_ComboBox1_strategy.AddString ( _T("均線 & 不留倉") );
+	m_ComboBox1_strategy.AddString ( _T("均線 & 留倉") );
+	m_ComboBox1_strategy.SetCurSel(0);
+	AdjustDropDownWidth ( IDC_COMBO1 );
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
@@ -345,10 +365,10 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			nAsk,
 			nClose,
 			nQty);*/
-		/*double close_bid_diff, close_ask_diff;
+		double close_bid_diff, close_ask_diff;
 		close_bid_diff = fabs( double ( nClose - nBid ) / 100 );
 		close_ask_diff = fabs( double ( nClose - nAsk ) / 100 );
-		if ( nPtr > 0) {
+		if ( nPtr > 0 && ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) ) {
 			if ( close_bid_diff >  close_ask_diff) {
 				ask_vol += nQty;
 				ask_product += nQty * nClose;
@@ -368,19 +388,21 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 					bid_product += nQty * nClose;
 					bid_weight = bid_product / ( 100 * bid_vol );
 				}
-		}*/
+		}
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
 			nQty, 0 );
+		m_pDialog->account_A.update_kline_close_time ( m_pDialog->mKline_stream.kline_close_time );
 		m_pDialog->mKline_stream_day.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
 			nQty, 0 );
+		m_pDialog->account_B.update_kline_close_time ( m_pDialog->mKline_stream_day.kline_close_time );
 		string symbol;
 		//int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA1, *pList_15min_MA2, *pList_day_MA1, *pList_day_MA2;
@@ -410,7 +432,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
-			//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+			if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+				if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+					position_type = Long_position;
+			}
+			else
 				position_type = Long_position;
 			//else
 				//position_type = Short_position;
@@ -420,7 +446,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		}
 		else
 			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
-				//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+				if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+					if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+						position_type = Short_position;
+				}
+				else
 					position_type = Short_position;
 				//else
 					//position_type = Long_position;
@@ -431,7 +461,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			else
 				if ( close_price < MA1_15min_lower && close_price > MA2_15min_upper ) { //account_A exit long position
 					//position_type = Close_all_position;
-					//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+					if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+						if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+							position_type = Short_position;
+					}
+					else
 						position_type = Short_position;
 					//else
 						//position_type = Long_position;
@@ -439,13 +473,17 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 				else
 					if ( close_price > MA1_15min_upper && close_price < MA2_15min_lower ) { //account_A exit short position
 						//position_type = Close_all_position;
-						//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+						if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+							if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+								position_type = Long_position;
+						}
+						else
 							position_type = Long_position;
 						//else
 							//position_type1 = Short_position;
 					}
-		//if ( nTime > 134400)
-			//position_type = Close_all_position;
+		if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 2 ) && nTime > 134400)
+			position_type = Close_all_position;
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -455,7 +493,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		if ( ! ( nPtr % 200 ) )
 			m_pDialog->account_A.refresh_portfolio( false );
 		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
-			//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+			if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+				if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+					position_type1 = Long_position;
+			}
+			else
 				position_type1 = Long_position;
 			//else
 				//position_type1 = Short_position;
@@ -465,7 +507,11 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		}
 		else
 			if ( close_price < MA1_day_lower && close_price < MA2_day_lower ) { //account_B hold short position
-				//if ( ask_vol < bid_vol && ( ask_vol + bid_vol ) > 100 )
+				if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+					if ( ask_vol < bid_vol && ( ask_vol + bid_vol ) > 100 )
+						position_type1 = Short_position;
+				}
+				else
 					position_type1 = Short_position;
 				//else
 					//position_type1 = Long_position;
@@ -475,20 +521,28 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 			}
 			else
 				if ( close_price < MA1_day_lower && close_price > MA2_day_upper ) { //account_B exit long position
-					//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+					if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+						if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+							position_type1 = Short_position;
+					}
+					else
 						position_type1 = Short_position;
 					//else
 						//position_type = Long_position;
 				}
 				else
 					if ( close_price > MA1_day_upper && close_price < MA2_day_lower ) { //account_B exit short position
-						//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+						if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+							if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+								position_type1 = Long_position;
+						}
+						else
 							position_type1 = Long_position;
 						//else
 							//position_type1 = Short_position;
 					}
-		//if ( nTime > 134400)
-			//position_type1 = Close_all_position;
+		if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 2 ) && nTime > 134400)
+			position_type1 = Close_all_position;
 		m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -552,10 +606,10 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			//SKQuoteLib_RequestTicks(&sPageNo, "");
 			//m_pDialog->OnBnClickedButton14();
 		//}
-		/*double close_bid_diff, close_ask_diff;
+		double close_bid_diff, close_ask_diff;
 		close_bid_diff = fabs( double ( nClose - nBid ) / 100 );
 		close_ask_diff = fabs( double ( nClose - nAsk ) / 100 );
-		if ( nPtr > 0) {
+		if ( nPtr > 0 && ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) ) {
 			if ( close_bid_diff >  close_ask_diff) {
 				ask_vol += nQty;
 				ask_product += nQty * nClose;
@@ -575,19 +629,21 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					bid_product += nQty * nClose;
 					bid_weight = bid_product / ( 100 * bid_vol );
 				}
-		}*/
+		}
 		m_pDialog->mKline_stream.Push_Tick_Data( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
 			nQty, 1 );
+		m_pDialog->account_A.update_kline_close_time ( m_pDialog->mKline_stream.kline_close_time );
 		m_pDialog->mKline_stream_day.Push_Tick_Data ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
 			nAsk,
 			nClose,
 			nQty, 1 );
+		m_pDialog->account_B.update_kline_close_time ( m_pDialog->mKline_stream_day.kline_close_time );
 		string symbol;
 		//static int position_type = -1, position_type1 = -1;
 		list <double> *pList_15min_MA1, *pList_15min_MA2, *pList_day_MA1, *pList_day_MA2;
@@ -617,7 +673,11 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		double close_price = 0;
 		close_price = nClose / 100;
 		if ( close_price > MA1_15min_upper && close_price > MA2_15min_upper ) { //account_A hold long position
-			//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+			if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+				if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+					position_type = Long_position;
+			}
+			else
 				position_type = Long_position;
 			//else
 				//position_type = Short_position;
@@ -627,7 +687,11 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		}
 		else
 			if ( close_price < MA1_15min_lower && close_price < MA2_15min_lower ) { //account_A hold short position
-				//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+				if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+					if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+						position_type = Short_position;
+				}
+				else
 					position_type = Short_position;
 				//else
 					//position_type = Long_position;
@@ -638,7 +702,11 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			else
 				if ( close_price < MA1_15min_lower && close_price > MA2_15min_upper ) { //account_A exit long position
 					//position_type = Close_all_position;
-					//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+					if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+						if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+							position_type = Short_position;
+					}
+					else
 						position_type = Short_position;
 					//else
 						//position_type = Long_position;
@@ -647,14 +715,18 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 				else
 					if ( close_price > MA1_15min_upper && close_price < MA2_15min_lower ) { //account_A exit short position
 						//position_type = Close_all_position;
-						//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+						if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+							if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+								position_type = Long_position;
+						}
+						else
 							position_type = Long_position;
 						//else
 							//position_type1 = Short_position;
 						//position_type = Close_long_position;
 					}
-		//if ( nTime > 134400)
-			//position_type = Close_all_position;
+		if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 2 ) && nTime > 134400)
+			position_type = Close_all_position;
 		m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
 			nTime,
 			nBid,
@@ -665,7 +737,11 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			m_pDialog->account_A.refresh_portfolio( false );
 		
 		if ( close_price > MA1_day_upper && close_price > MA2_day_upper ) { //account_B hold long position
-			//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+			if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+				if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+					position_type1 = Long_position;
+			}
+			else
 				position_type1 = Long_position;
 			//else
 				//position_type1 = Short_position;
@@ -675,7 +751,11 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		}
 		else
 			if ( close_price < MA1_day_lower && close_price < MA2_day_lower ) { //account_B hold short position
-				//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+				if ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) {
+					if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+						position_type1 = Short_position;
+				}
+				else
 					position_type1 = Short_position;
 				//else
 					//position_type1 = Long_position;
@@ -685,21 +765,29 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 			}
 			else
 				if ( close_price < MA1_day_lower && close_price > MA2_day_upper ) { //account_B exit long position
-					//if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+					if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) ) {
+						if ( ( ask_vol / bid_vol ) < 1 && ( ask_vol + bid_vol ) > 100 )
+							position_type1 = Short_position;
+					}
+					else
 						position_type1 = Short_position;
 					//else
 						//position_type1 = Long_position;
 				}
 				else
 					if ( close_price > MA1_day_upper && close_price < MA2_day_lower ) { //account_B exit short position
-						//if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+						if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 1 ) ) {
+							if ( ( ask_vol / bid_vol ) > 1 && ( ask_vol + bid_vol ) > 100 )
+								position_type1 = Long_position;
+						}
+						else
 							position_type1 = Long_position;
 						//else
 							//position_type1 = Short_position;
 					}
 
-		//if ( nTime > 134400)
-			//position_type1 = Close_all_position;
+		if ( ( m_pDialog->m_strategy == 0 || m_pDialog->m_strategy == 2 ) && nTime > 134400)
+			position_type1 = Close_all_position;
 		/*int final_position =-1;
 		if ( position_type == Long_position && position_type1 == Long_position )
 			final_position = Long_position;
@@ -1415,7 +1503,9 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	// TODO: Add your control notification handler code here
 	GetDlgItem(IDC_BUTTON13)->EnableWindow( FALSE );
 	GetDlgItem(IDC_BUTTON14)->EnableWindow( TRUE );
-	GetDlgItem(IDC_CHECK1)->EnableWindow( FALSE );
+	/*GetDlgItem(IDC_CHECK1)->EnableWindow( FALSE );
+	m_ComboBox1_strategy.EnableWindow ( FALSE );*/
+	m_strategy = m_ComboBox1_strategy.GetCurSel();
 	if ( enable_MA_margin == 0 ) {
 		mMA1_margin_factor = 0;
 		mMA2_margin_factor = 0;
@@ -1427,6 +1517,15 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 			mMA2_margin_factor = mMA2_margin;
 			mMA3_margin_factor = mMA3_margin;
 		}
+	/*CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
+	pButton->EnableWindow ( FALSE );
+	pButton1->EnableWindow ( FALSE );
+	IDC_EDIT_Stoploss*/
+	for ( int i = IDC_EDIT_MA1_period; i <= IDC_EDIT_Stoploss; i++ )
+		GetDlgItem(i)->EnableWindow( FALSE );
+	this->account_A.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
+	this->account_B.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
 
 	int  nCode = 0;
 	t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
@@ -1487,7 +1586,10 @@ void CQuoteTesterDlg::OnBnClickedButton14()
 	pWnd->EnableWindow( TRUE );
 	pWnd = GetDlgItem(IDC_BUTTON14);
 	pWnd->EnableWindow( FALSE );
-	GetDlgItem(IDC_CHECK1)->EnableWindow( TRUE );
+	//GetDlgItem(IDC_CHECK1)->EnableWindow( TRUE );
+	//m_ComboBox1_strategy.EnableWindow ( TRUE );
+	for ( int i = IDC_EDIT_MA1_period; i <= IDC_EDIT_Stoploss; i++ )
+		GetDlgItem(i)->EnableWindow( TRUE );
 	
 	TerminateThread( t_hnd, (DWORD) 0 );
 	//CloseHandle(t_hnd);
@@ -1591,8 +1693,84 @@ void CQuoteTesterDlg::OnKillfocus_MA3_margin() {
 	UpdateData( TRUE );
 }
 
+void CQuoteTesterDlg::OnKillfocus_Stoploss() {
+	UpdateData( TRUE );
+}
+
 void CQuoteTesterDlg::OnBnClickedCheck1()
 {
 	// TODO: Add your control notification handler code here
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnCbnSelchangeCombo1()
+{
+	// TODO: Add your control notification handler code here
+	/*char str_buf [ 20 ];
+	itoa( m_ComboBox1_strategy.GetCurSel(), str_buf, 10 );
+	CString str(str_buf);
+	AfxMessageBox( str );*/
+}
+
+/*auto adjust combobox*/
+void CQuoteTesterDlg::AdjustDropDownWidth(int nID)
+{
+	CComboBox *pComboBox = (CComboBox *) GetDlgItem(nID);
+	int MaxWidth = 0;
+	CDC *pDC = pComboBox->GetDC();
+
+	// Iterate through all strings in Combobox and get MaxWidth
+	CString String;
+	CSize TextSize;
+	TEXTMETRIC tm;
+
+	// Select the listbox font, save the old font
+	CFont* pFont = pComboBox->GetFont();
+	CFont* pOldFont = pDC->SelectObject(pFont);
+	// Get the text metrics for avg char width
+    pDC->GetTextMetrics(&tm);
+	for ( int Index = 0; Index < pComboBox->GetCount(); Index++ )
+	{
+		// Get n'th string.
+		pComboBox->GetLBText( Index, String );
+
+		// Get TextExtend
+		TextSize = pDC->GetTextExtent( String );
+		TextSize.cx += tm.tmAveCharWidth;
+
+		// Get MaxWidth.
+		if( TextSize.cx > MaxWidth )
+		{
+			MaxWidth = TextSize.cx;
+		}
+	}
+	pDC->SelectObject(pOldFont);
+	pComboBox->ReleaseDC(pDC);
+
+	// Adjust the width for the vertical scroll bar and the left and right border.
+	MaxWidth += ::GetSystemMetrics(SM_CXVSCROLL) + 2*::GetSystemMetrics(SM_CXEDGE);
+	// Set the width of the list box so that every item is completely visible.
+	pComboBox->SetDroppedWidth(MaxWidth);
+}
+void CQuoteTesterDlg::OnBnClickedCheck2()
+{
+	// TODO: Add your control notification handler code here
+	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
+	if ( pButton1->GetCheck() == BST_UNCHECKED ) 
+		pButton->SetCheck ( 0 );
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg::OnBnClickedCheck3()
+{
+	// TODO: Add your control notification handler code here
+	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
+	if ( pButton->GetCheck() == BST_CHECKED ) 
+		pButton1->SetCheck ( 1 );
+	/*else
+		if ( pButton->GetCheck() == BST_UNCHECKED ) 
+			pButton->SetCheck ( 1 );*/
 	UpdateData( TRUE );
 }

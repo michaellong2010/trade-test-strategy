@@ -71,6 +71,8 @@ public:
 	afx_msg void OnKillfocus_MA1_margin();
 	afx_msg void OnKillfocus_MA2_margin();
 	afx_msg void OnKillfocus_MA3_margin();
+	afx_msg void OnCbnSelchangeCombo1();
+	afx_msg void OnKillfocus_Stoploss ();
 
 	boolean ReadyForTrading;
 
@@ -99,4 +101,11 @@ public:
 	int mMA1_period, mMA2_period, mMA3_period;
 	double mMA1_margin, mMA2_margin, mMA3_margin;
 	double mMA1_margin_factor, mMA2_margin_factor, mMA3_margin_factor;
+
+	/*combobox strategy methods combination*/
+	CComboBox m_ComboBox1_strategy;
+	void AdjustDropDownWidth(int nID);
+	int m_strategy, m_stoploss, m_en_stoploss, m_en_trailing_stop;
+	afx_msg void OnBnClickedCheck2();
+	afx_msg void OnBnClickedCheck3();
 };

@@ -39,10 +39,13 @@ private:
 	/*margin, free-margin, equity*/
 	double margin, free_margin, equity;
 	double final_close;
-	boolean m_en_trailing_stop;
+	boolean m_en_trailing_stop, m_en_stoploss;
 	double m_trailing_stop_points;
+	int m_nPtr;
+	int kline_close_time, m_stoploss_count, tradable_time;
+	int nTimeFrame;
 public:
-	CAccount( string account_name );
+	CAccount( string account_name, int time_frame );
 	~CAccount();
 
 	/*place a order with market price¡Astage into pending status at tick==nPtr and deal at next tick*/
@@ -53,4 +56,6 @@ public:
 	fstream *p_portfolio_fs;
 	ofstream txt_portfolio_fs;
 	void refresh_portfolio( bool exit_trading );
+	void update_kline_close_time ( int new_close_time );
+	void set_stoploss ( int, int, int );
 };
