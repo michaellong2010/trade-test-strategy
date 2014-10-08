@@ -346,17 +346,17 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			  tradable = true;
 			else {
 				if ( position_type == Long_position ) {
-					if ( nClose > ( m_MA1 * ( 1 + m_factor ) ) )
+					/*if ( nClose > ( m_MA1 * ( 1 + m_factor ) ) )
 						tradable = true;
 					else
-						tradable = false;
+						tradable = false;*/
 				}
 				else
 					if ( position_type == Short_position ) {
-						if ( nClose < ( m_MA1 * ( 1 - m_factor ) ) )
+						/*if ( nClose < ( m_MA1 * ( 1 - m_factor ) ) )
 							tradable = true;
 						else
-							tradable = false;
+							tradable = false;*/
 					}
 			}
 			if ( tradable == true ) {

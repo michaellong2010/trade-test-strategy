@@ -105,7 +105,8 @@ public:
 	/*combobox strategy methods combination*/
 	CComboBox m_ComboBox1_strategy;
 	void AdjustDropDownWidth(int nID);
-	int m_strategy, m_stoploss, m_en_stoploss, m_en_trailing_stop;
+	int m_strategy, m_stoploss, m_en_stoploss, m_en_trailing_stop, m_en_trade_MA_ambigous;
 	afx_msg void OnBnClickedCheck2();
 	afx_msg void OnBnClickedCheck3();
+	afx_msg void OnBnClickedCheck4();
 };

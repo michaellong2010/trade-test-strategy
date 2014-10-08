@@ -509,6 +509,7 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	int year, month, day;
 	string txt_out_filename;
 	CString txt_filenameW, KLine_filenameW;
+	int strip_repeat_mDate = 0, strip_repeat_mTime = 0;
 	
 	//GetSystemTime ( &ti ) ;
 	::GetLocalTime ( &ti );
@@ -579,10 +580,14 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 			if ( current_date == m_file_candlestick.mDate || ( current_date > m_file_candlestick.mDate && days_difference ( day, month, year, ti.wDay, ti.wMonth, ti.wYear ) == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) )
 				continue;
 			else {
+				if ( strip_repeat_mDate != m_file_candlestick.mDate || strip_repeat_mTime != m_file_candlestick.mTime ) {
 				pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );
 				nRead_candlesticks++;
 				if ( m_file_candlestick.mTime < mMap_KLine_open_time [ m_str_symbol ] ) {
 					mMap_KLine_open_time [ m_str_symbol ] = m_file_candlestick.mTime;
+				}
+				strip_repeat_mDate = m_file_candlestick.mDate;
+				strip_repeat_mTime = m_file_candlestick.mTime;
 				}
 			}
 
