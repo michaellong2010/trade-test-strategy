@@ -1,0 +1,382 @@
+[4764] 2015/01/02 00:18:53.053 API InitInstance 
+[4764] 2015/01/02 00:21:14.105 API ExitInstance 
+[6204] 2015/01/02 01:48:55.130 API InitInstance 
+[6204] 2015/01/02 01:49:09.312 SKQuoteLib_Initialize ¡GS122811334
+[6204] 2015/01/02 01:49:09.312 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_Initialize  SUCCESS 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachConnectionCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachQuoteCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachBest5CallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachTicksGetCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachKLineDataCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachMarketTotCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachMarketBuySellCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachMarketHighLowCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachStrikePricesCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttchServerTimeCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6204] 2015/01/02 01:49:10.469 SKQuoteLib_AttachProductsReadyCallBack 
+[228] 2015/01/02 01:51:56.100 API InitInstance 
+[228] 2015/01/02 01:52:05.691 SKQuoteLib_Initialize ¡GS122811334
+[228] 2015/01/02 01:52:05.691 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_Initialize  SUCCESS 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachConnectionCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachQuoteCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachBest5CallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachTicksGetCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachKLineDataCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachMarketTotCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachMarketBuySellCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachMarketHighLowCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachStrikePricesCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttchServerTimeCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[228] 2015/01/02 01:52:06.864 SKQuoteLib_AttachProductsReadyCallBack 
+[228] 2015/01/02 01:52:15.667 SKQuoteLib_EnterMonitor IP¡Ginfo9.capital.com.tw
+[228] 2015/01/02 01:52:15.717 SocketConnect Type¡G100  ErrorCode¡G0
+[228] 2015/01/02 01:52:28.197 Stocks Ready
+[228] 2015/01/02 01:52:28.418 SKQuoteLib_GetKLine(TX00,1)
+[228] 2015/01/02 01:52:34.227 SKQuoteLib_GetKLine(TX00,4)
+[228] 2015/01/02 01:52:34.227 SKQuoteLib_GetDate(TX00,4)
+[228] 2015/01/02 01:52:36.456 SKQuoteLib_RequestTicks (1,TX00)
+[5344] 2015/01/02 10:11:45.154 API InitInstance 
+[6096] 2015/01/02 10:12:51.492 API InitInstance 
+[6020] 2015/01/02 10:13:48.067 API InitInstance 
+[5800] 2015/01/02 10:25:24.451 API InitInstance 
+[1216] 2015/01/02 10:27:09.704 API InitInstance 
+[5576] 2015/01/02 10:29:55.114 API InitInstance 
+[1560] 2015/01/02 10:44:25.679 API InitInstance 
+[1560] 2015/01/02 10:51:20.703 SKQuoteLib_Initialize ¡GS122811334
+[1560] 2015/01/02 10:51:20.703 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_Initialize  SUCCESS 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachConnectionCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachQuoteCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachBest5CallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachTicksGetCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachKLineDataCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachMarketTotCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachMarketBuySellCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachMarketHighLowCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachStrikePricesCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttchServerTimeCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[1560] 2015/01/02 10:51:22.066 SKQuoteLib_AttachProductsReadyCallBack 
+[1560] 2015/01/02 10:51:42.117 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[6004] 2015/01/02 11:03:17.373 API InitInstance 
+[6004] 2015/01/02 11:03:38.391 SKQuoteLib_Initialize ¡GS122811334
+[6004] 2015/01/02 11:03:38.391 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_Initialize  SUCCESS 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachConnectionCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachQuoteCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachBest5CallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachTicksGetCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachKLineDataCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachMarketTotCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachMarketBuySellCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachMarketHighLowCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachStrikePricesCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttchServerTimeCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6004] 2015/01/02 11:03:39.740 SKQuoteLib_AttachProductsReadyCallBack 
+[5180] 2015/01/02 11:04:53.559 API InitInstance 
+[5180] 2015/01/02 11:05:14.581 SKQuoteLib_Initialize ¡GS122811334
+[5180] 2015/01/02 11:05:14.581 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_Initialize  SUCCESS 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachConnectionCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachQuoteCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachBest5CallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachTicksGetCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachKLineDataCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachMarketTotCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachMarketBuySellCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachMarketHighLowCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachStrikePricesCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttchServerTimeCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5180] 2015/01/02 11:05:15.726 SKQuoteLib_AttachProductsReadyCallBack 
+[5272] 2015/01/02 11:06:54.346 API InitInstance 
+[5272] 2015/01/02 11:07:11.866 SKQuoteLib_Initialize ¡GS122811334
+[5272] 2015/01/02 11:07:11.866 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_Initialize  SUCCESS 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachConnectionCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachQuoteCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachBest5CallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachTicksGetCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachKLineDataCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachMarketTotCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachMarketBuySellCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachMarketHighLowCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachStrikePricesCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttchServerTimeCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5272] 2015/01/02 11:07:13.062 SKQuoteLib_AttachProductsReadyCallBack 
+[1624] 2015/01/02 11:08:22.856 API InitInstance 
+[1624] 2015/01/02 11:09:04.986 SKQuoteLib_Initialize ¡GS122811334
+[1624] 2015/01/02 11:09:04.986 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_Initialize  SUCCESS 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachConnectionCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachQuoteCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachBest5CallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachTicksGetCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachKLineDataCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachMarketTotCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachMarketBuySellCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachMarketHighLowCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachStrikePricesCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttchServerTimeCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[1624] 2015/01/02 11:09:06.137 SKQuoteLib_AttachProductsReadyCallBack 
+[5920] 2015/01/02 11:44:30.219 API InitInstance 
+[3832] 2015/01/02 11:45:11.304 API InitInstance 
+[3172] 2015/01/02 11:47:18.090 API InitInstance 
+[1816] 2015/01/02 11:47:58.212 API InitInstance 
+[1816] 2015/01/02 11:48:34.879 SKQuoteLib_Initialize ¡GS122811334
+[1816] 2015/01/02 11:48:34.880 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1816] 2015/01/02 11:48:36.182 SKQuoteLib_Initialize  SUCCESS 
+[1816] 2015/01/02 11:48:36.183 SKQuoteLib_AttachConnectionCallBack 
+[1816] 2015/01/02 11:48:36.184 SKQuoteLib_AttachQuoteCallBack 
+[1816] 2015/01/02 11:48:36.185 SKQuoteLib_AttachBest5CallBack 
+[1816] 2015/01/02 11:48:36.186 SKQuoteLib_AttachTicksGetCallBack 
+[1816] 2015/01/02 11:48:36.187 SKQuoteLib_AttachKLineDataCallBack 
+[1816] 2015/01/02 11:48:36.188 SKQuoteLib_AttachMarketTotCallBack 
+[1816] 2015/01/02 11:48:36.189 SKQuoteLib_AttachMarketBuySellCallBack 
+[1816] 2015/01/02 11:48:36.190 SKQuoteLib_AttachMarketHighLowCallBack 
+[1816] 2015/01/02 11:48:36.191 SKQuoteLib_AttachStrikePricesCallBack 
+[1816] 2015/01/02 11:48:36.192 SKQuoteLib_AttchServerTimeCallBack 
+[1816] 2015/01/02 11:48:36.193 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[1816] 2015/01/02 11:48:36.194 SKQuoteLib_AttachProductsReadyCallBack 
+[6056] 2015/01/02 11:50:45.672 API InitInstance 
+[6056] 2015/01/02 11:51:03.242 SKQuoteLib_Initialize ¡GS122811334
+[6056] 2015/01/02 11:51:03.243 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6056] 2015/01/02 11:51:04.413 SKQuoteLib_Initialize  SUCCESS 
+[6056] 2015/01/02 11:51:04.414 SKQuoteLib_AttachConnectionCallBack 
+[6056] 2015/01/02 11:51:04.414 SKQuoteLib_AttachQuoteCallBack 
+[6056] 2015/01/02 11:51:04.414 SKQuoteLib_AttachBest5CallBack 
+[6056] 2015/01/02 11:51:04.415 SKQuoteLib_AttachTicksGetCallBack 
+[6056] 2015/01/02 11:51:04.415 SKQuoteLib_AttachKLineDataCallBack 
+[6056] 2015/01/02 11:51:04.416 SKQuoteLib_AttachMarketTotCallBack 
+[6056] 2015/01/02 11:51:04.416 SKQuoteLib_AttachMarketBuySellCallBack 
+[6056] 2015/01/02 11:51:04.417 SKQuoteLib_AttachMarketHighLowCallBack 
+[6056] 2015/01/02 11:51:04.417 SKQuoteLib_AttachStrikePricesCallBack 
+[6056] 2015/01/02 11:51:04.418 SKQuoteLib_AttchServerTimeCallBack 
+[6056] 2015/01/02 11:51:04.418 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6056] 2015/01/02 11:51:04.418 SKQuoteLib_AttachProductsReadyCallBack 
+[6056] 2015/01/02 11:51:40.575 SKQuoteLib_EnterMonitor IP¡Ginfo11.capital.com.tw
+[3720] 2015/01/02 11:52:12.426 API InitInstance 
+[3720] 2015/01/02 11:52:28.293 SKQuoteLib_Initialize ¡GS122811334
+[3720] 2015/01/02 11:52:28.294 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3720] 2015/01/02 11:52:29.454 SKQuoteLib_Initialize  SUCCESS 
+[3720] 2015/01/02 11:52:29.455 SKQuoteLib_AttachConnectionCallBack 
+[3720] 2015/01/02 11:52:29.455 SKQuoteLib_AttachQuoteCallBack 
+[3720] 2015/01/02 11:52:29.456 SKQuoteLib_AttachBest5CallBack 
+[3720] 2015/01/02 11:52:29.456 SKQuoteLib_AttachTicksGetCallBack 
+[3720] 2015/01/02 11:52:29.457 SKQuoteLib_AttachKLineDataCallBack 
+[3720] 2015/01/02 11:52:29.458 SKQuoteLib_AttachMarketTotCallBack 
+[3720] 2015/01/02 11:52:29.458 SKQuoteLib_AttachMarketBuySellCallBack 
+[3720] 2015/01/02 11:52:29.459 SKQuoteLib_AttachMarketHighLowCallBack 
+[3720] 2015/01/02 11:52:29.460 SKQuoteLib_AttachStrikePricesCallBack 
+[3720] 2015/01/02 11:52:29.460 SKQuoteLib_AttchServerTimeCallBack 
+[3720] 2015/01/02 11:52:29.461 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[3720] 2015/01/02 11:52:29.461 SKQuoteLib_AttachProductsReadyCallBack 
+[7136] 2015/01/02 12:58:31.643 API InitInstance 
+[7136] 2015/01/02 12:59:24.636 SKQuoteLib_Initialize ¡GS122811334
+[7136] 2015/01/02 12:59:24.637 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[7136] 2015/01/02 12:59:26.049 SKQuoteLib_Initialize  SUCCESS 
+[7136] 2015/01/02 12:59:26.049 SKQuoteLib_AttachConnectionCallBack 
+[7136] 2015/01/02 12:59:26.050 SKQuoteLib_AttachQuoteCallBack 
+[7136] 2015/01/02 12:59:26.050 SKQuoteLib_AttachBest5CallBack 
+[7136] 2015/01/02 12:59:26.051 SKQuoteLib_AttachTicksGetCallBack 
+[7136] 2015/01/02 12:59:26.051 SKQuoteLib_AttachKLineDataCallBack 
+[7136] 2015/01/02 12:59:26.052 SKQuoteLib_AttachMarketTotCallBack 
+[7136] 2015/01/02 12:59:26.052 SKQuoteLib_AttachMarketBuySellCallBack 
+[7136] 2015/01/02 12:59:26.053 SKQuoteLib_AttachMarketHighLowCallBack 
+[7136] 2015/01/02 12:59:26.053 SKQuoteLib_AttachStrikePricesCallBack 
+[7136] 2015/01/02 12:59:26.054 SKQuoteLib_AttchServerTimeCallBack 
+[7136] 2015/01/02 12:59:26.055 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[7136] 2015/01/02 12:59:26.055 SKQuoteLib_AttachProductsReadyCallBack 
+[7136] 2015/01/02 12:59:41.857 SKQuoteLib_LeaveMonitor 
+[7136] 2015/01/02 12:59:41.861 SKQuoteLib_LeaveMonitor 
+[344] 2015/01/02 13:04:38.770 API InitInstance 
+[1320] 2015/01/02 13:07:23.022 API InitInstance 
+[1320] 2015/01/02 13:07:42.376 SKQuoteLib_Initialize ¡GS122811334
+[1320] 2015/01/02 13:07:42.377 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1320] 2015/01/02 13:07:43.514 SKQuoteLib_Initialize  SUCCESS 
+[1320] 2015/01/02 13:07:43.515 SKQuoteLib_AttachConnectionCallBack 
+[1320] 2015/01/02 13:07:43.516 SKQuoteLib_AttachQuoteCallBack 
+[1320] 2015/01/02 13:07:43.516 SKQuoteLib_AttachBest5CallBack 
+[1320] 2015/01/02 13:07:43.517 SKQuoteLib_AttachTicksGetCallBack 
+[1320] 2015/01/02 13:07:43.517 SKQuoteLib_AttachKLineDataCallBack 
+[1320] 2015/01/02 13:07:43.518 SKQuoteLib_AttachMarketTotCallBack 
+[1320] 2015/01/02 13:07:43.518 SKQuoteLib_AttachMarketBuySellCallBack 
+[1320] 2015/01/02 13:07:43.519 SKQuoteLib_AttachMarketHighLowCallBack 
+[1320] 2015/01/02 13:07:43.519 SKQuoteLib_AttachStrikePricesCallBack 
+[1320] 2015/01/02 13:07:43.520 SKQuoteLib_AttchServerTimeCallBack 
+[1320] 2015/01/02 13:07:43.520 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[1320] 2015/01/02 13:07:43.521 SKQuoteLib_AttachProductsReadyCallBack 
+[7072] 2015/01/02 13:22:07.932 API InitInstance 
+[6912] 2015/01/02 13:22:55.567 API InitInstance 
+[6288] 2015/01/02 13:25:04.260 API InitInstance 
+[5420] 2015/01/02 13:30:00.159 API InitInstance 
+[5420] 2015/01/02 13:30:33.344 SKQuoteLib_Initialize ¡GS122811334
+[5420] 2015/01/02 13:30:33.360 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_Initialize  SUCCESS 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachConnectionCallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachQuoteCallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachBest5CallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachTicksGetCallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachKLineDataCallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachMarketTotCallBack 
+[5420] 2015/01/02 13:30:34.456 SKQuoteLib_AttachMarketBuySellCallBack 
+[5420] 2015/01/02 13:30:34.472 SKQuoteLib_AttachMarketHighLowCallBack 
+[5420] 2015/01/02 13:30:34.472 SKQuoteLib_AttachStrikePricesCallBack 
+[5420] 2015/01/02 13:30:34.472 SKQuoteLib_AttchServerTimeCallBack 
+[5420] 2015/01/02 13:30:34.472 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5420] 2015/01/02 13:30:34.472 SKQuoteLib_AttachProductsReadyCallBack 
+[5420] 2015/01/02 13:31:18.321 SKQuoteLib_LeaveMonitor 
+[5420] 2015/01/02 13:31:18.321 SKQuoteLib_LeaveMonitor 
+[3300] 2015/01/02 13:39:50.460 API InitInstance 
+[7044] 2015/01/02 13:41:03.753 API InitInstance 
+[7044] 2015/01/02 13:41:24.295 SKQuoteLib_Initialize ¡GS122811334
+[7044] 2015/01/02 13:41:24.295 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[7044] 2015/01/02 13:41:25.358 SKQuoteLib_Initialize  SUCCESS 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachConnectionCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachQuoteCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachBest5CallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachTicksGetCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachKLineDataCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachMarketTotCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachMarketBuySellCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachMarketHighLowCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachStrikePricesCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttchServerTimeCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[7044] 2015/01/02 13:41:31.668 SKQuoteLib_AttachProductsReadyCallBack 
+[4376] 2015/01/02 13:43:16.451 API InitInstance 
+[4376] 2015/01/02 13:43:28.331 API ExitInstance 
+[6564] 2015/01/02 13:43:56.638 API InitInstance 
+[4904] 2015/01/02 13:44:16.747 API InitInstance 
+[4640] 2015/01/02 13:47:42.261 API InitInstance 
+[1240] 2015/01/02 13:52:49.503 API InitInstance 
+[6832] 2015/01/02 13:57:09.947 API InitInstance 
+[6832] 2015/01/02 13:57:42.922 SKQuoteLib_Initialize ¡GS122811334
+[6832] 2015/01/02 13:57:42.922 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_Initialize  SUCCESS 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachConnectionCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachQuoteCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachBest5CallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachTicksGetCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachKLineDataCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachMarketTotCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachMarketBuySellCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachMarketHighLowCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachStrikePricesCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttchServerTimeCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6832] 2015/01/02 13:57:44.680 SKQuoteLib_AttachProductsReadyCallBack 
+[608] 2015/01/02 14:04:36.840 API InitInstance 
+[608] 2015/01/02 14:04:56.264 SKQuoteLib_Initialize ¡GS122811334
+[608] 2015/01/02 14:04:56.264 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_Initialize  SUCCESS 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachConnectionCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachQuoteCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachBest5CallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachTicksGetCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachKLineDataCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachMarketTotCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachMarketBuySellCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachMarketHighLowCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachStrikePricesCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttchServerTimeCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[608] 2015/01/02 14:04:57.389 SKQuoteLib_AttachProductsReadyCallBack 
+[4384] 2015/01/02 14:06:56.808 API InitInstance 
+[4384] 2015/01/02 14:07:08.089 SKQuoteLib_Initialize ¡GS122811334
+[4384] 2015/01/02 14:07:08.089 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4384] 2015/01/02 14:07:09.214 SKQuoteLib_Initialize  SUCCESS 
+[4384] 2015/01/02 14:07:09.214 SKQuoteLib_AttachConnectionCallBack 
+[4384] 2015/01/02 14:07:09.214 SKQuoteLib_AttachQuoteCallBack 
+[4384] 2015/01/02 14:07:09.214 SKQuoteLib_AttachBest5CallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachTicksGetCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachKLineDataCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachMarketTotCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachMarketBuySellCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachMarketHighLowCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachStrikePricesCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttchServerTimeCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[4384] 2015/01/02 14:07:09.230 SKQuoteLib_AttachProductsReadyCallBack 
+[6588] 2015/01/02 14:07:45.360 API InitInstance 
+[6588] 2015/01/02 14:08:16.182 SKQuoteLib_Initialize ¡GS122811334
+[6588] 2015/01/02 14:08:16.182 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_Initialize  SUCCESS 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachConnectionCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachQuoteCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachBest5CallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachTicksGetCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachKLineDataCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachMarketTotCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachMarketBuySellCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachMarketHighLowCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachStrikePricesCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttchServerTimeCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6588] 2015/01/02 14:08:17.433 SKQuoteLib_AttachProductsReadyCallBack 
+[6360] 2015/01/02 14:08:54.361 API InitInstance 
+[6360] 2015/01/02 14:09:16.539 SKQuoteLib_Initialize ¡GS122811334
+[6360] 2015/01/02 14:09:16.539 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_Initialize  SUCCESS 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachConnectionCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachQuoteCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachBest5CallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachTicksGetCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachKLineDataCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachMarketTotCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachMarketBuySellCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachMarketHighLowCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachStrikePricesCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttchServerTimeCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[6360] 2015/01/02 14:09:17.682 SKQuoteLib_AttachProductsReadyCallBack 
+[2024] 2015/01/02 18:18:08.829 API InitInstance 
+[2024] 2015/01/02 18:18:22.042 SKQuoteLib_Initialize ¡GS122811334
+[2024] 2015/01/02 18:18:22.042 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2024] 2015/01/02 18:18:22.526 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[832] 2015/01/02 18:19:15.113 API InitInstance 
+[832] 2015/01/02 18:19:38.560 SKQuoteLib_Initialize ¡GS122811334
+[832] 2015/01/02 18:19:38.560 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[832] 2015/01/02 18:19:38.872 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[832] 2015/01/02 18:20:55.578 SKQuoteLib_Initialize ¡GS122811334
+[832] 2015/01/02 18:20:55.578 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[832] 2015/01/02 18:20:55.609 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[3700] 2015/01/02 18:21:48.181 API InitInstance 
+[3700] 2015/01/02 18:22:17.868 SKQuoteLib_Initialize ¡GS122811334
+[3700] 2015/01/02 18:22:17.868 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[3700] 2015/01/02 18:22:18.180 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[5060] 2015/01/02 18:23:02.647 API InitInstance 
+[5060] 2015/01/02 18:23:15.829 SKQuoteLib_Initialize ¡GS122811334
+[5060] 2015/01/02 18:23:15.829 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5060] 2015/01/02 18:23:16.141 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[2024] 2015/01/02 18:24:48.228 API InitInstance 
+[2024] 2015/01/02 18:25:08.336 SKQuoteLib_Initialize ¡GS122811334
+[2024] 2015/01/02 18:25:08.336 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2024] 2015/01/02 18:25:08.648 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[1804] 2015/01/02 18:26:39.783 API InitInstance 
+[1804] 2015/01/02 18:27:02.981 SKQuoteLib_Initialize ¡GS122811334
+[1804] 2015/01/02 18:27:02.981 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1804] 2015/01/02 18:27:03.293 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[4116] 2015/01/02 18:28:51.388 API InitInstance 
+[4116] 2015/01/02 18:29:32.868 SKQuoteLib_Initialize ¡GS122811334
+[4116] 2015/01/02 18:29:32.868 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4116] 2015/01/02 18:29:33.196 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[5056] 2015/01/02 18:33:29.658 API InitInstance 
+[5056] 2015/01/02 18:33:48.784 SKQuoteLib_Initialize ¡GS122811334
+[5056] 2015/01/02 18:33:48.799 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5056] 2015/01/02 18:33:49.096 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[5056] 2015/01/02 18:34:50.263 SKQuoteLib_Initialize ¡GS122811334
+[5056] 2015/01/02 18:34:50.263 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5056] 2015/01/02 18:34:50.295 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[2428] 2015/01/02 18:36:31.470 API InitInstance 
+[2428] 2015/01/02 18:36:50.580 SKQuoteLib_Initialize ¡GS122811334
+[2428] 2015/01/02 18:36:50.580 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[2428] 2015/01/02 18:36:50.892 SKQuoteLib_Initialize ¡Ghttps://order3.capital.com.tw/
+[5608] 2015/01/02 22:34:30.005 API InitInstance 

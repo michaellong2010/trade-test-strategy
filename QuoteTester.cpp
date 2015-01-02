@@ -5,12 +5,16 @@
 #include "stdafx.h"
 #include "QuoteTester.h"
 #include "QuoteTesterDlg.h"
+#include "test_dlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
+/*DWORD g_hThreadID;
+HANDLE g_hThread_Order;
+DWORD WINAPI ThreadProc1( LPVOID lpParameter );
+HWND g_hWnd = NULL;*/
 // CQuoteTesterApp
 
 BEGIN_MESSAGE_MAP(CQuoteTesterApp, CWinApp)
@@ -69,6 +73,7 @@ BOOL CQuoteTesterApp::InitInstance()
 
 	CQuoteTesterDlg dlg;
 	m_pMainWnd = &dlg;
+	//g_hThread_Order = ::CreateThread( NULL, 0, ThreadProc1, this, 0, &g_hThreadID );
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
@@ -79,7 +84,17 @@ BOOL CQuoteTesterApp::InitInstance()
 	{
 		// TODO: 在此放置於使用 [取消] 來停止使用對話方塊時
 		// 處理的程式碼
+		/*::PostThreadMessage ( dlg.m_Order_operator1.g_ThreadID, WM_DESTROY, 0, 0 );
+		::PostThreadMessage ( dlg.m_Order_operator1.g_ThreadID, WM_QUIT, 0, 0 );
+		::WaitForSingleObject ( dlg.m_Order_operator1.g_hThread_Order, INFINITE );
+		::PostThreadMessage ( dlg.m_Order_operator2.g_ThreadID, WM_DESTROY, 0, 0 );
+		::PostThreadMessage ( dlg.m_Order_operator2.g_ThreadID, WM_QUIT, 0, 0 );
+		::WaitForSingleObject ( dlg.m_Order_operator2.g_hThread_Order, INFINITE );*/
 	}
+	if (  dlg.m_Order_operator1.m_process_info.hProcess != NULL )
+		TerminateProcess (  dlg.m_Order_operator1.m_process_info.hProcess, 0 );
+	if (  dlg.m_Order_operator2.m_process_info.hProcess != NULL )
+		TerminateProcess (  dlg.m_Order_operator2.m_process_info.hProcess, 0 );
 
 	// 刪除上面所建立的殼層管理員。
 	/*if (pShellManager != NULL)
@@ -92,3 +107,35 @@ BOOL CQuoteTesterApp::InitInstance()
 	return FALSE;
 }
 
+/*DWORD WINAPI ThreadProc1( LPVOID lpParameter ) {
+	BOOL bRet = FALSE;
+	MSG msg;	
+	HACCEL hAccTable;
+	Ctest_dlg *m_pdlgAbout = NULL;
+
+	m_pdlgAbout = new Ctest_dlg ();
+	m_pdlgAbout->Create ( Ctest_dlg::IDD, NULL );
+	g_hWnd = m_pdlgAbout->m_hWnd;
+	m_pdlgAbout->ShowWindow(SW_SHOW);
+
+	while ( ( bRet = ::GetMessage ( &msg, NULL, 0, 0 ) ) ) {
+		if ( ( bRet = ::TranslateMessage ( &msg ) ) == TRUE ) {
+			if ( msg.message == WM_KEYUP )
+				TRACE ( "WM_SYSCOMMAND\n" );		
+		}
+		else {
+		
+		}
+		if ( msg.message == WM_CHAR )
+			TRACE ( "WM_CHAR\n" );
+		else
+			if ( msg.message == WM_CLOSE )
+				TRACE ( "WM_CLOSE\n" );
+			else
+				if ( msg.message == WM_DESTROY )
+					TRACE ( "WM_DESTROY\n" );
+		//::TranslateMessage ( &msg );
+		::DispatchMessage ( &msg );
+	}
+	return 0;
+}*/

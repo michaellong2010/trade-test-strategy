@@ -22,10 +22,11 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 
 	TCHAR path [ 200 ];
 	GetCurrentDirectory ( 200, path );	
-	path_bufW = path;
-	path_bufW = path_bufW + _T("\\data\\");
+	//path_bufW = path;
+	//path_bufW = path_bufW + _T("\\data\\");
 	path_bufA = path;
 	path_bufA = path_bufA + "\\data\\";
+	path_bufW = path_bufA;
 	//wcstombs( path_buf, path, sizeof(path_buf) );
 	//strcpy ( path_buf, path );
 	//strcat ( path_buf, "\\data\\");

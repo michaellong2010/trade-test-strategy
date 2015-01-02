@@ -7,12 +7,14 @@
 #include <deque>
 #include <cmath>
 #include <math.h>
+#include "Order.h"
 #pragma once
 
 using namespace std; 
 #define WM_DATA WM_USER+1
 #define WM_TICK WM_USER+3
 #define WM_HISTORY_TICK WM_USER+5
+#define CDialogEx CDialog
 
 // CQuoteTesterDlg ¹ï¸Ü¤è¶ô
 class CQuoteTesterDlg : public CDialogEx
@@ -109,4 +111,7 @@ public:
 	afx_msg void OnBnClickedCheck2();
 	afx_msg void OnBnClickedCheck3();
 	afx_msg void OnBnClickedCheck4();
+
+	CCapitalOrder m_Order_operator1, m_Order_operator2;
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

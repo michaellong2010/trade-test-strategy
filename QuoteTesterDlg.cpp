@@ -938,8 +938,8 @@ void _stdcall OnNotifyKLineData( char * caStockNo, char * caData )
 		BSTR bstrMsg = strMsg.AllocSysString();
 
 		if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
-			SysFreeString(bstrMsg);
 			SendMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
+			SysFreeString(bstrMsg);
 		}
 		else
 			PostMessage(FindWindow(NULL,_T("QuoteTester")),WM_DATA,m_nType,(int)bstrMsg);
@@ -1083,8 +1083,8 @@ void CQuoteTesterDlg::OnBnClickedButton1()
 	CStringA strTempB(strPassword);
 	const CHAR* caPass = (LPCSTR)strTempB;
 
-	//nCode = SKQuoteLib_Initialize(caText,caPass);
-	nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
+	nCode = SKQuoteLib_Initialize(caText,caPass);
+	//nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
 
 	if( nCode == 0 )
 	{
@@ -1433,11 +1433,11 @@ DWORD WINAPI do_quote(LPVOID dlg) {
 	/*CEdit* pEdit; 
 	pEdit = (CEdit*) pDialog->GetDlgItem(IDC_EDIT_ID); 
 	CString strText;
-	pEdit->GetWindowTextW(strText);
+	pEdit->GetWindowText(strText);
 
     pEdit = (CEdit*) pDialog->GetDlgItem(IDC_EDIT_Pass); 
 	CString strPassword;
-	pEdit->GetWindowTextW(strPassword);
+	pEdit->GetWindowText(strPassword);
 
 	CStringA strTempA(strText);
 	const CHAR* caText = strTempA.GetString();
@@ -1562,7 +1562,13 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	this->account_B.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
 
 	int  nCode = 0;
-	t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
+	//t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
+	t_hnd = ::CreateThread( NULL, 0, do_quote, this, 0, &t_id );
+	::SuspendThread ( t_hnd );
+	/*20141221 added by michael
+	one capital account correspod to one capital order thread*/
+	/*g_hThread_Capital_Order [ 0 ] = ::CreateThread( NULL, 0, ThreadProc, this, 0, &g_Thread_ID_Capital_Order[ 0 ] );
+	g_hThread_Capital_Order [ 1 ] = ::CreateThread( NULL, 0, ThreadProc, this, 0, &g_Thread_ID_Capital_Order[ 1 ] );*/
 
 	CEdit* pEdit; 
 	pEdit = (CEdit*) GetDlgItem(IDC_EDIT_ID); 
@@ -1579,8 +1585,10 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	CStringA strTempB(strPassword);
 	const CHAR* caPass = (LPCSTR)strTempB;
 
-	//nCode = SKQuoteLib_Initialize(caText,caPass);
-	nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
+	nCode = SKQuoteLib_Initialize(caText,caPass);
+//nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
+	//this->m_Order_operator1.LoginAccount ( caText, caPass );
+	//this->m_Order_operator2.LoginAccount ( caText, caPass );
 	if( nCode == 0 )
 	{
 		//µù¥UCALLBACK
@@ -1598,7 +1606,34 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 		nCode = SKQuoteLib_AttachHistoryTicksGetCallBack( (UINT_PTR) OnNotifyHistoryTicksGet);
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 
+		/*20141227 added by michael*/
+		if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
+			TRACE ( "login first order account %s failed", caText );
+			OnBnClickedButton14 ( );
+		}
+		else
+			if ( this->m_Order_operator2.LoginAccount ( caText, caPass ) ) {
+				::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
+				TRACE ( "login second order account %s failed", caText );
+				OnBnClickedButton14 ( );
+			}
+		//this->m_Order_operator1.SetUIVisibility ( SW_SHOW );
+		//this->m_Order_operator2.SetUIVisibility ( SW_SHOW );
 		//AfxMessageBox(_T("ªì©l¦¨¥\"));
+	}
+	else {
+		if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
+			TRACE ( "login first order account %s failed", caText );
+			OnBnClickedButton14 ( );
+		}
+		else
+			if ( this->m_Order_operator2.LoginAccount ( caText, caPass ) ) {
+				::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
+				TRACE ( "login second order account %s failed", caText );
+				OnBnClickedButton14 ( );
+			}	
 	}
 
 	//OnBnClickedButton1();
@@ -1813,4 +1848,17 @@ void CQuoteTesterDlg::OnBnClickedCheck4()
 {
 	// TODO: Add your control notification handler code here
 	UpdateData( TRUE );
+}
+
+BOOL CQuoteTesterDlg::PreTranslateMessage(MSG* pMsg)
+{
+	/*if( pMsg->message == WM_KEYDOWN )
+	{
+		if(pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
+		{
+			return TRUE;                // Do not process further
+		}
+	}*/
+
+	return CDialog::PreTranslateMessage ( pMsg );
 }

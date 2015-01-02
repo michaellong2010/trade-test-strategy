@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Account.h"
 
 TOrder_info m_order;
@@ -18,13 +19,13 @@ CAccount::CAccount( string account_name, int time_frame ) {
 	//AfxMessageBox( path );
 	//wcstombs( path_buf, path, sizeof(path_buf) );
 	//strcpy ( path_buf, path );
-	path_bufW = path;
+	path_bufA = path;
 	list<TOrder_info> *pList_open_order, *pList_close_order;
 	//m_portfolio_filename = "C:\\temp\\" + account_name + ".bin";
 	//m_txt_portfolio_filename = "C:\\temp\\" + account_name + ".txt";
 	//strcat ( path_buf, "\\report\\");
-	path_bufW = path_bufW + _T("\\report\\");
-	path_bufA = path_bufW;
+	path_bufA = path_bufA + _T("\\report\\");
+	path_bufW = path_bufA;
 	_mkdir ( (char *)path_bufA.GetString() );
 	m_portfolio_filename = ((char *)path_bufA.GetString()) + account_name + ".bin";
 	m_txt_portfolio_filename = ((char *)path_bufA.GetString()) + account_name + ".txt";

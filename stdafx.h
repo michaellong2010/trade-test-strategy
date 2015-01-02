@@ -36,7 +36,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 //#include <afxcontrolbars.h>     // 功能區和控制列的 MFC 支援
-#define CDialogEx CDialog
+
 
 
 
