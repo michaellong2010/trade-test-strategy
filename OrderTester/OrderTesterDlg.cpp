@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "OrderTester.h"
 #include "OrderTesterDlg.h"
+#include <Account.h>
 //#include "afxdialogex.h"
 
 #include "Functions.h"
@@ -58,6 +59,7 @@ BOOL COrderTesterDlg::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESU
 LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) {
 	
 	TLogin *plogin_info;
+	TOrder_info *porder_info;
 	CString str1, str2;
 
 	if ( message == WM_CLOSE )
@@ -75,6 +77,11 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 					str1 = plogin_info->LoginID;
 					::SendMessage ( this->m_hWnd, WM_LOGIN, (WPARAM) str1.AllocSysString (), (LPARAM) str2.AllocSysString () );
 				}
+				else
+					if ( cds.dwData == ORDER_COPYDATA ) {
+						porder_info = ( TOrder_info * ) cds.lpData;
+						//porder_info->
+					}
 			}
 		//if ( message == WM_LOGIN )
 			//return FALSE;
@@ -434,7 +441,7 @@ void __stdcall OnOrderAsyncCallBack( DWORD dwThreadID, int nCode, BSTR bstrMessa
 	strMsg.Format( _T( "ThradID: %d  Code: %d  Message: %s" ),dwThreadID,nCode,CString(bstrMessage));
 
 
-	TRACE ( "%x %x\n", ::GetProcessIdOfThread( ::GetCurrentThread ( ) ), ::GetProcessId ( AfxGetApp()->m_hInstance ) );
+	//TRACE ( "%x %x\n", ::GetProcessIdOfThread( ::GetCurrentThread ( ) ), ::GetProcessId ( AfxGetApp()->m_hInstance ) );
 	TRACE ( "%s\n", g_strWndTitle );
 	SendMessage(FindWindow(NULL, ( LPCSTR) g_strWndTitle ),WM_MESSAGE,0,(long)strMsg.AllocSysString());
 	/*COrderTesterDlg* pDlg = NULL;
@@ -804,9 +811,9 @@ LRESULT COrderTesterDlg::OnLogin ( WPARAM wParam, LPARAM lParam )
 	//HWND m_stockdlg_hwnd = ::FindWindowEx ( this->m_hWnd, ::GetWindow ( this->m_TabControl.m_hWnd, GW_CHILD ), NULL, NULL );
 	//HWND m_hwnd = ::FindWindow ( NULL, "police" );
 	//::EnumChildWindows ( this->m_TabControl.m_hWnd, EnumChildProc1, 200 );
-	this->m_TabControl.SetCurSel ( enum_FutureDlg );
+	//this->m_TabControl.SetCurSel ( enum_FutureDlg );
 	//m_FutureDlg.ShowWindow ( TRUE );
-	//Switch_TabControl ( this->enum_FutureDlg );
+	Switch_TabControl ( this->enum_FutureDlg );
 	//::MessageBox ( NULL, strID, "kkk", MB_OK );
 	return 0;
 }

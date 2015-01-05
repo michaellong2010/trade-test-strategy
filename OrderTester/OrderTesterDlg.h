@@ -123,3 +123,4 @@ struct TLogin {
 };
 
 #define LOGIN_COPYDATA 0
+#define ORDER_COPYDATA 1

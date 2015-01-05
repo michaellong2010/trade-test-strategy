@@ -4,8 +4,10 @@
 #pragma once
 
 
-class COrder {
+class COrder : public CObject {
 public:
+	DECLARE_DYNAMIC( COrder )
+
 	COrder();
 	~COrder();
 	
@@ -28,6 +30,8 @@ protected:
 
 class CCapitalOrder : public COrder {
 public:
+	DECLARE_DYNAMIC( CCapitalOrder )
+	
 	CCapitalOrder();
 	~CCapitalOrder();
 	virtual void Create_Order_UI ();

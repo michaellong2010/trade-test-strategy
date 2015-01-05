@@ -1611,19 +1611,21 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
 			TRACE ( "login first order account %s failed", caText );
 			OnBnClickedButton14 ( );
+			account_A.bind_order_operator ( &m_Order_operator1 );
 		}
 		else
 			if ( this->m_Order_operator2.LoginAccount ( caText, caPass ) ) {
 				::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
 				TRACE ( "login second order account %s failed", caText );
 				OnBnClickedButton14 ( );
+				account_B.bind_order_operator ( &m_Order_operator2 );
 			}
 		//this->m_Order_operator1.SetUIVisibility ( SW_SHOW );
 		//this->m_Order_operator2.SetUIVisibility ( SW_SHOW );
 		//AfxMessageBox(_T("ªì©l¦¨¥\"));
 	}
 	else {
-		if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+		/*if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
 			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
 			TRACE ( "login first order account %s failed", caText );
 			OnBnClickedButton14 ( );
@@ -1633,7 +1635,7 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 				::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
 				TRACE ( "login second order account %s failed", caText );
 				OnBnClickedButton14 ( );
-			}	
+			}*/
 	}
 
 	//OnBnClickedButton1();

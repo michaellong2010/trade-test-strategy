@@ -1,3 +1,5 @@
+#include "Order.h"
+#include "OrderTesterDlg.h"
 #include <string>
 #include <deque>
 #include <map>
@@ -58,4 +60,10 @@ public:
 	void refresh_portfolio( bool exit_trading );
 	void update_kline_close_time ( int new_close_time );
 	void set_stoploss ( int, int, int );
+
+	/*20150106 added by michael*/
+	static int m_Account_count;
+	int m_Account_index;
+	COrder *m_pOrder_operator;
+	void bind_order_operator ( COrder * pOrder_operator );
 };

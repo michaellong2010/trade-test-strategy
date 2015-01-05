@@ -28,6 +28,8 @@ void COrder::SetUIVisibility ( BOOL visible )
 		::ShowWindow ( g_hWnd, visible );
 }
 
+IMPLEMENT_DYNAMIC( CCapitalOrder, COrder )
+IMPLEMENT_DYNAMIC( COrder, CObject )
 CCapitalOrder::~CCapitalOrder() {
 	//delete m_pDlgOrder;
 }
@@ -144,7 +146,7 @@ BOOL CALLBACK EnumChildProc( HWND hwnd, LPARAM lParam )
 		if ( pCWnd && pCWnd->GetDlgCtrlID () == IDC_LIST_REPORTS )
 			::EnableWindow ( hwnd, TRUE );
 		else
-			::EnableWindow ( hwnd, FALSE );
+			::EnableWindow ( hwnd, TRUE );
 		return TRUE;
 	}
 	else

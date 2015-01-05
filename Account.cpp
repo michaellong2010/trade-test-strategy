@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Account.h"
 
+int CAccount::m_Account_count = 0;
 TOrder_info m_order;
 /*account_name is a unique identifier for each account*/
 CAccount::CAccount( string account_name, int time_frame ) {
@@ -102,6 +103,9 @@ CAccount::CAccount( string account_name, int time_frame ) {
 	m_trailing_stop_points = 100;
 	kline_close_time = m_stoploss_count = tradable_time = 0;
 	nTimeFrame = time_frame;
+
+	m_Account_index = m_Account_count++;
+	m_pOrder_operator = NULL;
 }
 
 CAccount::~CAccount() {
@@ -321,6 +325,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	/*create new order with position_type*/
 	boolean tradable = true;
 	double m_factor = 0, m_MA1;
+	CCapitalOrder *pCapitalOrder = NULL;
+	COPYDATASTRUCT cds;
 	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) && m_current_tick_time >= tradable_time ) {
 		new_free_margin = free_margin - ticker_margin;
 
@@ -383,6 +389,15 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 
 			free_margin = new_free_margin;
 			pList_open_order->insert ( pList_open_order->end(), m_order );
+			
+			/*20150106 added by michael*/
+			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) ) {
+					pCapitalOrder = ( CCapitalOrder * ) m_pOrder_operator;
+					cds.cbData = sizeof ( TOrder_info );
+					cds.lpData = & m_order;
+					cds.dwData = ORDER_COPYDATA;
+					::SendMessage ( pCapitalOrder->g_hWnd, WM_COPYDATA, ( WPARAM ) AfxGetMainWnd()->m_hWnd, ( LPARAM ) &cds );
+			}
 			}
 		}
 	}
@@ -498,4 +513,9 @@ void CAccount::set_stoploss ( int en_stoploss, int en_trailing_stop, int stoplos
 		m_en_trailing_stop = false;
 
 	m_trailing_stop_points = stoploss;
+}
+
+void CAccount::bind_order_operator ( COrder * pOrder_operator )
+{
+	m_pOrder_operator = pOrder_operator;
 }
