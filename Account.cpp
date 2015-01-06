@@ -164,6 +164,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	m_tick_hour = nTime / 10000;
 	m_tick_min = ( nTime - m_tick_hour * 10000 ) / 100;
 	m_current_tick_time = 60 * m_tick_hour + m_tick_min;
+	CCapitalOrder *pCapitalOrder = NULL;
+	COPYDATASTRUCT cds;
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
 		m_order = *itr1;
 		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
@@ -268,6 +270,14 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			else
 				m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
+			/*20150106 added by michael*/
+			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) ) {
+				pCapitalOrder = ( CCapitalOrder * ) m_pOrder_operator;
+				cds.cbData = sizeof ( TOrder_info );
+				cds.lpData = & m_order;
+				cds.dwData = ORDER_COPYDATA;
+				::SendMessage ( pCapitalOrder->g_hWnd, WM_COPYDATA, ( WPARAM ) AfxGetMainWnd()->m_hWnd, ( LPARAM ) &cds );
+			}
 			pList_open_order->erase ( itr1++ );
 
 			free_margin += ticker_margin;
@@ -325,8 +335,6 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	/*create new order with position_type*/
 	boolean tradable = true;
 	double m_factor = 0, m_MA1;
-	CCapitalOrder *pCapitalOrder = NULL;
-	COPYDATASTRUCT cds;
 	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) && m_current_tick_time >= tradable_time ) {
 		new_free_margin = free_margin - ticker_margin;
 

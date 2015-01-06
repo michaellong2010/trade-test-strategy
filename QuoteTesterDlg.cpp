@@ -1564,7 +1564,7 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 	int  nCode = 0;
 	//t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
 	t_hnd = ::CreateThread( NULL, 0, do_quote, this, 0, &t_id );
-	::SuspendThread ( t_hnd );
+	//::SuspendThread ( t_hnd );
 	/*20141221 added by michael
 	one capital account correspod to one capital order thread*/
 	/*g_hThread_Capital_Order [ 0 ] = ::CreateThread( NULL, 0, ThreadProc, this, 0, &g_Thread_ID_Capital_Order[ 0 ] );
@@ -1611,13 +1611,15 @@ void CQuoteTesterDlg::OnBnClickedButton13()
 			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
 			TRACE ( "login first order account %s failed", caText );
 			OnBnClickedButton14 ( );
-			account_A.bind_order_operator ( &m_Order_operator1 );
 		}
 		else
 			if ( this->m_Order_operator2.LoginAccount ( caText, caPass ) ) {
 				::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
 				TRACE ( "login second order account %s failed", caText );
 				OnBnClickedButton14 ( );
+			}
+			else {
+				account_A.bind_order_operator ( &m_Order_operator1 );
 				account_B.bind_order_operator ( &m_Order_operator2 );
 			}
 		//this->m_Order_operator1.SetUIVisibility ( SW_SHOW );

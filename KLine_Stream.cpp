@@ -509,7 +509,7 @@ void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
 	SYSTEMTIME ti;
 	int year, month, day;
 	string txt_out_filename;
-	CString txt_filenameW, KLine_filenameW;
+	CStringW txt_filenameW, KLine_filenameW;
 	int strip_repeat_mDate = 0, strip_repeat_mTime = 0;
 	
 	//GetSystemTime ( &ti ) ;
@@ -647,7 +647,7 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 	}
 	
 	char str_buf [ 100 ];
-	CString tick_filenameW;
+	CStringW tick_filenameW;
 	if ( store_tick_file ==true ) {
 	//m_str_filename = "C:\\temp\\" + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
 	m_str_filename = path_bufA.GetString() + string( itoa(m_candlestick.mDate, str_buf, 10 ) ) + "-" + symbol;
@@ -1388,7 +1388,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	int n_total_sticks, i, j, nRead_sticks;
 	TCandleStick m_raw_candlestick;
 	int m_open_time, m_open_hour, m_open_min, kline_start_index;
-	CString collapsed_filenameW;
+	CStringW collapsed_filenameW;
 	int current_date = get_trading_date ( ticker_symbol );
 	/*calculate MA15*/
 	/*list<TCandleStick>::reverse_iterator itr, itr1;

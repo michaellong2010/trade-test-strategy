@@ -80,7 +80,33 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 				else
 					if ( cds.dwData == ORDER_COPYDATA ) {
 						porder_info = ( TOrder_info * ) cds.lpData;
-						//porder_info->
+						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_STOCKNO )->m_hWnd, porder_info->ticker_symbol );
+
+						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_ORDERTYPE ) )->SetCurSel( 0 );
+						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_DAYTRADE ) )->SetCurSel( 0 );						
+						if ( porder_info->exit_tick == -1 ) {
+							sprintf ( str1.GetBufferSetLength ( 100 ), "%s",  porder_info->open_price );
+							::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
+
+							if ( porder_info->position_type == OP_BUY )
+								( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+							else
+								if ( porder_info->position_type == OP_SHORT )
+									( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+						}
+						else
+							if ( porder_info->exit_tick > 0 ) {
+								sprintf ( str1.GetBufferSetLength ( 100 ), "%s",  porder_info->close_price );
+								::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
+
+								if ( porder_info->position_type == OP_SHORT )
+									( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+								else
+									if ( porder_info->position_type == OP_BUY )
+										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+							}
+						sprintf ( str1.GetBufferSetLength( 100 ), "%s",  porder_info->lots );
+						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_QTY )->m_hWnd, str1 );
 					}
 			}
 		//if ( message == WM_LOGIN )
