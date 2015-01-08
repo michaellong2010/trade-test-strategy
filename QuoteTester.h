@@ -19,6 +19,7 @@ class CQuoteTesterApp : public CWinApp
 {
 public:
 	CQuoteTesterApp();
+	int Close_OrderTester ( );
 
 // ÂÐ¼g
 public:

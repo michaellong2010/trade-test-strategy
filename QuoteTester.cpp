@@ -6,6 +6,7 @@
 #include "QuoteTester.h"
 #include "QuoteTesterDlg.h"
 #include "test_dlg.h"
+#include "psapi.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,48 @@ BEGIN_MESSAGE_MAP(CQuoteTesterApp, CWinApp)
 END_MESSAGE_MAP()
 
 
+/*20150109 added by michael*/
+int CQuoteTesterApp::Close_OrderTester ( )
+{
+	// Get the list of process identifiers.
+
+    DWORD aProcesses[1024], cbNeeded, cProcesses;
+    unsigned int i;
+
+    if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) )
+    {
+        return 1;
+    }
+
+
+    // Calculate how many process identifiers were returned.
+
+    cProcesses = cbNeeded / sizeof(DWORD);
+	HANDLE hProcess;
+	HMODULE hMod;
+	TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+	string TerminateMe = "OrderTester.exe";
+
+	for ( i = 0; i < cProcesses; i++ )
+	{
+		if( aProcesses[i] != 0 )
+		{
+			//PrintProcessNameAndID( aProcesses[i] );
+			hProcess = OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, aProcesses[i] );
+			if (NULL != hProcess ) {
+				if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), &cbNeeded) ) {
+					GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR) );
+					if ( TerminateMe == szProcessName ) {
+						::TerminateProcess ( hProcess, 0 );
+						TRACE ( szProcessName );
+					}
+				}
+			}
+			CloseHandle( hProcess );
+		}
+	}
+	return 0;
+}
 // CQuoteTesterApp 建構
 
 CQuoteTesterApp::CQuoteTesterApp()
@@ -71,6 +114,7 @@ BOOL CQuoteTesterApp::InitInstance()
 	// (例如，公司名稱或組織名稱)
 	SetRegistryKey(_T("本機 AppWizard 所產生的應用程式"));
 
+	Close_OrderTester();
 	CQuoteTesterDlg dlg;
 	m_pMainWnd = &dlg;
 	//g_hThread_Order = ::CreateThread( NULL, 0, ThreadProc1, this, 0, &g_hThreadID );

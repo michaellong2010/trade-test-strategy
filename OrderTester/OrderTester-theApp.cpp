@@ -55,10 +55,12 @@ BOOL COrderTesterApp::InitInstance()
 {
 	m_pFirstInstanceObj = new CLimitSingleInstance ( TEXT("Global\\{05CA3573-B449-4e0b-83F5-7FD612E378E9}") );
 	m_nInstanceID = 0;
-	if ( m_pFirstInstanceObj->IsAnotherInstanceRunning() ) {
+	if ( m_pFirstInstanceObj && m_pFirstInstanceObj->IsAnotherInstanceRunning() ) {
+		//delete m_pFirstInstanceObj;
+		//m_pFirstInstanceObj = NULL;
 		m_pSecondInstanceObj = new CLimitSingleInstance ( TEXT("Global\\{05CA3573-B449-4e0b-83F5-7FD612E378EA}") );	
 		m_nInstanceID = 1;
-		if ( m_pSecondInstanceObj->IsAnotherInstanceRunning() ) {
+		if ( m_pSecondInstanceObj && m_pSecondInstanceObj->IsAnotherInstanceRunning() ) {
 			TRACE ( "max  number of instance 2" );
 			return FALSE;
 		}

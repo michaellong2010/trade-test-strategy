@@ -457,3 +457,6 @@
 [5832] 2015/01/08 14:53:42.500 SKQuoteLib_LeaveMonitor 
 [5832] 2015/01/08 14:53:42.500 SocketClose Type¡G101  ErrorCode¡G0
 [5832] 2015/01/08 14:53:42.578 API ExitInstance 
+[5920] 2015/01/08 20:42:15.937 API InitInstance 
+[5908] 2015/01/08 20:44:53.437 API InitInstance 
+[5752] 2015/01/08 21:01:20.968 API InitInstance 

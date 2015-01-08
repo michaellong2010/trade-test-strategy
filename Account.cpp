@@ -271,15 +271,15 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
 			/*20150106 added by michael*/
-			m_order.close_price = final_close;
 			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) ) {
+				m_order.close_price = final_close;
 				pCapitalOrder = ( CCapitalOrder * ) m_pOrder_operator;
 				cds.cbData = sizeof ( TOrder_info );
 				cds.lpData = & m_order;
 				cds.dwData = ORDER_COPYDATA;
 				::SendMessage ( pCapitalOrder->g_hWnd, WM_COPYDATA, ( WPARAM ) AfxGetMainWnd()->m_hWnd, ( LPARAM ) &cds );
+				m_order.close_price = 0;
 			}
-			m_order.close_price = 0;
 			pList_open_order->erase ( itr1++ );
 
 			free_margin += ticker_margin;

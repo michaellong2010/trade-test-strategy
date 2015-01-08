@@ -1,0 +1,38 @@
+[5632] 2015/01/09 02:50:10.937 API InitInstance 
+[5632] 2015/01/09 02:50:42.265 API ExitInstance 
+[5188] 2015/01/09 02:51:46.359 API InitInstance 
+[5188] 2015/01/09 02:52:41.359 API ExitInstance 
+[1224] 2015/01/09 02:53:07.484 API InitInstance 
+[1224] 2015/01/09 02:54:22.953 API ExitInstance 
+[5840] 2015/01/09 02:54:57.390 API InitInstance 
+[4756] 2015/01/09 02:56:17.953 API InitInstance 
+[4756] 2015/01/09 02:57:32.203 API ExitInstance 
+[4980] 2015/01/09 02:59:26.953 API InitInstance 
+[4180] 2015/01/09 03:00:31.453 API InitInstance 
+[4180] 2015/01/09 03:01:46.343 SKQuoteLib_Initialize ¡GS122811334
+[4180] 2015/01/09 03:01:46.343 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4180] 2015/01/09 03:01:47.625 SKQuoteLib_Initialize  SUCCESS 
+[4180] 2015/01/09 03:01:47.625 SKQuoteLib_AttachConnectionCallBack 
+[4180] 2015/01/09 03:01:47.625 SKQuoteLib_AttachQuoteCallBack 
+[4180] 2015/01/09 03:01:47.625 SKQuoteLib_AttachBest5CallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachTicksGetCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachKLineDataCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachMarketTotCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachMarketBuySellCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachMarketHighLowCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachStrikePricesCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttchServerTimeCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[4180] 2015/01/09 03:01:47.640 SKQuoteLib_AttachProductsReadyCallBack 
+[4180] 2015/01/09 03:01:51.375 SKQuoteLib_EnterMonitor IP¡Ginfo16.capital.com.tw
+[4180] 2015/01/09 03:01:51.406 SocketConnect Type¡G100  ErrorCode¡G0
+[4180] 2015/01/09 03:02:07.968 Stocks Ready
+[4180] 2015/01/09 03:02:08.109 SKQuoteLib_GetKLine(TX00,4)
+[4180] 2015/01/09 03:02:08.156 SKQuoteLib_GetDate(TX00,4)
+[4180] 2015/01/09 03:02:11.328 SKQuoteLib_GetKLine(TX00,1)
+[4180] 2015/01/09 03:02:14.328 SKQuoteLib_RequestTicks (1,TX00)
+[2972] 2015/01/09 03:12:39.453 API InitInstance 
+[2972] 2015/01/09 03:13:00.812 API ExitInstance 
+[1904] 2015/01/09 03:13:30.281 API InitInstance 
+[2368] 2015/01/09 03:15:17.437 API InitInstance 
+[2368] 2015/01/09 03:15:31.500 API ExitInstance 
