@@ -60,8 +60,10 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 	
 	TLogin *plogin_info;
 	TOrder_info *porder_info;
-	CString str1, str2;
+	CString str1, str2, strMsg;
+	SYSTEMTIME ti;
 
+	::GetLocalTime ( &ti );
 	if ( message == WM_CLOSE )
 		return TRUE;
 	else
@@ -79,13 +81,15 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 				}
 				else
 					if ( cds.dwData == ORDER_COPYDATA ) {
+						strMsg.Format(_T("send order to capital at time: %d: %d: %d "), ti.wMinute, ti.wSecond, ti.wMilliseconds );
+						AddReport ( strMsg );
 						porder_info = ( TOrder_info * ) cds.lpData;
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_STOCKNO )->m_hWnd, porder_info->ticker_symbol );
 
 						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_ORDERTYPE ) )->SetCurSel( 0 );
 						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_DAYTRADE ) )->SetCurSel( 0 );						
 						if ( porder_info->exit_tick == -1 ) {
-							sprintf ( str1.GetBufferSetLength ( 100 ), "%s",  porder_info->open_price );
+							sprintf ( str1.GetBufferSetLength ( 100 ), "%lf",  porder_info->open_price );
 							::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
 
 							if ( porder_info->position_type == OP_BUY )
@@ -96,7 +100,7 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 						}
 						else
 							if ( porder_info->exit_tick > 0 ) {
-								sprintf ( str1.GetBufferSetLength ( 100 ), "%s",  porder_info->close_price );
+								sprintf ( str1.GetBufferSetLength ( 100 ), "%lf",  porder_info->close_price );
 								::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
 
 								if ( porder_info->position_type == OP_SHORT )
@@ -105,8 +109,9 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 									if ( porder_info->position_type == OP_BUY )
 										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
 							}
-						sprintf ( str1.GetBufferSetLength( 100 ), "%s",  porder_info->lots );
+						sprintf ( str1.GetBufferSetLength( 100 ), "%d",  porder_info->lots );
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_QTY )->m_hWnd, str1 );
+						m_FutureDlg.OnBnClickedButtonSendfutureorder ( );
 					}
 			}
 		//if ( message == WM_LOGIN )

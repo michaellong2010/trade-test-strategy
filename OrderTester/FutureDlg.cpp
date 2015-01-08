@@ -88,7 +88,9 @@ void CFutureDlg::OnBnClickedButtonSendfutureorder()
 
 	
 	CString strMsg;
-	strMsg.Format(_T("Return Code : %d  Message:%s"),nCode,caBuf);
+	SYSTEMTIME ti;
+	::GetLocalTime ( &ti );
+	strMsg.Format(_T("Return Code : %d  Message:%s, time: %d: %d: %d "),nCode,caBuf, ti.wMinute, ti.wSecond, ti.wMilliseconds );
 
 	pDlg->AddReport( strMsg);
 }

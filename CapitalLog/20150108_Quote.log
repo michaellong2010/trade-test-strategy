@@ -1,0 +1,459 @@
+[724] 2015/01/08 10:02:21.453 API InitInstance 
+[724] 2015/01/08 10:03:36.718 SKQuoteLib_Initialize ¡GS122811334
+[724] 2015/01/08 10:03:36.718 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[724] 2015/01/08 10:03:37.406 SKQuoteLib_Initialize  SUCCESS 
+[724] 2015/01/08 10:03:37.406 SKQuoteLib_AttachConnectionCallBack 
+[724] 2015/01/08 10:03:37.406 SKQuoteLib_AttachQuoteCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachBest5CallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachTicksGetCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachKLineDataCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachMarketTotCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachMarketBuySellCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachMarketHighLowCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachStrikePricesCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttchServerTimeCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[724] 2015/01/08 10:03:37.421 SKQuoteLib_AttachProductsReadyCallBack 
+[724] 2015/01/08 10:03:37.468 SKQuoteLib_EnterMonitor IP¡Ginfo9.capital.com.tw
+[724] 2015/01/08 10:03:46.812 SocketConnect Type¡G100  ErrorCode¡G0
+[724] 2015/01/08 10:03:59.000 Stocks Ready
+[724] 2015/01/08 10:03:59.015 SKQuoteLib_GetKLine(TX00,4)
+[724] 2015/01/08 10:03:59.015 SKQuoteLib_GetDate(TX00,4)
+[724] 2015/01/08 10:04:06.390 SKQuoteLib_GetKLine(TX00,1)
+[724] 2015/01/08 10:04:13.671 SKQuoteLib_RequestTicks (1,TX00)
+[5328] 2015/01/08 10:05:14.484 API InitInstance 
+[5328] 2015/01/08 10:05:24.984 SKQuoteLib_Initialize ¡GS122811334
+[5328] 2015/01/08 10:05:24.984 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_Initialize  SUCCESS 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachConnectionCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachQuoteCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachBest5CallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachTicksGetCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachKLineDataCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachMarketTotCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachMarketBuySellCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachMarketHighLowCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachStrikePricesCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttchServerTimeCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5328] 2015/01/08 10:05:25.765 SKQuoteLib_AttachProductsReadyCallBack 
+[5328] 2015/01/08 10:05:25.796 SKQuoteLib_EnterMonitor IP¡Ginfo16.capital.com.tw
+[5328] 2015/01/08 10:05:27.000 SocketConnect Type¡G100  ErrorCode¡G0
+[5328] 2015/01/08 10:05:39.140 Stocks Ready
+[5328] 2015/01/08 10:05:39.171 SKQuoteLib_GetKLine(TX00,4)
+[5328] 2015/01/08 10:05:39.171 SKQuoteLib_GetDate(TX00,4)
+[5328] 2015/01/08 10:05:41.796 SKQuoteLib_GetKLine(TX00,1)
+[5328] 2015/01/08 10:05:44.390 SKQuoteLib_RequestTicks (1,TX00)
+[1872] 2015/01/08 10:08:09.953 API InitInstance 
+[1872] 2015/01/08 10:08:29.234 API ExitInstance 
+[1648] 2015/01/08 10:09:04.234 API InitInstance 
+[1648] 2015/01/08 10:09:14.843 SKQuoteLib_Initialize ¡GS122811334
+[1648] 2015/01/08 10:09:14.843 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_Initialize  SUCCESS 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachConnectionCallBack 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachQuoteCallBack 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachBest5CallBack 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachTicksGetCallBack 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachKLineDataCallBack 
+[1648] 2015/01/08 10:09:15.656 SKQuoteLib_AttachMarketTotCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttachMarketBuySellCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttachMarketHighLowCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttachStrikePricesCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttchServerTimeCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[1648] 2015/01/08 10:09:15.671 SKQuoteLib_AttachProductsReadyCallBack 
+[1648] 2015/01/08 10:09:15.703 SKQuoteLib_EnterMonitor IP¡Ginfo8.capital.com.tw
+[1648] 2015/01/08 10:09:16.890 SocketConnect Type¡G100  ErrorCode¡G0
+[1648] 2015/01/08 10:09:28.859 Stocks Ready
+[1648] 2015/01/08 10:09:28.906 SKQuoteLib_GetKLine(TX00,4)
+[1648] 2015/01/08 10:09:28.906 SKQuoteLib_GetDate(TX00,4)
+[1648] 2015/01/08 10:09:31.468 SKQuoteLib_GetKLine(TX00,1)
+[1648] 2015/01/08 10:09:34.078 SKQuoteLib_RequestTicks (1,TX00)
+[1648] 2015/01/08 10:10:51.625 Check Link Status 
+[1648] 2015/01/08 10:11:16.890 Check Link Status 
+[1648] 2015/01/08 10:12:16.890 Check Link Status 
+[5380] 2015/01/08 10:13:31.359 API InitInstance 
+[5380] 2015/01/08 10:14:22.484 SKQuoteLib_Initialize ¡GS122811334
+[5380] 2015/01/08 10:14:22.484 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_Initialize  SUCCESS 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachConnectionCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachQuoteCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachBest5CallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachTicksGetCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachKLineDataCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachMarketTotCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachMarketBuySellCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachMarketHighLowCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachStrikePricesCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttchServerTimeCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5380] 2015/01/08 10:14:23.343 SKQuoteLib_AttachProductsReadyCallBack 
+[5380] 2015/01/08 10:14:23.375 SKQuoteLib_EnterMonitor IP¡Ginfo10.capital.com.tw
+[5380] 2015/01/08 10:14:24.609 SocketConnect Type¡G100  ErrorCode¡G0
+[5380] 2015/01/08 10:14:35.953 Stocks Ready
+[5380] 2015/01/08 10:14:36.000 SKQuoteLib_GetKLine(TX00,4)
+[5380] 2015/01/08 10:14:36.000 SKQuoteLib_GetDate(TX00,4)
+[5380] 2015/01/08 10:14:38.500 SKQuoteLib_GetKLine(TX00,1)
+[5380] 2015/01/08 10:14:41.250 SKQuoteLib_RequestTicks (1,TX00)
+[4704] 2015/01/08 10:16:11.718 API InitInstance 
+[4704] 2015/01/08 10:16:29.468 SKQuoteLib_Initialize ¡GS122811334
+[4704] 2015/01/08 10:16:29.468 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_Initialize  SUCCESS 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachConnectionCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachQuoteCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachBest5CallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachTicksGetCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachKLineDataCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachMarketTotCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachMarketBuySellCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachMarketHighLowCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachStrikePricesCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttchServerTimeCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[4704] 2015/01/08 10:16:30.265 SKQuoteLib_AttachProductsReadyCallBack 
+[4704] 2015/01/08 10:16:30.312 SKQuoteLib_EnterMonitor IP¡Ginfo22.capital.com.tw
+[4704] 2015/01/08 10:16:31.437 SocketConnect Type¡G100  ErrorCode¡G0
+[4704] 2015/01/08 10:16:43.062 Stocks Ready
+[4704] 2015/01/08 10:16:43.093 SKQuoteLib_GetKLine(TX00,4)
+[4704] 2015/01/08 10:16:43.093 SKQuoteLib_GetDate(TX00,4)
+[4704] 2015/01/08 10:16:45.640 SKQuoteLib_GetKLine(TX00,1)
+[4704] 2015/01/08 10:16:48.281 SKQuoteLib_RequestTicks (1,TX00)
+[4156] 2015/01/08 10:21:26.718 API InitInstance 
+[4156] 2015/01/08 10:21:38.250 SKQuoteLib_Initialize ¡GS122811334
+[4156] 2015/01/08 10:21:38.250 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_Initialize  SUCCESS 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachConnectionCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachQuoteCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachBest5CallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachTicksGetCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachKLineDataCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachMarketTotCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachMarketBuySellCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachMarketHighLowCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachStrikePricesCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttchServerTimeCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[4156] 2015/01/08 10:21:39.046 SKQuoteLib_AttachProductsReadyCallBack 
+[4156] 2015/01/08 10:21:39.078 SKQuoteLib_EnterMonitor IP¡Ginfo8.capital.com.tw
+[4156] 2015/01/08 10:21:40.250 SocketConnect Type¡G100  ErrorCode¡G0
+[4156] 2015/01/08 10:21:51.953 Stocks Ready
+[4156] 2015/01/08 10:21:51.953 SKQuoteLib_GetKLine(TX00,4)
+[4156] 2015/01/08 10:21:51.953 SKQuoteLib_GetDate(TX00,4)
+[4156] 2015/01/08 10:21:59.515 SKQuoteLib_GetKLine(TX00,1)
+[4156] 2015/01/08 10:22:06.171 SKQuoteLib_RequestTicks (1,TX00)
+[4136] 2015/01/08 10:24:21.609 API InitInstance 
+[4236] 2015/01/08 10:24:45.218 API InitInstance 
+[4236] 2015/01/08 10:24:54.203 SKQuoteLib_Initialize ¡GS122811334
+[4236] 2015/01/08 10:24:54.203 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_Initialize  SUCCESS 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachConnectionCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachQuoteCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachBest5CallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachTicksGetCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachKLineDataCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachMarketTotCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachMarketBuySellCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachMarketHighLowCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachStrikePricesCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttchServerTimeCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[4236] 2015/01/08 10:24:55.015 SKQuoteLib_AttachProductsReadyCallBack 
+[4236] 2015/01/08 10:24:55.062 SKQuoteLib_EnterMonitor IP¡Ginfo17.capital.com.tw
+[4236] 2015/01/08 10:24:56.218 SocketConnect Type¡G100  ErrorCode¡G0
+[4236] 2015/01/08 10:25:08.234 Stocks Ready
+[4236] 2015/01/08 10:25:08.281 SKQuoteLib_GetKLine(TX00,4)
+[4236] 2015/01/08 10:25:08.281 SKQuoteLib_GetDate(TX00,4)
+[4236] 2015/01/08 10:25:10.765 SKQuoteLib_GetKLine(TX00,1)
+[4236] 2015/01/08 10:25:13.406 SKQuoteLib_RequestTicks (1,TX00)
+[4236] 2015/01/08 10:27:02.609 Check Link Status 
+[4236] 2015/01/08 10:27:56.218 Check Link Status 
+[4236] 2015/01/08 10:28:56.218 Check Link Status 
+[4236] 2015/01/08 10:29:56.218 Check Link Status 
+[4236] 2015/01/08 10:30:56.218 Check Link Status 
+[4236] 2015/01/08 10:31:56.218 Check Link Status 
+[4236] 2015/01/08 10:32:56.218 Check Link Status 
+[4236] 2015/01/08 10:33:56.218 Check Link Status 
+[4236] 2015/01/08 10:34:56.218 Check Link Status 
+[4236] 2015/01/08 10:35:56.218 Check Link Status 
+[4236] 2015/01/08 10:36:56.218 Check Link Status 
+[4236] 2015/01/08 10:37:56.218 Check Link Status 
+[4236] 2015/01/08 10:38:56.218 Check Link Status 
+[4236] 2015/01/08 10:39:56.218 Check Link Status 
+[4236] 2015/01/08 10:40:56.218 Check Link Status 
+[4236] 2015/01/08 10:41:56.218 Check Link Status 
+[4236] 2015/01/08 10:42:56.218 Check Link Status 
+[4236] 2015/01/08 10:43:56.218 Check Link Status 
+[4236] 2015/01/08 10:44:56.218 Check Link Status 
+[4236] 2015/01/08 10:45:56.218 Check Link Status 
+[4236] 2015/01/08 10:46:56.218 Check Link Status 
+[4236] 2015/01/08 10:47:56.218 Check Link Status 
+[4236] 2015/01/08 10:48:56.218 Check Link Status 
+[4236] 2015/01/08 10:49:56.218 Check Link Status 
+[4236] 2015/01/08 10:50:56.218 Check Link Status 
+[4236] 2015/01/08 10:51:56.218 Check Link Status 
+[4236] 2015/01/08 10:52:56.218 Check Link Status 
+[4236] 2015/01/08 10:53:56.218 Check Link Status 
+[4236] 2015/01/08 10:54:56.218 Check Link Status 
+[4236] 2015/01/08 10:55:56.218 Check Link Status 
+[4236] 2015/01/08 10:56:56.218 Check Link Status 
+[4236] 2015/01/08 10:57:56.218 Check Link Status 
+[4236] 2015/01/08 10:58:21.812 SKQuoteLib_LeaveMonitor 
+[4236] 2015/01/08 10:58:21.812 SocketClose Type¡G101  ErrorCode¡G0
+[4236] 2015/01/08 10:58:21.890 API ExitInstance 
+[5832] 2015/01/08 11:00:43.343 API InitInstance 
+[5832] 2015/01/08 11:01:44.890 SKQuoteLib_Initialize ¡GS122811334
+[5832] 2015/01/08 11:01:44.890 SKQuoteLib_Initialize ¡Ghttps://order2.capital.com.tw/
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_Initialize  SUCCESS 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachConnectionCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachQuoteCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachBest5CallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachTicksGetCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachKLineDataCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachMarketTotCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachMarketBuySellCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachMarketHighLowCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachStrikePricesCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttchServerTimeCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachHistoryTicksGetCallBack 
+[5832] 2015/01/08 11:01:45.703 SKQuoteLib_AttachProductsReadyCallBack 
+[5832] 2015/01/08 11:01:45.734 SKQuoteLib_EnterMonitor IP¡Ginfo20.capital.com.tw
+[5832] 2015/01/08 11:01:47.031 SocketConnect Type¡G100  ErrorCode¡G0
+[5832] 2015/01/08 11:01:48.343 Stocks Ready
+[5832] 2015/01/08 11:01:48.343 SKQuoteLib_GetKLine(TX00,4)
+[5832] 2015/01/08 11:01:48.343 SKQuoteLib_GetDate(TX00,4)
+[5832] 2015/01/08 11:01:55.765 SKQuoteLib_GetKLine(TX00,1)
+[5832] 2015/01/08 11:02:02.406 SKQuoteLib_RequestTicks (1,TX00)
+[5832] 2015/01/08 11:03:23.281 Check Link Status 
+[5832] 2015/01/08 11:03:47.031 Check Link Status 
+[5832] 2015/01/08 11:04:47.031 Check Link Status 
+[5832] 2015/01/08 11:05:47.031 Check Link Status 
+[5832] 2015/01/08 11:06:47.031 Check Link Status 
+[5832] 2015/01/08 11:07:47.031 Check Link Status 
+[5832] 2015/01/08 11:08:47.031 Check Link Status 
+[5832] 2015/01/08 11:09:47.031 Check Link Status 
+[5832] 2015/01/08 11:10:47.031 Check Link Status 
+[5832] 2015/01/08 11:11:47.031 Check Link Status 
+[5832] 2015/01/08 11:12:47.031 Check Link Status 
+[5832] 2015/01/08 11:13:47.031 Check Link Status 
+[5832] 2015/01/08 11:14:47.031 Check Link Status 
+[5832] 2015/01/08 11:15:47.031 Check Link Status 
+[5832] 2015/01/08 11:16:47.031 Check Link Status 
+[5832] 2015/01/08 11:17:47.031 Check Link Status 
+[5832] 2015/01/08 11:18:47.031 Check Link Status 
+[5832] 2015/01/08 11:19:47.031 Check Link Status 
+[5832] 2015/01/08 11:20:47.031 Check Link Status 
+[5832] 2015/01/08 11:21:47.031 Check Link Status 
+[5832] 2015/01/08 11:22:47.031 Check Link Status 
+[5832] 2015/01/08 11:23:47.031 Check Link Status 
+[5832] 2015/01/08 11:24:47.031 Check Link Status 
+[5832] 2015/01/08 11:25:47.031 Check Link Status 
+[5832] 2015/01/08 11:26:47.031 Check Link Status 
+[5832] 2015/01/08 11:27:47.031 Check Link Status 
+[5832] 2015/01/08 11:28:47.031 Check Link Status 
+[5832] 2015/01/08 11:29:47.031 Check Link Status 
+[5832] 2015/01/08 11:30:47.031 Check Link Status 
+[5832] 2015/01/08 11:31:47.031 Check Link Status 
+[5832] 2015/01/08 11:32:47.031 Check Link Status 
+[5832] 2015/01/08 11:33:47.031 Check Link Status 
+[5832] 2015/01/08 11:34:47.031 Check Link Status 
+[5832] 2015/01/08 11:35:47.031 Check Link Status 
+[5832] 2015/01/08 11:36:47.031 Check Link Status 
+[5832] 2015/01/08 11:37:47.031 Check Link Status 
+[5832] 2015/01/08 11:38:47.031 Check Link Status 
+[5832] 2015/01/08 11:39:47.031 Check Link Status 
+[5832] 2015/01/08 11:40:47.031 Check Link Status 
+[5832] 2015/01/08 11:41:47.031 Check Link Status 
+[5832] 2015/01/08 11:42:47.031 Check Link Status 
+[5832] 2015/01/08 11:43:47.031 Check Link Status 
+[5832] 2015/01/08 11:44:47.031 Check Link Status 
+[5832] 2015/01/08 11:45:47.031 Check Link Status 
+[5832] 2015/01/08 11:46:47.031 Check Link Status 
+[5832] 2015/01/08 11:47:47.031 Check Link Status 
+[5832] 2015/01/08 11:48:47.031 Check Link Status 
+[5832] 2015/01/08 11:49:47.031 Check Link Status 
+[5832] 2015/01/08 11:50:47.031 Check Link Status 
+[5832] 2015/01/08 11:51:47.031 Check Link Status 
+[5832] 2015/01/08 11:52:47.031 Check Link Status 
+[5832] 2015/01/08 11:53:47.031 Check Link Status 
+[5832] 2015/01/08 11:54:47.031 Check Link Status 
+[5832] 2015/01/08 11:55:47.031 Check Link Status 
+[5832] 2015/01/08 11:56:47.031 Check Link Status 
+[5832] 2015/01/08 11:57:47.031 Check Link Status 
+[5832] 2015/01/08 11:58:47.031 Check Link Status 
+[5832] 2015/01/08 11:59:47.031 Check Link Status 
+[5832] 2015/01/08 12:00:47.031 Check Link Status 
+[5832] 2015/01/08 12:01:47.031 Check Link Status 
+[5832] 2015/01/08 12:02:47.031 Check Link Status 
+[5832] 2015/01/08 12:03:47.031 Check Link Status 
+[5832] 2015/01/08 12:04:47.031 Check Link Status 
+[5832] 2015/01/08 12:05:47.031 Check Link Status 
+[5832] 2015/01/08 12:06:47.031 Check Link Status 
+[5832] 2015/01/08 12:07:47.031 Check Link Status 
+[5832] 2015/01/08 12:08:47.031 Check Link Status 
+[5832] 2015/01/08 12:09:47.031 Check Link Status 
+[5832] 2015/01/08 12:10:47.031 Check Link Status 
+[5832] 2015/01/08 12:11:47.031 Check Link Status 
+[5832] 2015/01/08 12:12:47.031 Check Link Status 
+[5832] 2015/01/08 12:13:47.031 Check Link Status 
+[5832] 2015/01/08 12:14:47.031 Check Link Status 
+[5832] 2015/01/08 12:15:47.031 Check Link Status 
+[5832] 2015/01/08 12:16:47.031 Check Link Status 
+[5832] 2015/01/08 12:17:47.031 Check Link Status 
+[5832] 2015/01/08 12:18:47.031 Check Link Status 
+[5832] 2015/01/08 12:19:47.031 Check Link Status 
+[5832] 2015/01/08 12:20:47.031 Check Link Status 
+[5832] 2015/01/08 12:21:47.031 Check Link Status 
+[5832] 2015/01/08 12:22:47.031 Check Link Status 
+[5832] 2015/01/08 12:23:47.031 Check Link Status 
+[5832] 2015/01/08 12:24:47.031 Check Link Status 
+[5832] 2015/01/08 12:25:47.031 Check Link Status 
+[5832] 2015/01/08 12:26:47.031 Check Link Status 
+[5832] 2015/01/08 12:27:47.031 Check Link Status 
+[5832] 2015/01/08 12:28:47.031 Check Link Status 
+[5832] 2015/01/08 12:29:47.031 Check Link Status 
+[5832] 2015/01/08 12:30:47.031 Check Link Status 
+[5832] 2015/01/08 12:31:47.031 Check Link Status 
+[5832] 2015/01/08 12:32:47.031 Check Link Status 
+[5832] 2015/01/08 12:33:47.031 Check Link Status 
+[5832] 2015/01/08 12:34:47.031 Check Link Status 
+[5832] 2015/01/08 12:35:47.031 Check Link Status 
+[5832] 2015/01/08 12:36:47.031 Check Link Status 
+[5832] 2015/01/08 12:37:47.031 Check Link Status 
+[5832] 2015/01/08 12:38:47.031 Check Link Status 
+[5832] 2015/01/08 12:39:47.031 Check Link Status 
+[5832] 2015/01/08 12:40:47.031 Check Link Status 
+[5832] 2015/01/08 12:41:47.031 Check Link Status 
+[5832] 2015/01/08 12:42:47.031 Check Link Status 
+[5832] 2015/01/08 12:43:47.031 Check Link Status 
+[5832] 2015/01/08 12:44:47.031 Check Link Status 
+[5832] 2015/01/08 12:45:47.031 Check Link Status 
+[5832] 2015/01/08 12:46:47.031 Check Link Status 
+[5832] 2015/01/08 12:47:47.031 Check Link Status 
+[5832] 2015/01/08 12:48:47.031 Check Link Status 
+[5832] 2015/01/08 12:49:47.031 Check Link Status 
+[5832] 2015/01/08 12:50:47.031 Check Link Status 
+[5832] 2015/01/08 12:51:47.031 Check Link Status 
+[5832] 2015/01/08 12:52:47.031 Check Link Status 
+[5832] 2015/01/08 12:53:47.031 Check Link Status 
+[5832] 2015/01/08 12:54:47.031 Check Link Status 
+[5832] 2015/01/08 12:55:47.031 Check Link Status 
+[5832] 2015/01/08 12:56:47.031 Check Link Status 
+[5832] 2015/01/08 12:57:47.031 Check Link Status 
+[5832] 2015/01/08 12:58:47.031 Check Link Status 
+[5832] 2015/01/08 12:59:47.031 Check Link Status 
+[5832] 2015/01/08 13:00:47.031 Check Link Status 
+[5832] 2015/01/08 13:01:47.031 Check Link Status 
+[5832] 2015/01/08 13:02:47.031 Check Link Status 
+[5832] 2015/01/08 13:03:47.031 Check Link Status 
+[5832] 2015/01/08 13:04:47.031 Check Link Status 
+[5832] 2015/01/08 13:05:47.031 Check Link Status 
+[5832] 2015/01/08 13:06:47.031 Check Link Status 
+[5832] 2015/01/08 13:07:47.031 Check Link Status 
+[5832] 2015/01/08 13:08:47.031 Check Link Status 
+[5832] 2015/01/08 13:09:47.031 Check Link Status 
+[5832] 2015/01/08 13:10:47.031 Check Link Status 
+[5832] 2015/01/08 13:11:47.031 Check Link Status 
+[5832] 2015/01/08 13:12:47.031 Check Link Status 
+[5832] 2015/01/08 13:13:47.031 Check Link Status 
+[5832] 2015/01/08 13:14:47.031 Check Link Status 
+[5832] 2015/01/08 13:15:47.031 Check Link Status 
+[5832] 2015/01/08 13:16:47.031 Check Link Status 
+[5832] 2015/01/08 13:17:47.031 Check Link Status 
+[5832] 2015/01/08 13:18:47.031 Check Link Status 
+[5832] 2015/01/08 13:19:47.031 Check Link Status 
+[5832] 2015/01/08 13:20:47.031 Check Link Status 
+[5832] 2015/01/08 13:21:47.031 Check Link Status 
+[5832] 2015/01/08 13:22:47.031 Check Link Status 
+[5832] 2015/01/08 13:23:47.031 Check Link Status 
+[5832] 2015/01/08 13:24:47.031 Check Link Status 
+[5832] 2015/01/08 13:25:47.031 Check Link Status 
+[5832] 2015/01/08 13:26:47.031 Check Link Status 
+[5832] 2015/01/08 13:27:47.031 Check Link Status 
+[5832] 2015/01/08 13:28:47.031 Check Link Status 
+[5832] 2015/01/08 13:29:47.031 Check Link Status 
+[5832] 2015/01/08 13:30:47.031 Check Link Status 
+[5832] 2015/01/08 13:31:47.031 Check Link Status 
+[5832] 2015/01/08 13:32:47.031 Check Link Status 
+[5832] 2015/01/08 13:33:47.031 Check Link Status 
+[5832] 2015/01/08 13:34:47.031 Check Link Status 
+[5832] 2015/01/08 13:35:47.031 Check Link Status 
+[5832] 2015/01/08 13:36:47.031 Check Link Status 
+[5832] 2015/01/08 13:37:47.031 Check Link Status 
+[5832] 2015/01/08 13:38:47.031 Check Link Status 
+[5832] 2015/01/08 13:39:47.031 Check Link Status 
+[5832] 2015/01/08 13:40:47.031 Check Link Status 
+[5832] 2015/01/08 13:41:47.031 Check Link Status 
+[5832] 2015/01/08 13:42:47.031 Check Link Status 
+[5832] 2015/01/08 13:43:47.031 Check Link Status 
+[5832] 2015/01/08 13:44:47.031 Check Link Status 
+[5832] 2015/01/08 13:45:47.031 Check Link Status 
+[5832] 2015/01/08 13:46:47.031 Check Link Status 
+[5832] 2015/01/08 13:47:47.031 Check Link Status 
+[5832] 2015/01/08 13:48:47.031 Check Link Status 
+[5832] 2015/01/08 13:49:47.031 Check Link Status 
+[5832] 2015/01/08 13:50:47.031 Check Link Status 
+[5832] 2015/01/08 13:51:47.031 Check Link Status 
+[5832] 2015/01/08 13:52:47.031 Check Link Status 
+[5832] 2015/01/08 13:53:47.031 Check Link Status 
+[5832] 2015/01/08 13:54:47.031 Check Link Status 
+[5832] 2015/01/08 13:55:47.031 Check Link Status 
+[5832] 2015/01/08 13:56:47.031 Check Link Status 
+[5832] 2015/01/08 13:57:47.031 Check Link Status 
+[5832] 2015/01/08 13:58:47.031 Check Link Status 
+[5832] 2015/01/08 13:59:47.031 Check Link Status 
+[5832] 2015/01/08 14:00:47.031 Check Link Status 
+[5832] 2015/01/08 14:01:47.031 Check Link Status 
+[5832] 2015/01/08 14:02:47.031 Check Link Status 
+[5832] 2015/01/08 14:03:47.031 Check Link Status 
+[5832] 2015/01/08 14:04:47.031 Check Link Status 
+[5832] 2015/01/08 14:05:47.031 Check Link Status 
+[5832] 2015/01/08 14:06:47.031 Check Link Status 
+[5832] 2015/01/08 14:07:47.031 Check Link Status 
+[5832] 2015/01/08 14:08:47.031 Check Link Status 
+[5832] 2015/01/08 14:09:47.031 Check Link Status 
+[5832] 2015/01/08 14:10:47.031 Check Link Status 
+[5832] 2015/01/08 14:11:47.031 Check Link Status 
+[5832] 2015/01/08 14:12:47.031 Check Link Status 
+[5832] 2015/01/08 14:13:47.031 Check Link Status 
+[5832] 2015/01/08 14:14:47.031 Check Link Status 
+[5832] 2015/01/08 14:15:47.031 Check Link Status 
+[5832] 2015/01/08 14:16:47.031 Check Link Status 
+[5832] 2015/01/08 14:17:47.031 Check Link Status 
+[5832] 2015/01/08 14:18:47.031 Check Link Status 
+[5832] 2015/01/08 14:19:47.031 Check Link Status 
+[5832] 2015/01/08 14:20:47.031 Check Link Status 
+[5832] 2015/01/08 14:21:47.031 Check Link Status 
+[5832] 2015/01/08 14:22:47.031 Check Link Status 
+[5832] 2015/01/08 14:23:47.031 Check Link Status 
+[5832] 2015/01/08 14:24:47.031 Check Link Status 
+[5832] 2015/01/08 14:25:47.031 Check Link Status 
+[5832] 2015/01/08 14:26:47.031 Check Link Status 
+[5832] 2015/01/08 14:27:47.031 Check Link Status 
+[5832] 2015/01/08 14:28:47.031 Check Link Status 
+[5832] 2015/01/08 14:29:47.031 Check Link Status 
+[5832] 2015/01/08 14:30:47.031 Check Link Status 
+[5832] 2015/01/08 14:31:47.031 Check Link Status 
+[5832] 2015/01/08 14:32:47.031 Check Link Status 
+[5832] 2015/01/08 14:33:47.031 Check Link Status 
+[5832] 2015/01/08 14:34:47.031 Check Link Status 
+[5832] 2015/01/08 14:35:47.031 Check Link Status 
+[5832] 2015/01/08 14:36:47.031 Check Link Status 
+[5832] 2015/01/08 14:37:47.031 Check Link Status 
+[5832] 2015/01/08 14:38:47.031 Check Link Status 
+[5832] 2015/01/08 14:39:47.031 Check Link Status 
+[5832] 2015/01/08 14:40:47.031 Check Link Status 
+[5832] 2015/01/08 14:41:47.031 Check Link Status 
+[5832] 2015/01/08 14:42:47.031 Check Link Status 
+[5832] 2015/01/08 14:43:47.031 Check Link Status 
+[5832] 2015/01/08 14:44:47.031 Check Link Status 
+[5832] 2015/01/08 14:45:47.031 Check Link Status 
+[5832] 2015/01/08 14:46:47.031 Check Link Status 
+[5832] 2015/01/08 14:47:47.031 Check Link Status 
+[5832] 2015/01/08 14:48:47.031 Check Link Status 
+[5832] 2015/01/08 14:49:47.031 Check Link Status 
+[5832] 2015/01/08 14:50:47.031 Check Link Status 
+[5832] 2015/01/08 14:51:47.031 Check Link Status 
+[5832] 2015/01/08 14:52:47.031 Check Link Status 
+[5832] 2015/01/08 14:53:42.500 SKQuoteLib_LeaveMonitor 
+[5832] 2015/01/08 14:53:42.500 SocketClose Type¡G101  ErrorCode¡G0
+[5832] 2015/01/08 14:53:42.578 API ExitInstance 
