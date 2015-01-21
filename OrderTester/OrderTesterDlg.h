@@ -43,6 +43,7 @@ private:
 // Construction
 public:
 	COrderTesterDlg(CWnd* pParent = NULL);	// standard constructor
+	~COrderTesterDlg ( );
 
 // Dialog Data
 	enum { IDD = IDD_ORDERTESTER_DIALOG };
@@ -95,11 +96,15 @@ public:
 	static int m_Account_count;
 	int m_Account_index, m_get_TF_accounts;
 	CString m_strAccount;
-	HANDLE g_hEvent_Account_Ready;
+	HANDLE g_hEvent_Account_Ready, g_hEvent_FutureRight_Ready, g_hEvent_OpenInterest_Ready;
 /*20150101 added by michael*/
 	DWORD m_WndOwnerThreadID;
 	void Switch_TabControl ( int NewPage );
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+/* 20150113 added by michael */
+	double margin, free_margin, equity;
+	map< string, double > mMap_origin_margin, mMap_keep_margin, mMap_perpip_value;
+	int m_nlong_position, m_nshort_position;
 };
 
 class CAboutDlg : public CDialogEx

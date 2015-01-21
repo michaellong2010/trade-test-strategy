@@ -11,6 +11,9 @@ CAccount::CAccount( string account_name, int time_frame ) {
 	mMap_origin_margin.insert ( pair <string, double> ( "TX00", 83000 ) );
 	mMap_keep_margin.insert ( pair <string, double> ( "TX00", 64000 ) );
 	mMap_perpip_value.insert ( pair <string, double> ( "TX00", 200 ) );
+	mMap_origin_margin.insert ( pair <string, double> ( "MTX00", 20750 ) );
+	mMap_keep_margin.insert ( pair <string, double> ( "MTX00", 16000 ) );
+	mMap_perpip_value.insert ( pair <string, double> ( "MTX00", 50 ) );
 	margin = free_margin = equity = 300000;
 
 	TCHAR path [ 200 ];

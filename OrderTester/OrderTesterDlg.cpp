@@ -16,7 +16,9 @@
 
 DWORD swat;
 CString g_strWndTitle;
+HWND g_hWnd_OrderTesterDlg = NULL;
 int COrderTesterDlg::m_Account_count = 0;
+VOID CALLBACK TimerProc1( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime );
 // CAboutDlg dialog used for App About
 
 /*class CAboutDlg : public CDialogEx
@@ -62,6 +64,9 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 	TOrder_info *porder_info;
 	CString str1, str2, strMsg;
 	SYSTEMTIME ti;
+	double new_free_margin = 0, ticker_margin = 0, pip_value = 0, keep_margin = 0, base_margin = 0;
+	string symbol;
+	int sync_lots = 0;
 
 	::GetLocalTime ( &ti );
 	if ( message == WM_CLOSE )
@@ -84,6 +89,18 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 						strMsg.Format(_T("send order to capital at time: %d: %d: %d "), ti.wMinute, ti.wSecond, ti.wMilliseconds );
 						AddReport ( strMsg );
 						porder_info = ( TOrder_info * ) cds.lpData;
+						symbol = porder_info->ticker_symbol;
+						//pip_value = mMap_perpip_value [ symbol ];
+						ticker_margin = mMap_origin_margin [ symbol ];
+						//keep_margin = mMap_keep_margin [ symbol ];
+						//this->margin
+						//this->equity
+						//new_free_margin = free_margin - ticker_margin;
+						if ( margin > equity )
+							base_margin =  margin;
+						else
+							base_margin =  equity;
+						sync_lots = porder_info->lots;
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_STOCKNO )->m_hWnd, porder_info->ticker_symbol );
 
 						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_ORDERTYPE ) )->SetCurSel( 0 );
@@ -92,28 +109,84 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 							sprintf ( str1.GetBufferSetLength ( 100 ), "%lf",  porder_info->open_price );
 							::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
 
-							if ( porder_info->position_type == OP_BUY )
-								( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+							if ( porder_info->position_type == OP_BUY ) {
+								if ( ( m_nshort_position - m_nlong_position ) >= 0 ) {
+									( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+									sync_lots = m_nshort_position - m_nlong_position + sync_lots;
+									new_free_margin = free_margin + ticker_margin * ( m_nshort_position - m_nlong_position - sync_lots );
+								}
+								else
+									if ( ( m_nlong_position - m_nshort_position ) >= sync_lots ) {
+										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+										sync_lots =  m_nlong_position - m_nshort_position - sync_lots;
+										new_free_margin = free_margin + ticker_margin * sync_lots;
+									}
+									/*else
+										if ( ( m_nlong_position - m_nshort_position ) < sync_lots ) {
+											( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+											sync_lots = m_nshort_position - m_nlong_position + sync_lots;
+										}*/
+							}
 							else
-								if ( porder_info->position_type == OP_SHORT )
-									( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+								if ( porder_info->position_type == OP_SHORT ) {
+									if ( ( m_nlong_position - m_nshort_position ) >= 0 ) {
+										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+										sync_lots = m_nlong_position - m_nshort_position + sync_lots;
+										new_free_margin = free_margin + ticker_margin * ( m_nlong_position - m_nshort_position - sync_lots );
+									}
+									else
+										if ( ( m_nshort_position - m_nlong_position ) >= sync_lots ) {
+											( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+											sync_lots = m_nshort_position - m_nlong_position - sync_lots;
+											new_free_margin = free_margin + ticker_margin * sync_lots;
+										}
+										/*else
+											if ( ( m_nshort_position - m_nlong_position ) < sync_lots ) {
+												( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+												sync_lots = m_nlong_position - m_nshort_position + sync_lots;
+											}*/
+								}
 						}
 						else
 							if ( porder_info->exit_tick > 0 ) {
 								sprintf ( str1.GetBufferSetLength ( 100 ), "%lf",  porder_info->close_price );
 								::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_PRICE )->m_hWnd, str1 );
 
-								if ( porder_info->position_type == OP_SHORT )
-									( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+								if ( porder_info->position_type == OP_SHORT ) {
+									if ( ( m_nshort_position - m_nlong_position ) >= 0 ) {
+										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+										sync_lots = m_nshort_position - m_nlong_position;
+									}
+									else
+										if ( ( m_nshort_position - m_nlong_position ) < 0 ) {
+											( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+											sync_lots = m_nlong_position - m_nshort_position;
+										}
+								}
 								else
-									if ( porder_info->position_type == OP_BUY )
-										( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+									if ( porder_info->position_type == OP_BUY ) {
+										if ( ( m_nlong_position - m_nshort_position ) >= 0 ) {
+											( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 1 );
+											sync_lots = m_nlong_position - m_nshort_position;
+										}
+										else
+											if ( ( m_nlong_position - m_nshort_position ) < 0 ) {
+												( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_BUYSELL ) )->SetCurSel( 0 );
+												sync_lots = m_nshort_position - m_nlong_position;
+											}
+									}
+								new_free_margin = free_margin + ticker_margin * sync_lots;
 							}
 						sprintf ( str1.GetBufferSetLength( 100 ), "%d",  porder_info->lots );
+						//sprintf ( str1.GetBufferSetLength( 100 ), "%d",  sync_lots );
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_QTY )->m_hWnd, str1 );
+						//if ( base_margin > 0 && new_free_margin > 0 && 100 * ( new_free_margin / base_margin ) > 30.0 )
 						m_FutureDlg.OnBnClickedButtonSendfutureorder ( );
 					}
 			}
+			else
+				if ( message == WM_REFRESH_FUTURE_RIGHT )
+					return TRUE;
 		//if ( message == WM_LOGIN )
 			//return FALSE;
 		//else
@@ -143,6 +216,25 @@ COrderTesterDlg::COrderTesterDlg(CWnd* pParent /*=NULL*/)
 	sprintf ( buf, "%x %x %x %x", &swat, ::GetCurrentProcessId(), ::GetCurrentThreadId ( ), &m_Account_index );
 	m_WndOwnerThreadID = ::GetCurrentThreadId ( );
 	//::MessageBox ( NULL, buf, "kkk", MB_OK );
+
+	margin = free_margin = equity = 0;
+	mMap_origin_margin.insert ( pair <string, double> ( "TX00", 83000 ) );
+	mMap_keep_margin.insert ( pair <string, double> ( "TX00", 64000 ) );
+	mMap_perpip_value.insert ( pair <string, double> ( "TX00", 200 ) );
+	mMap_origin_margin.insert ( pair <string, double> ( "MTX00", 20750 ) );
+	mMap_keep_margin.insert ( pair <string, double> ( "MTX00", 16000 ) );
+	mMap_perpip_value.insert ( pair <string, double> ( "MTX00", 50 ) );
+	m_nlong_position = m_nshort_position = 0;
+	g_hEvent_FutureRight_Ready = ::CreateEvent ( NULL, FALSE, FALSE, NULL );
+	g_hEvent_OpenInterest_Ready = ::CreateEvent ( NULL, FALSE, FALSE, NULL );
+}
+
+COrderTesterDlg::~COrderTesterDlg ( )
+{
+	if ( g_hEvent_Account_Ready )
+		::CloseHandle ( g_hEvent_Account_Ready );
+	::CloseHandle ( g_hEvent_FutureRight_Ready );
+	::CloseHandle ( g_hEvent_OpenInterest_Ready );
 }
 
 void COrderTesterDlg::DoDataExchange(CDataExchange* pDX)
@@ -262,7 +354,9 @@ BOOL COrderTesterDlg::OnInitDialog()
 	char buf [ 100 ];
 	sprintf ( buf, "%x", this->m_hWnd );
 	//::MessageBox ( NULL, buf, "kkk", MB_OK );
-	::SetEvent ( g_hEvent_Account_Ready );
+	if ( g_hEvent_Account_Ready )
+		::SetEvent ( g_hEvent_Account_Ready );
+	g_hWnd_OrderTesterDlg = this->m_hWnd;
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -348,31 +442,48 @@ void __stdcall OnBSTRCallBack( BSTR bstrData)
 /*20141229 added by michael*/
 void __stdcall OnNotifyFutureRightCallBack ( BSTR bstrData )
 {
-	COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( FindWindow(NULL,  ( LPCSTR) g_strWndTitle ) );
+	//COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( /*FindWindow(NULL,  ( LPCSTR) g_strWndTitle )*/g_hWnd_OrderTesterDlg );
 	CString strMsg ( bstrData );
 	vector<CString> Items;
 	if ( strMsg.Find ( _T ( "##" ) ) != -1 ) {
-		::PostMessage ( pDlg->m_hWnd, WM_REFRESH_FUTURE_RIGHT, ( WPARAM ) strMsg.AllocSysString(), 0 );
+		//::SetEvent ( pDlg->g_hEvent_FutureRight_Ready );
 	}
 	else {
 /*parse future right information*/
-		Items = pDlg->DivideByComma ( strMsg );
+		//Items = pDlg->DivideByComma ( strMsg );
+		/*pDlg->margin = _tstof( Items [ 0 ] );
+		pDlg->equity = _tstof( Items [ 6 ] );
+		pDlg->free_margin = _tstof( Items [ 18 ] );*/
+		::PostMessage ( FindWindow( NULL,  ( LPCSTR) g_strWndTitle ), WM_REFRESH_FUTURE_RIGHT, ( WPARAM ) bstrData, 0 );
 	}
 	OnBSTRCallBack ( bstrData );
 }
 
 void __stdcall OnNotifyOpenInterestCallBack ( BSTR bstrData )
 {
-	COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( FindWindow(NULL,  ( LPCSTR) g_strWndTitle ) );
+	COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( /*FindWindow(NULL,  ( LPCSTR) g_strWndTitle )*/g_hWnd_OrderTesterDlg );
 	CString strMsg ( bstrData );
 	vector<CString> Items;
 	if ( strMsg.Find ( _T ( "##" ) ) != -1 ) {
 		::PostMessage ( pDlg->m_hWnd, WM_REFRESH_OPEN_INTEREST, ( WPARAM ) strMsg.AllocSysString(), 0 );
+		::SetEvent ( pDlg->g_hEvent_OpenInterest_Ready );
 	}
 	else {
 /*parse open interest information*/
 		Items = pDlg->DivideByComma ( strMsg );
+		if ( Items.size ( ) > 1 ) {
+			if ( Items [ 3 ] == "B" )
+				pDlg->m_nlong_position = _ttoi( Items [ 4 ] );
+			else
+				if ( Items [ 3 ] == "S" )
+					pDlg->m_nshort_position = _ttoi( Items [ 4 ] );
+				else {
+					pDlg->m_nlong_position = pDlg->m_nshort_position = 0;
+				}
+		}
+		//pDlg->m_nlong_position =
 	}
+	pDlg->m_nlong_position = pDlg->m_nshort_position = 5;
 	OnBSTRCallBack ( bstrData );
 }
 
@@ -494,6 +605,8 @@ void COrderTesterDlg::OnBnClickedButtonInit()
 	try
 	{
 		CString strAccount;
+		DWORD dwWaitResult = -1;
+		CFutureDlg  *pFutureDlg = NULL;
 		m_editID.GetWindowText(strAccount);
 
 		CString strPassWord;
@@ -532,7 +645,14 @@ void COrderTesterDlg::OnBnClickedButtonInit()
 
 			if( nCert == 0 ) {
 				//MessageBox(_T("READ CERT SUCCESS"));
-				::SetEvent ( g_hEvent_Account_Ready );
+				pFutureDlg = ( ( CFutureDlg  * ) m_TabControl.GetDlgItem ( IDD_DIALOG_FUTURE ) );
+				pFutureDlg->OnBnClickedButtonFutureright ( );
+				dwWaitResult = ::WaitForSingleObject ( g_hEvent_FutureRight_Ready, 10000 );
+				pFutureDlg->OnBnClickedButtonOpeninterest ( );
+				dwWaitResult = ::WaitForSingleObject ( g_hEvent_OpenInterest_Ready, 10000 );
+				if ( g_hEvent_Account_Ready )
+					::SetEvent ( g_hEvent_Account_Ready );
+				//::SetTimer ( this->m_hWnd, 1993, 15000, TimerProc1 );
 			}
 			else
 				MessageBox(_T("READ CERT FALE"));
