@@ -38,4 +38,6 @@ public:
 	afx_msg void OnBnClickedButtonOpeninterest();
 	afx_msg void OnBnClickedButtonFutureright();
 	afx_msg void OnBnClickedButtonExecutionReport();
+
+	int nCode;
 };

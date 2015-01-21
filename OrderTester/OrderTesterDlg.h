@@ -24,7 +24,6 @@ using namespace std;
 /*20141229 added by michael*/
 #define WM_REFRESH_FUTURE_RIGHT ( WM_USER + 102 )
 #define WM_REFRESH_OPEN_INTEREST ( WM_USER + 103 )
-
 // COrderTesterDlg dialog
 class COrderTesterDlg : public CDialogEx
 {
@@ -96,7 +95,7 @@ public:
 	static int m_Account_count;
 	int m_Account_index, m_get_TF_accounts;
 	CString m_strAccount;
-	HANDLE g_hEvent_Account_Ready, g_hEvent_FutureRight_Ready, g_hEvent_OpenInterest_Ready;
+	HANDLE g_hEvent_Account_Ready/*, g_hEvent_FutureRight_Ready, g_hEvent_OpenInterest_Ready*/;
 /*20150101 added by michael*/
 	DWORD m_WndOwnerThreadID;
 	void Switch_TabControl ( int NewPage );

@@ -9,6 +9,7 @@
 //#include "afxdialogex.h"
 
 #include "Functions.h"
+#include <comutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,6 +20,7 @@ CString g_strWndTitle;
 HWND g_hWnd_OrderTesterDlg = NULL;
 int COrderTesterDlg::m_Account_count = 0;
 VOID CALLBACK TimerProc1( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime );
+HANDLE g_hEvent_FutureRight_Ready = NULL, g_hEvent_OpenInterest_Ready = NULL;
 // CAboutDlg dialog used for App About
 
 /*class CAboutDlg : public CDialogEx
@@ -67,6 +69,7 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 	double new_free_margin = 0, ticker_margin = 0, pip_value = 0, keep_margin = 0, base_margin = 0;
 	string symbol;
 	int sync_lots = 0;
+	vector<CString> Items;
 
 	::GetLocalTime ( &ti );
 	if ( message == WM_CLOSE )
@@ -185,8 +188,34 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 					}
 			}
 			else
-				if ( message == WM_REFRESH_FUTURE_RIGHT )
+				if ( message == WM_REFRESH_FUTURE_RIGHT ) {
+					strMsg = ( BSTR ) wParam;
+					Items = DivideByComma ( strMsg );
+					margin = _tstof( Items [ 0 ] );
+					equity = _tstof( Items [ 6 ] );
+					free_margin = _tstof( Items [ 18 ] );
 					return TRUE;
+				}
+				else
+					if ( message == WM_REFRESH_OPEN_INTEREST ) {
+						strMsg = ( BSTR ) wParam;
+						Items = DivideByComma ( strMsg );
+						if ( Items.size ( ) > 1 ) {
+							if ( Items [ 3 ] == "B" ) {
+								m_nlong_position = _ttoi( Items [ 4 ] );
+								m_nshort_position = 0;
+							}
+							else
+								if ( Items [ 3 ] == "S" ) {
+									m_nshort_position = _ttoi( Items [ 4 ] );
+									m_nlong_position = 0;
+								}
+								else {
+									m_nlong_position = m_nshort_position = 0;
+								}
+						}
+						return TRUE;
+					}
 		//if ( message == WM_LOGIN )
 			//return FALSE;
 		//else
@@ -235,6 +264,7 @@ COrderTesterDlg::~COrderTesterDlg ( )
 		::CloseHandle ( g_hEvent_Account_Ready );
 	::CloseHandle ( g_hEvent_FutureRight_Ready );
 	::CloseHandle ( g_hEvent_OpenInterest_Ready );
+	::KillTimer ( this->m_hWnd, 1993 );
 }
 
 void COrderTesterDlg::DoDataExchange(CDataExchange* pDX)
@@ -446,7 +476,7 @@ void __stdcall OnNotifyFutureRightCallBack ( BSTR bstrData )
 	CString strMsg ( bstrData );
 	vector<CString> Items;
 	if ( strMsg.Find ( _T ( "##" ) ) != -1 ) {
-		//::SetEvent ( pDlg->g_hEvent_FutureRight_Ready );
+		::SetEvent ( g_hEvent_FutureRight_Ready );
 	}
 	else {
 /*parse future right information*/
@@ -461,16 +491,15 @@ void __stdcall OnNotifyFutureRightCallBack ( BSTR bstrData )
 
 void __stdcall OnNotifyOpenInterestCallBack ( BSTR bstrData )
 {
-	COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( /*FindWindow(NULL,  ( LPCSTR) g_strWndTitle )*/g_hWnd_OrderTesterDlg );
+	//COrderTesterDlg* pDlg = (COrderTesterDlg*) CWnd::FromHandle ( /*FindWindow(NULL,  ( LPCSTR) g_strWndTitle )*/g_hWnd_OrderTesterDlg );
 	CString strMsg ( bstrData );
 	vector<CString> Items;
 	if ( strMsg.Find ( _T ( "##" ) ) != -1 ) {
-		::PostMessage ( pDlg->m_hWnd, WM_REFRESH_OPEN_INTEREST, ( WPARAM ) strMsg.AllocSysString(), 0 );
-		::SetEvent ( pDlg->g_hEvent_OpenInterest_Ready );
+		::SetEvent ( g_hEvent_OpenInterest_Ready );		
 	}
 	else {
 /*parse open interest information*/
-		Items = pDlg->DivideByComma ( strMsg );
+		/*Items = pDlg->DivideByComma ( strMsg );
 		if ( Items.size ( ) > 1 ) {
 			if ( Items [ 3 ] == "B" )
 				pDlg->m_nlong_position = _ttoi( Items [ 4 ] );
@@ -480,10 +509,11 @@ void __stdcall OnNotifyOpenInterestCallBack ( BSTR bstrData )
 				else {
 					pDlg->m_nlong_position = pDlg->m_nshort_position = 0;
 				}
-		}
+		}*/
 		//pDlg->m_nlong_position =
+		::PostMessage ( FindWindow( NULL,  ( LPCSTR) g_strWndTitle ), WM_REFRESH_OPEN_INTEREST, ( WPARAM ) bstrData, 0 );
 	}
-	pDlg->m_nlong_position = pDlg->m_nshort_position = 5;
+	//pDlg->m_nlong_position = pDlg->m_nshort_position = 5;
 	OnBSTRCallBack ( bstrData );
 }
 
@@ -646,13 +676,19 @@ void COrderTesterDlg::OnBnClickedButtonInit()
 			if( nCert == 0 ) {
 				//MessageBox(_T("READ CERT SUCCESS"));
 				pFutureDlg = ( ( CFutureDlg  * ) m_TabControl.GetDlgItem ( IDD_DIALOG_FUTURE ) );
-				pFutureDlg->OnBnClickedButtonFutureright ( );
-				dwWaitResult = ::WaitForSingleObject ( g_hEvent_FutureRight_Ready, 10000 );
-				pFutureDlg->OnBnClickedButtonOpeninterest ( );
-				dwWaitResult = ::WaitForSingleObject ( g_hEvent_OpenInterest_Ready, 10000 );
+				do {
+					pFutureDlg->OnBnClickedButtonFutureright ( );
+				} while ( pFutureDlg->nCode == SK_ERROR_QUERY_IN_PROCESSING );
+				if ( pFutureDlg->nCode == 0 )
+					dwWaitResult = ::WaitForSingleObject ( g_hEvent_FutureRight_Ready, 10000 );
+				do {
+					pFutureDlg->OnBnClickedButtonOpeninterest ( );
+				} while ( pFutureDlg->nCode == SK_ERROR_QUERY_IN_PROCESSING );
+				if ( pFutureDlg->nCode == 0 )
+					dwWaitResult = ::WaitForSingleObject ( g_hEvent_OpenInterest_Ready, 10000 );
 				if ( g_hEvent_Account_Ready )
 					::SetEvent ( g_hEvent_Account_Ready );
-				//::SetTimer ( this->m_hWnd, 1993, 15000, TimerProc1 );
+				::SetTimer ( this->m_hWnd, 1993, 15000, TimerProc1 );
 			}
 			else
 				MessageBox(_T("READ CERT FALE"));
@@ -698,11 +734,21 @@ vector<CString> COrderTesterDlg::DivideByComma( CString strBuf)
 );*/
 VOID CALLBACK TimerProc1( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
+	DWORD dwWaitResult = -1;
 	TRACE ( "%x\n", ::GetCurrentThreadId ( ) );
 	CFutureDlg *pFutureDlg = ( CFutureDlg  * )  ( (COrderTesterDlg*) AfxGetMainWnd() )->m_TabControl.GetDlgItem ( IDD_DIALOG_FUTURE );
 
-	pFutureDlg->OnBnClickedButtonFutureright ( );
-	pFutureDlg->OnBnClickedButtonOpeninterest ( );
+	do {
+		pFutureDlg->OnBnClickedButtonFutureright ( );
+	} while ( pFutureDlg->nCode == SK_ERROR_QUERY_IN_PROCESSING );
+	if ( pFutureDlg->nCode == 0 )
+		dwWaitResult = ::WaitForSingleObject ( g_hEvent_FutureRight_Ready, 10000 );
+	do {
+		pFutureDlg->OnBnClickedButtonOpeninterest ( );
+	} while ( pFutureDlg->nCode == SK_ERROR_QUERY_IN_PROCESSING );
+	if ( pFutureDlg->nCode == 0 )
+		dwWaitResult = ::WaitForSingleObject ( g_hEvent_OpenInterest_Ready, 10000 );
+
 }
 
 void COrderTesterDlg::AddAccount(const CString& strAccount)

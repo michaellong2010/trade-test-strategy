@@ -304,13 +304,13 @@ void CFutureDlg::OnBnClickedButtonOpeninterest()
 		return;
 	}
 
-	int nCode = GetOpenInterest( m_strAccount);
+	nCode = GetOpenInterest( m_strAccount);
 	
-	CString strMsg;
+	/*CString strMsg;
 	strMsg.Format(_T("Return Code : %d"),nCode);
 	
 	COrderTesterDlg* pDlg = (COrderTesterDlg*) AfxGetMainWnd();
-	pDlg->AddReport( strMsg );
+	pDlg->AddReport( strMsg );*/
 }
 
 
@@ -323,13 +323,13 @@ void CFutureDlg::OnBnClickedButtonFutureright()
 		return;
 	}
 
-	int nCode = GetFutureRight( m_strAccount);
+	nCode = GetFutureRight( m_strAccount);
 	
-	CString strMsg;
+	/*CString strMsg;
 	strMsg.Format(_T("Return Code : %d"),nCode);
 	
 	COrderTesterDlg* pDlg = (COrderTesterDlg*) AfxGetMainWnd();
-	pDlg->AddReport( strMsg );
+	pDlg->AddReport( strMsg );*/
 }
 
 void CFutureDlg::OnBnClickedButtonExecutionReport()
