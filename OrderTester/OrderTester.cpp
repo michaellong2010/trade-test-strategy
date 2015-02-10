@@ -53,6 +53,7 @@ CAboutDlg about_dlg;
 
 BOOL COrderTesterApp::InitInstance()
 {
+	AfxOleInit();
 	m_pFirstInstanceObj = new CLimitSingleInstance ( TEXT("Global\\{05CA3573-B449-4e0b-83F5-7FD612E378E9}") );
 	m_nInstanceID = 0;
 	if ( m_pFirstInstanceObj->IsAnotherInstanceRunning() ) {

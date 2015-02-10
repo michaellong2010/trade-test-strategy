@@ -200,7 +200,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\QuoteTesterDlg.h"
+					RelativePath=".\QuoteTesterDlg_New_UI.h"
 					>
 				</File>
 				<File
@@ -267,7 +267,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\QuoteTesterDlg.cpp"
+					RelativePath=".\QuoteTesterDlg_New_UI.cpp"
 					>
 				</File>
 				<File

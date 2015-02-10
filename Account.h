@@ -36,6 +36,19 @@ struct TOrder_info {
 	}
 };
 
+struct TStrategy_info {
+	BOOL isConfigure;
+	int nType, time_frame, n_sticks;
+	int mMA1_period, mMA2_period, mMA3_period;
+	string symbol;
+	BOOL enable_MA_margin;
+	double mMA1_margin, mMA2_margin, mMA3_margin;
+	BOOL m_en_stoploss, m_en_trailing_stop, m_en_trade_MA_ambigous;
+	int m_stoploss;
+	BOOL m_en_gap, m_bid_ask_weight_ratio, m_en_open_interest;
+	BOOL m_simulation_only;
+};
+
 class CAccount {
 private:
 	/*margin, free-margin, equity*/
@@ -66,4 +79,9 @@ public:
 	int m_Account_index;
 	COrder *m_pOrder_operator;
 	void bind_order_operator ( COrder * pOrder_operator );
+
+	TStrategy_info m_Strategy;
+	double m_orig_MA1_margin, m_orig_MA2_margin, m_orig_MA3_margin;
+	int m_current_tick_time;
+	void reset( TStrategy_info &strategy );
 };

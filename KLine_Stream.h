@@ -10,6 +10,7 @@
 #include "Functions.h"
 #include <math.h>
 #include <direct.h>
+#include "Account.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -49,6 +50,15 @@ struct TCandleStick {
 	}
 };
 
+struct TAskBidWeight {
+	double bid_vol;
+	double bid_weight;
+	double ask_vol;
+	double ask_weight;
+	double bid_product;
+	double ask_product;
+};
+
 /*handle multi-symbols & single time frame for each symbol*/
 class CKLineStream {
 private:
@@ -73,10 +83,11 @@ private:
 	int n_collapse_sticks;
 	int server_escape_seconds;
 	bool store_tick_file;
-	bool MA1_list_ready, MA2_list_ready;
+	bool MA1_list_ready, MA2_list_ready, MA3_list_ready;
 	//char path_buf [ 200 ];
 	CStringW path_bufW;
 	CStringA path_bufA;
+	TStrategy_info m_Strategy;
 public:
 	CKLineStream(int time_frame, int n_sticks, bool need_store_tick);	// 標準建構函式
 	~CKLineStream();
@@ -100,10 +111,10 @@ public:
 	vector<string> tokenize( const char *input_str, char *delimiter );
 
 	/* load KLine data from archive into `mMap_stock_kline`　when call capital API SKQuoteLib_GetKLine() */
-	void load_KLine_from_archive ( char * ticker_symbol );
+	void load_KLine_from_archive ( const char * ticker_symbol );
 	/*set/get KLine ready status of symbols*/
-	void set_KLine_ready ( char * ticker_symbol );
-	bool get_KLine_ready ( char * ticker_symbol );
+	void set_KLine_ready ( const char * ticker_symbol );
+	bool get_KLine_ready ( const char * ticker_symbol );
 
 	ofstream txt_out;
 	/*map stock symbol to reference it's vector<tick>*/
@@ -118,18 +129,24 @@ public:
 	int kline_fetch_server_time;
 
 	/*collapse multiple candlestick form another time frame KLine*/
-	void candlestick_collapse ( char * ticker_symbol );
+	void candlestick_collapse ( const char * ticker_symbol );
 
 	/*calculate mean average of KLine data MA15&MA22*/
-	map<string, list<double>*> mMap_MA1, mMap_MA2;
+	map<string, list<double>*> mMap_MA1, mMap_MA2, mMap_MA3;
 
 	bool is_tick_in_kline;
 	void sync_server_time ( int total_secconds );
 
-	double mMA1_period, mMA2_period;
-	void setting_MA ( int MA1_period, int MA2_period );
+	double mMA1_period, mMA2_period, mMA3_period;
+	void setting_MA ( int MA1_period, int MA2_period, int MA3_period );
 
 	/*get current trading date*/
 	int get_trading_date ( string ticker_symbol );
 	int kline_close_time;
+	void reset( TStrategy_info &strategy );
+	map < string, bool > mMap_MA1_ready, mMap_MA2_ready, mMap_MA3_ready;
+	bool isCanChangeStrategy ( TStrategy_info &strategy );
+	list<double> *pList_MA1, *pList_MA2, *pList_MA3;
+	map < string, TAskBidWeight *> mMap_askbid_weight;
+	TAskBidWeight *pAskBd_Weight;
 };

@@ -46,7 +46,7 @@ CKLineStream::~CKLineStream() {
 			delete (*itr).second;
 	}
 
-	/*cloase all file stream*/
+	/*close all file stream*/
 	for ( map<string, TKLineData_FileInfo *>::iterator itr1 = file_stream_info.begin(); itr1 != file_stream_info.end(); itr1++ ) {
 		p_fs = ((*itr1).second)->p_fs;
 		p_fs->flush();
@@ -59,7 +59,6 @@ CKLineStream::~CKLineStream() {
 
 	for ( map<string, list<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
 		delete (*itr).second;
-
 	}
 
 	for ( map<string, list<TCandleStick>*>::iterator itr = mMap_tick_compose_kline.begin(); itr != mMap_tick_compose_kline.end(); itr++ ) {
@@ -80,11 +79,271 @@ CKLineStream::~CKLineStream() {
 		delete (*itr1).second;
 	for ( map<string, list<double>*>::iterator itr1 = mMap_MA2.begin(); itr1 != mMap_MA2.end(); itr1++ )
 		delete (*itr1).second;
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA3.begin(); itr1 != mMap_MA3.end(); itr1++ )
+		delete (*itr1).second;
 
 	if ( txt_out.is_open() ) {
 		txt_out.flush();
 		txt_out.close();
 	}
+}
+
+bool CKLineStream::isCanChangeStrategy ( TStrategy_info &strategy )
+{
+	if ( mMap_intraday_open_time.count ( strategy.symbol ) && ( m_Strategy.n_sticks != strategy.n_sticks || m_Strategy.time_frame != strategy.time_frame ) ) {
+		return false;
+	}
+	else {
+		reset( strategy );
+		return true;
+	}
+
+}
+
+void CKLineStream::reset ( TStrategy_info &strategy )
+{
+	int nSize;
+	fstream *p_fs;
+	string m_str_symbol, m_str_symbol1, m_str_filename, m_str_filename1;
+	char str_buf[ 100 ];
+	list < TCandleStick > *pList_KLineData = NULL, *pList_KLineData1 = NULL;
+	TKLineData_FileInfo *pKLine_file_info = NULL, *pKLine_file_info1 = NULL;
+	m_Strategy = strategy;
+
+	if ( nTimeFrame != m_Strategy.time_frame || m_Strategy.n_sticks != n_collapse_sticks ) {
+		for (map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.begin();  itr != mMap_stock_kline.end(); itr++) {
+			nSize = sizeof((*itr).first);
+			nSize = sizeof((*itr).second);
+			if ( nSize == 4 )
+				delete (*itr).second;
+		}
+		mMap_stock_kline.clear ();
+
+		for ( map<string, TKLineData_FileInfo *>::iterator itr1 = file_stream_info.begin(); itr1 != file_stream_info.end(); itr1++ ) {
+			p_fs = ((*itr1).second)->p_fs;
+			p_fs->flush();
+			p_fs->close();
+			nSize = sizeof((*itr1).second);
+			delete ((*itr1).second->p_fs);
+			if ( nSize == 4 )
+				delete (*itr1).second;
+		}
+		file_stream_info.clear ();
+	}
+	else {
+		if ( m_Strategy.n_sticks == n_collapse_sticks ) {
+			m_str_symbol = m_Strategy.symbol;
+			m_str_filename = path_bufA.GetString() + m_str_symbol + "_" + mTimeFrameName[ nTimeFrame ];
+			map<string, list<TCandleStick> *>::iterator itr = mMap_stock_kline.find ( m_str_symbol );
+			map<string, TKLineData_FileInfo *>::iterator itr1 =  file_stream_info.find( m_str_filename );
+			/*test if a key exist*/
+			if ( itr != mMap_stock_kline.end() && itr1 != file_stream_info.end() ) {
+				pList_KLineData = (*itr).second;
+				pKLine_file_info = (*itr1).second;
+			}
+
+			if ( n_collapse_sticks == 1 ) {
+				for (map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.begin();  itr != mMap_stock_kline.end(); itr++) {
+					if ( pList_KLineData != (*itr).second )
+						delete (*itr).second;
+				}
+				mMap_stock_kline.clear ();
+				if ( pList_KLineData != NULL )
+					mMap_stock_kline.insert ( pair < string, list < TCandleStick > * > ( m_str_symbol, pList_KLineData ) );
+
+
+				for ( map<string, TKLineData_FileInfo *>::iterator itr1 = file_stream_info.begin(); itr1 != file_stream_info.end(); itr1++ ) {
+					if ( pKLine_file_info != (*itr1).second ) {
+						p_fs = ((*itr1).second)->p_fs;
+						p_fs->flush();
+						p_fs->close();
+
+						delete ((*itr1).second->p_fs);
+						delete (*itr1).second;
+					}
+				}
+				file_stream_info.clear ();
+				if ( pKLine_file_info != NULL )
+					file_stream_info.insert ( pair < string, TKLineData_FileInfo * > ( m_str_filename, pKLine_file_info ) );
+			}
+			else {
+				switch ( nTimeFrame ) {
+                  case 0: //1min
+					  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 1 * n_collapse_sticks );
+					  break;
+				  case 1: //5min
+					  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 5 * n_collapse_sticks );
+					  break;
+				  case 2: //30min
+					  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 30 * n_collapse_sticks );
+					  break;
+				}
+				m_str_symbol1 = str_buf;
+				m_str_filename1 = path_bufA.GetString() + m_str_symbol1;
+				itr = mMap_stock_kline.find ( m_str_symbol1 );
+				itr1 =  file_stream_info.find( m_str_filename1 );
+				if ( itr != mMap_stock_kline.end() && itr1 != file_stream_info.end() ) {
+					pList_KLineData1 = (*itr).second;
+					pKLine_file_info1 = (*itr1).second;
+				}
+
+				for (map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.begin();  itr != mMap_stock_kline.end(); itr++) {
+					if ( pList_KLineData != (*itr).second && pList_KLineData1 != (*itr).second )
+						delete (*itr).second;
+				}
+				mMap_stock_kline.clear ();
+				if ( pList_KLineData != NULL )
+					mMap_stock_kline.insert ( pair < string, list < TCandleStick > * > ( m_str_symbol, pList_KLineData ) );
+				if ( pList_KLineData1 != NULL )
+					mMap_stock_kline.insert ( pair < string, list < TCandleStick > * > ( m_str_symbol1, pList_KLineData1 ) );
+
+				for ( map<string, TKLineData_FileInfo *>::iterator itr1 = file_stream_info.begin(); itr1 != file_stream_info.end(); itr1++ ) {
+					if ( pKLine_file_info != (*itr1).second && pKLine_file_info1 != (*itr1).second ) {
+						p_fs = ((*itr1).second)->p_fs;
+						p_fs->flush();
+						p_fs->close();
+
+						delete ((*itr1).second->p_fs);
+						delete (*itr1).second;
+					}
+				}
+				file_stream_info.clear ();
+				if ( pKLine_file_info != NULL )
+					file_stream_info.insert ( pair < string, TKLineData_FileInfo * > ( m_str_filename, pKLine_file_info ) );
+				if ( pKLine_file_info1 != NULL )
+					file_stream_info.insert ( pair < string, TKLineData_FileInfo * > ( m_str_filename1, pKLine_file_info1 ) );
+			}
+		}
+		else {
+		
+		}
+	}
+	mMap_kline_ready.clear ();
+	mMap_KLine_open_time.clear ();
+	//mMap_intraday_open_time.clear ();
+
+	n_collapse_sticks = m_Strategy.n_sticks;	
+	nTimeFrame = m_Strategy.time_frame;
+
+	list<TICK> *pList_TickData = NULL;
+	pList_KLineData = NULL;
+	m_str_symbol = m_Strategy.symbol;
+	if ( n_collapse_sticks == 1 )
+		m_str_symbol1 = m_Strategy.symbol;
+	else {
+		switch ( nTimeFrame ) {
+	  case 0: //1min
+		  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 1 * n_collapse_sticks );
+		  m_str_symbol1 = str_buf;
+		  break;
+	  case 1: //5min
+		  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 5 * n_collapse_sticks );
+		  m_str_symbol1 = str_buf;
+		  break;
+	  case 2: //30min
+		  sprintf( str_buf, "%s_%dmin", m_Strategy.symbol.c_str(), 30 * n_collapse_sticks );
+		  m_str_symbol1 = str_buf;
+		  break;
+	  default:
+		  m_str_symbol1 = m_Strategy.symbol + "_" + mTimeFrameName[ nTimeFrame ];
+		}
+	}
+	m_str_symbol = m_str_symbol1;
+	/*if ( store_tick_file == true ) {
+		for ( map<string, list<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
+			//if ( (*itr).first == m_str_symbol )
+				//pList_TickData = (*itr).second;
+			//else
+				delete (*itr).second;
+		}
+		mMap_stock_ticks.clear ();
+		//if ( pList_TickData != NULL )
+			//mMap_stock_ticks.insert ( pair < string, list < TICK > * > ( m_str_symbol, pList_TickData ) );
+
+		for ( map<string, list<TCandleStick>*>::iterator itr = mMap_tick_compose_kline.begin(); itr != mMap_tick_compose_kline.end(); itr++ ) {
+			if ( (*itr).first == m_str_symbol1 )
+				pList_KLineData = (*itr).second;
+			else
+				delete (*itr).second;
+		}
+		mMap_tick_compose_kline.clear ();
+		if ( pList_KLineData != NULL )
+			mMap_tick_compose_kline.insert ( pair < string, list < TCandleStick > * > ( m_str_symbol1, pList_KLineData ) );
+
+		for ( map<string, TKLineData_FileInfo *>::iterator itr1 = mMap_tickfile_stream_info.begin(); itr1 != mMap_tickfile_stream_info.end(); itr1++ ) {
+			p_fs = ((*itr1).second)->p_fs;
+			p_fs->flush();
+			p_fs->close();
+			nSize = sizeof((*itr1).second);
+			delete ((*itr1).second->p_fs);
+			if ( nSize == 4 )
+				delete (*itr1).second;
+		}
+		mMap_tickfile_stream_info.clear ();
+	}
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA1.begin(); itr1 != mMap_MA1.end(); itr1++ ) {
+		pList_MA1 = (*itr1).second;
+		delete (*itr1).second;
+	}
+	for ( map<string, list<double>*>::iterator itr1 = mMap_MA2.begin(); itr1 != mMap_MA2.end(); itr1++ ) {
+		pList_MA2 = (*itr1).second;
+		delete (*itr1).second;
+	}
+	mMap_MA1.clear ();
+	mMap_MA2.clear ();
+	MA1_list_ready = MA2_list_ready = false;*/
+			if ( this->m_Strategy.mMA1_period > 0 ) {
+				if ( !mMap_MA1.count ( m_str_symbol ) ) {
+					pList_MA1 = new list<double>;
+					mMap_MA1.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA1 ) );
+					MA1_list_ready = mMap_MA1_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA1 = mMap_MA1 [ m_str_symbol ];
+					MA1_list_ready = mMap_MA1_ready [ m_str_symbol ];
+				}
+			}
+			else {
+				pList_MA1 = NULL;
+			}
+			if ( this->m_Strategy.mMA2_period > 0 ) {
+				if ( !mMap_MA2.count ( m_str_symbol ) ) {
+					pList_MA2 = new list<double>;
+					mMap_MA2.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA2 ) );
+					MA2_list_ready = mMap_MA2_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA2 = mMap_MA2 [ m_str_symbol ];
+					MA2_list_ready = mMap_MA2_ready [ m_str_symbol ];
+				}
+			}
+			else
+				pList_MA2 = NULL;
+			if ( this->m_Strategy.mMA3_period > 0 ) {
+				if ( !mMap_MA3.count ( m_str_symbol ) ) {
+					pList_MA3 = new list<double>;
+					mMap_MA3.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA3 ) );
+					MA3_list_ready = mMap_MA3_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA3 = mMap_MA3 [ m_str_symbol ];
+					MA3_list_ready = mMap_MA3_ready [ m_str_symbol ];
+				}
+			}
+			else
+				pList_MA3 = NULL;
+
+			if ( store_tick_file == true ) {
+				if ( !mMap_askbid_weight.count ( m_Strategy.symbol ) ) {
+					pAskBd_Weight = new TAskBidWeight;
+					mMap_askbid_weight [ m_Strategy.symbol ] = pAskBd_Weight;
+				}
+				else {
+					pAskBd_Weight = mMap_askbid_weight [ m_Strategy.symbol ];
+				}
+			}
+			else
+				pAskBd_Weight = NULL;
 }
 
 int CKLineStream::Push_KLine_Data(CString Stock_No, CString Data) {
@@ -385,10 +644,12 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 						pKLine_file_info->n_list_begin++;
 						pKLine_file_info->n_fsize = ( pKLine_file_info->n_list_end + 1 ) * n_bytes;
 						if ( ( pKLine_file_info->n_list_end - pKLine_file_info->n_list_begin + 1 ) < 1000 ) {
-							p_fs->seekg ( n_insert_pos*n_bytes, ios::beg );
-							p_fs->read ( (char *) &m_file_candlestick, n_bytes );
-							pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );
-							pKLine_file_info->n_list_begin--;
+							if ( ( pKLine_file_info->n_list_begin - 1 ) >= 0 ) {
+								pKLine_file_info->n_list_begin--;
+								p_fs->seekg ( pKLine_file_info->n_list_begin*n_bytes, ios::beg );
+								p_fs->read ( (char *) &m_file_candlestick, n_bytes );
+								pList_KLineData->insert ( pList_KLineData->begin(), m_file_candlestick );
+							}
 						}
 					}
 				}
@@ -494,7 +755,7 @@ vector<string> CKLineStream::tokenize( const char *input_str, char *delimiter ) 
 	return mToken;
 }
 
-void CKLineStream::load_KLine_from_archive ( char * ticker_symbol ) {
+void CKLineStream::load_KLine_from_archive ( const char * ticker_symbol ) {
 	/*candlesticks archive->mMap_stock_kline*/
 
 	string m_str_symbol, m_str_filename;
@@ -738,6 +999,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 	TCandleStick *m_pTick_candlestick;
 	bool found_tick_in_candlestick = false, found_in_file = false;
 	float new_price;
+	double close_bid_diff, close_ask_diff;
 #if 1
 	if ( store_tick_file ==true ) {
 	if ( found_in_vec == false) {
@@ -774,10 +1036,12 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 				pTick_file_info->n_list_begin++;
 				pTick_file_info->n_fsize = ( pTick_file_info->n_list_end + 1 ) * nSize;
 				if ( n_insert_pos >= 0 && ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) < 1000 ) {
-					p_fs->seekg ( n_insert_pos*nSize, ios::beg );
-					p_fs->read ( (char *) &m_file_tick, nSize );
-					pList_TickData->insert ( pList_TickData->begin(), m_file_tick );
-					pTick_file_info->n_list_begin--;
+					if ( ( pTick_file_info->n_list_begin - 1 ) >= 0 ) {
+						pTick_file_info->n_list_begin--;
+						p_fs->seekg ( pTick_file_info->n_list_begin*nSize, ios::beg );
+						p_fs->read ( (char *) &m_file_tick, nSize );
+						pList_TickData->insert ( pList_TickData->begin(), m_file_tick );
+					}
 				}
 				else
 					if ( ( pTick_file_info->n_list_end - pTick_file_info->n_list_begin + 1 ) == 1 )
@@ -806,6 +1070,33 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 		}
 		p_fs->flush();
 	}
+
+	if ( !nPtr ) {
+		close_bid_diff = close_ask_diff = 0;
+	}
+	else {
+		close_bid_diff = fabs( double ( nClose - nBid ) / 100 );
+		close_ask_diff = fabs( double ( nClose - nAsk ) / 100 );
+	}
+	if ( close_bid_diff >  close_ask_diff) {
+		pAskBd_Weight->ask_vol += nQty;
+		pAskBd_Weight->ask_product += nQty * nClose;
+		pAskBd_Weight->ask_weight = pAskBd_Weight->ask_product / ( 100 * pAskBd_Weight->ask_vol );
+	}
+	else
+		if ( close_bid_diff <  close_ask_diff) {
+			pAskBd_Weight->bid_vol += nQty;
+			pAskBd_Weight->bid_product += nQty * nClose;
+			pAskBd_Weight->bid_weight = pAskBd_Weight->bid_product / ( 100 * pAskBd_Weight->bid_vol );
+		}
+		else {
+			pAskBd_Weight->ask_vol += nQty;
+			pAskBd_Weight->ask_product += nQty * nClose;
+			pAskBd_Weight->ask_weight = pAskBd_Weight->ask_product / ( 100 * pAskBd_Weight->ask_vol );
+			pAskBd_Weight->bid_vol += nQty;
+			pAskBd_Weight->bid_product += nQty * nClose;
+			pAskBd_Weight->bid_weight = pAskBd_Weight->bid_product / ( 100 * pAskBd_Weight->bid_vol );
+		}
 	}
 #endif
 
@@ -824,10 +1115,10 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 #endif
 
 	string m_new_filename, m_str_symbol;
-	list<double> *pList_MA1, *pList_MA2;
+	//list<double> *pList_MA1, *pList_MA2, *pList_MA3;
 	double sum, mean;
 	static int is_last_tick_backfill = 1;
-	int n_MA_Groups, n_rev_ins_pos;
+	int n_MA_Groups, n_rev_ins_pos, mins_gap = 0;
 	//static bool MA15_list_ready = false, MA22_list_ready = false;
 	list <TCandleStick>::reverse_iterator itr5, itr6, itr7;
 	list <double>::reverse_iterator itr9;
@@ -837,7 +1128,12 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 
 			switch ( nTimeFrame ) {
 					case 1:
-						sprintf( str_buf, "%s_%dmin", symbol.c_str(), 5 * n_collapse_sticks );
+					case 2:
+						if ( nTimeFrame == 1 )
+							mins_gap = 5;
+						else
+							mins_gap = 30;
+						sprintf( str_buf, "%s_%dmin", symbol.c_str(), mins_gap * n_collapse_sticks );
 						m_str_symbol = str_buf;
 						//m_new_filename = "C:\\temp\\" + m_str_symbol;
 						m_new_filename = path_bufA.GetString() + m_str_symbol;
@@ -877,18 +1173,46 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 					pList_KLineData1 = mMap_stock_kline[ m_str_symbol ];
 				}
 			}
-			if ( !mMap_MA1.count ( m_str_symbol ) ) {
-				pList_MA1 = new list<double>;
-				mMap_MA1.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA1 ) );
+			/*if ( this->m_Strategy.mMA1_period > 0 ) {
+				if ( !mMap_MA1.count ( m_str_symbol ) ) {
+					pList_MA1 = new list<double>;
+					mMap_MA1.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA1 ) );
+					MA1_list_ready = mMap_MA1_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA1 = mMap_MA1 [ m_str_symbol ];
+					MA1_list_ready = mMap_MA1_ready [ m_str_symbol ];
+				}
+			}
+			else {
+				pList_MA1 = NULL;
+			}
+			if ( this->m_Strategy.mMA2_period > 0 ) {
+				if ( !mMap_MA2.count ( m_str_symbol ) ) {
+					pList_MA2 = new list<double>;
+					mMap_MA2.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA2 ) );
+					MA2_list_ready = mMap_MA2_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA2 = mMap_MA2 [ m_str_symbol ];
+					MA2_list_ready = mMap_MA2_ready [ m_str_symbol ];
+				}
 			}
 			else
-				pList_MA1 = mMap_MA1 [ m_str_symbol ];
-			if ( !mMap_MA2.count ( m_str_symbol ) ) {
-				pList_MA2 = new list<double>;
-				mMap_MA2.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA2 ) );
+				pList_MA2 = NULL;
+			if ( this->m_Strategy.mMA3_period > 0 ) {
+				if ( !mMap_MA3.count ( m_str_symbol ) ) {
+					pList_MA3 = new list<double>;
+					mMap_MA3.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA3 ) );
+					MA3_list_ready = mMap_MA3_ready [ m_str_symbol ] = false;
+				}
+				else {
+					pList_MA3 = mMap_MA3 [ m_str_symbol ];
+					MA3_list_ready = mMap_MA3_ready [ m_str_symbol ];
+				}
 			}
 			else
-				pList_MA2 = mMap_MA2 [ m_str_symbol ];
+				pList_MA3 = NULL;*/
 /*collapse tick data into appropriate candlestick*/
 			if ( nTimeFrame <= 4 ) {
 /*intraday timeframetake the first tick time as start within the day*/
@@ -903,9 +1227,10 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 				      case 0: //1min
 						  break;
 					  case 1: //5min
+					  case 2: //30min
 					  case 4: //day
-						  if ( nTimeFrame == 1)
-							  kline_close_time = next_kline_close_time = 60 * m_open_hour + ( m_open_min + 5 * n_collapse_sticks * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / ( 5 * n_collapse_sticks ) + 1 ) );
+						  if ( nTimeFrame == 1 || nTimeFrame == 2 )
+							  kline_close_time = next_kline_close_time = 60 * m_open_hour + ( m_open_min + mins_gap * n_collapse_sticks * ( ( ( 60 * m_tick_hour + m_tick_min ) - ( 60 * m_open_hour + m_open_min ) ) / ( mins_gap * n_collapse_sticks ) + 1 ) );
 						  else
 							  if ( nTimeFrame == 4)
 								  kline_close_time = next_kline_close_time = 0;
@@ -998,7 +1323,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 										  }
 									  }
 									  
-									  MA1_list_ready = true;
+									  mMap_MA1_ready [ m_str_symbol ] = MA1_list_ready = true;
 							  }
 							  else
 								  if ( MA1_list_ready == true /*&& is_BackFill == 0*/ ) {
@@ -1091,7 +1416,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 										  }
 									  }
 									  
-									  MA2_list_ready = true;
+									  mMap_MA2_ready [ m_str_symbol ] = MA2_list_ready = true;
 							  }
 							  else
 								  if ( MA2_list_ready == true /*&& is_BackFill == 0*/ ) {
@@ -1108,8 +1433,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 												  mean = sum / mMA2_period;												 
 												  (*itr9) = mean;
 											  }
-											  if ( pList_MA1->size() > 1000 )
-												  pList_MA1->pop_front();
+											  if ( pList_MA2->size() > 1000 )
+												  pList_MA2->pop_front();
 										  }
 									  }
 									  else
@@ -1126,9 +1451,104 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 													  mean = sum / mMA2_period;
 													  (*itr9) = mean;
 												  }
-												  if ( pList_MA1->size() > 1000 )
-													  pList_MA1->pop_front();
+												  if ( pList_MA2->size() > 1000 )
+													  pList_MA2->pop_front();
 											  }
+										  }
+								  }
+#endif
+
+#if 1
+								  if ( pList_MA3 != NULL ) {
+									  if ( MA3_list_ready == false ) {
+										  if ( pList_KLineData1 == NULL ) {
+										  }
+										  else
+											  if ( is_tick_in_kline == false ) {
+												  //MA22
+												  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA3_period ) {
+													  n_MA_Groups = pList_KLineData->size() + pList_KLineData1->size() - mMA3_period + 1;
+													  for ( itr5 = pList_KLineData->rbegin(), i = 0; i < n_MA_Groups && i < 1000 && i < pList_KLineData->size(); itr5++, i++ ) {
+														  for ( itr6 = itr5, sum = 0, j = 0; j < mMA3_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+															  sum += itr6->mClose;
+														  }
+														  for ( itr6 = pList_KLineData1->rbegin(); j < mMA3_period; j++, itr6++ ) {
+															  sum += itr6->mClose;
+														  }
+														  mean = sum / mMA3_period;
+														  pList_MA3->insert ( pList_MA3->begin(), mean );
+													  }
+													  if ( pList_KLineData1->size() >= mMA3_period ) {
+														  n_MA_Groups = pList_KLineData1->size() - mMA3_period + 1;
+														  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA3_period; j++, itr6++ ) {
+															  sum += itr6->mClose;
+														  }
+														  mean = sum / mMA3_period;
+														  pList_MA3->insert ( pList_MA3->begin(), mean );
+														  for ( i = 1; i < n_MA_Groups && i < 1000; itr5++, itr6++, i++ ) {
+															  sum = sum + itr6->mClose - itr5->mClose;
+															  mean = sum / mMA3_period;
+															  pList_MA3->insert ( pList_MA3->begin(), mean );
+														  }
+													  }
+												  }
+											  }
+											  else {
+												  //MA22
+												  if ( pList_KLineData1->size() >= mMA3_period ) {
+													  n_MA_Groups = pList_KLineData1->size() - mMA3_period + 1;
+													  for ( itr5 = itr6 = pList_KLineData1->rbegin(), sum = 0, j = 0; j < mMA3_period; j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  mean = sum / mMA3_period;
+													  pList_MA3->insert ( pList_MA3->begin(), mean );
+													  for ( i = 1; i < n_MA_Groups && i < 1000; i++, itr6++, itr5++ ) {
+														  sum = sum + itr6->mClose - itr5->mClose;
+														  mean = sum / mMA3_period;
+														  pList_MA3->insert ( pList_MA3->begin(), mean );
+													  }
+												  }
+											  }
+
+											  mMap_MA3_ready [ m_str_symbol ] = MA3_list_ready = true;
+									  }
+									  else
+										  if ( MA3_list_ready == true /*&& is_BackFill == 0*/ ) {
+											  if ( pList_KLineData1 == NULL ) {
+												  if ( is_tick_in_kline == false && pList_KLineData->size() >= mMA3_period ) {
+													  pList_MA3->insert ( pList_MA3->end(), mean );
+													  for ( itr9 = pList_MA3->rbegin(), itr6 = itr5 = pList_KLineData->rbegin(), sum = 0, j = 0; j < mMA3_period; j++, itr6++ ) {
+														  sum += itr6->mClose;
+													  }
+													  mean = sum / mMA3_period;												 
+													  (*itr9) = mean;											  
+													  for ( i = 1; i < (n_rev_ins_pos + 1); i++, itr5++, itr9++ ) {
+														  sum = sum + itr6->mClose - itr5->mClose;
+														  mean = sum / mMA3_period;												 
+														  (*itr9) = mean;
+													  }
+													  if ( pList_MA3->size() > 1000 )
+														  pList_MA3->pop_front();
+												  }
+											  }
+											  else
+												  if ( is_tick_in_kline == false ) {
+													  if ( ( pList_KLineData->size() + pList_KLineData1->size() ) >= mMA3_period ) {
+														  pList_MA3->insert ( pList_MA3->end(), mean );
+														  for ( itr9 = pList_MA3->rbegin(), itr5 = pList_KLineData->rbegin(), i = 0; i < (n_rev_ins_pos + 1); itr5++, i++, itr9++ ) {
+															  for ( itr6 = itr5, sum = 0, j = 0; j < mMA3_period && itr6 != pList_KLineData->rend(); j++, itr6++ ) {
+																  sum += itr6->mClose;
+															  }
+															  for ( itr6 = pList_KLineData1->rbegin(); j < mMA3_period; j++, itr6++ ) {
+																  sum += itr6->mClose;
+															  }
+															  mean = sum / mMA3_period;
+															  (*itr9) = mean;
+														  }
+														  if ( pList_MA3->size() > 1000 )
+															  pList_MA3->pop_front();
+													  }
+												  }
 										  }
 								  }
 #endif
@@ -1255,8 +1675,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 									  }
 								  }*/
 						  break;
-					  case 2: //30min
-						  break;
+					  //case 2: //30min
+						  //break;
 					}
 				}
 			}
@@ -1360,7 +1780,7 @@ bool CKLineStream::search_tick_in_file( TTickData_FileInfo *pTick_file_info, int
 }
 
 /*group several sticks into single stick*/
-void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
+void CKLineStream::candlestick_collapse ( const char * ticker_symbol ) {
 	list<TCandleStick> *pList_KLineData;
 	TKLineData_FileInfo *pOrig_KLine_file_info, *pNew_KLine_file_info;
 	string m_str_symbol, m_orig_filename, m_new_filename;
@@ -1390,6 +1810,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 	int m_open_time, m_open_hour, m_open_min, kline_start_index;
 	CStringW collapsed_filenameW;
 	int current_date = get_trading_date ( ticker_symbol );
+	int mins_gap = 0;
 	/*calculate MA15*/
 	/*list<TCandleStick>::reverse_iterator itr, itr1;
 	list<TCandleStick>::iterator itr2, itr3;
@@ -1402,9 +1823,14 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 			}
 			break;
 		case 1:
-			max_sticks = 180 / 5;
+		case 2:
+			if ( nTimeFrame == 1 )
+				mins_gap = 5;
+			else
+				mins_gap = 30;
+			max_sticks = 180 / mins_gap;
 			if ( n_sticks <= max_sticks ) {
-				sprintf( str_buf, "%s_%dmin", ticker_symbol, 5 * n_sticks );
+				sprintf( str_buf, "%s_%dmin", ticker_symbol, mins_gap * n_sticks );
 				m_str_symbol = str_buf;
 				//m_new_filename = "C:\\temp\\" + m_str_symbol;
 				m_new_filename = path_bufA.GetString() + m_str_symbol;
@@ -1448,7 +1874,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 					m_open_time = m_open_hour * 60 + m_open_min;
 				}
 				else {
-					m_open_time = mMap_KLine_open_time [ ticker_symbol ] - 5;
+					m_open_time = mMap_KLine_open_time [ ticker_symbol ] - mins_gap;
 				}
 				n_total_sticks = pOrig_KLine_file_info->n_fsize / nSize;
 				m_candlestick.mDate = 0;
@@ -1459,7 +1885,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 						p_orig_fs->read ( (char *) &m_raw_candlestick, nSize );
 						if ( m_raw_candlestick.mDate == current_date )
 							continue;
-						if ( ( m_raw_candlestick.mTime - m_open_time ) % ( n_sticks * 5 ) == 5) {
+						if ( ( m_raw_candlestick.mTime - m_open_time ) % ( n_sticks * mins_gap ) == mins_gap) {
 							if ( ( pNew_KLine_file_info->n_fsize - nSize ) >= 0 ) {
 								p_new_fs->seekp ( pNew_KLine_file_info->n_fsize - nSize, ios::beg );
 								p_new_fs->write ( (char *) &m_candlestick, nSize );
@@ -1480,7 +1906,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 							if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
 								m_candlestick.mHigh = m_raw_candlestick.mHigh;
 							if ( m_raw_candlestick.mLow < m_candlestick.mLow )
-								m_candlestick.mClose = m_raw_candlestick.mLow;
+								m_candlestick.mLow = m_raw_candlestick.mLow;
 						}
 					}
 					for ( j = i, kline_start_index = i; j < ( kline_start_index + n_sticks ) && j < n_total_sticks; j++, i++ ) {
@@ -1499,7 +1925,7 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 							if ( m_raw_candlestick.mHigh > m_candlestick.mHigh )
 								m_candlestick.mHigh = m_raw_candlestick.mHigh;
 							if ( m_raw_candlestick.mLow < m_candlestick.mLow )
-								m_candlestick.mClose = m_raw_candlestick.mLow;
+								m_candlestick.mLow = m_raw_candlestick.mLow;
 						}
 					}
 					if ( m_raw_candlestick.mDate == current_date )
@@ -1556,12 +1982,13 @@ void CKLineStream::candlestick_collapse ( char * ticker_symbol ) {
 			}
 			p_new_fs->flush();
 			break;
-		case 2:
+		/*case 2:
 			max_sticks = 180 / 30;
 			if ( n_sticks <= max_sticks ) {
+
 			
 			}
-			break;
+			break;*/
 		default:
 			return;
 	}
@@ -1591,7 +2018,7 @@ VOID CALLBACK OnTimerProc(
   //open_quote();
 }
 
-void CKLineStream::set_KLine_ready( char * ticker_symbol ) {
+void CKLineStream::set_KLine_ready( const char * ticker_symbol ) {
 	mMap_kline_ready [ ticker_symbol ] = true;
 }
 
@@ -1608,7 +2035,7 @@ void CKLineStream::KLine_server_time( int total_secconds ) {
 	::SetTimer( AfxGetApp ()->GetMainWnd ()->m_hWnd, 198, escape_time, (TIMERPROC)OnTimerProc );
 }
 
-bool CKLineStream::get_KLine_ready ( char * ticker_symbol ) {
+bool CKLineStream::get_KLine_ready ( const char * ticker_symbol ) {
 	return mMap_kline_ready [ ticker_symbol ];
 }
 
@@ -1620,9 +2047,10 @@ void CKLineStream::sync_server_time ( int total_secconds ) {
 		this->is_tick_in_kline = false; //true
 }
 
-void CKLineStream::setting_MA ( int MA1_period, int MA2_period ) {
+void CKLineStream::setting_MA ( int MA1_period, int MA2_period, int MA3_period ) {
 	mMA1_period = (double) MA1_period;
 	mMA2_period = (double) MA2_period;
+	mMA3_period = (double) MA3_period;
 }
 
 int CKLineStream::get_trading_date ( string ticker_symbol ) {

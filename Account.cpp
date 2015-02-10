@@ -111,6 +111,11 @@ CAccount::CAccount( string account_name, int time_frame ) {
 	m_pOrder_operator = NULL;
 }
 
+void CAccount::reset( TStrategy_info &strategy )
+{
+
+}
+
 CAccount::~CAccount() {
 	refresh_portfolio( true );
 	for ( map< string, list<TOrder_info>* >::iterator itr1 = mMap_open_order.begin(); itr1 != mMap_open_order.end(); itr1++ )
@@ -163,10 +168,10 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	ticker_margin = mMap_origin_margin [ symbol ];
 	keep_margin = mMap_keep_margin [ symbol ];
 	list<TOrder_info>::iterator itr1;
-	int m_tick_hour, m_tick_min, m_current_tick_time;
+	/*int m_tick_hour, m_tick_min, m_current_tick_time;
 	m_tick_hour = nTime / 10000;
 	m_tick_min = ( nTime - m_tick_hour * 10000 ) / 100;
-	m_current_tick_time = 60 * m_tick_hour + m_tick_min;
+	m_current_tick_time = 60 * m_tick_hour + m_tick_min;*/
 	CCapitalOrder *pCapitalOrder = NULL;
 	COPYDATASTRUCT cds;
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
@@ -323,16 +328,40 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				margin = margin + profit_loss;
 				*itr1 = m_order;
 
-				if ( profit_loss < 0 && m_stoploss_count < 6 ) {
+				if ( profit_loss < 0 /* && m_stoploss_count < 6 */ ) {
+					if ( m_stoploss_count == 0 ) {
+						m_orig_MA1_margin = this->m_Strategy.mMA1_margin;
+						m_orig_MA2_margin = this->m_Strategy.mMA2_margin;
+						m_orig_MA3_margin = this->m_Strategy.mMA3_margin;
+					}
 					m_stoploss_count++;
-				}
-				if ( m_stoploss_count == 6 ) {
-					if ( kline_close_time == 0) {
-						tradable_time = m_current_tick_time + 60;
-						m_stoploss_count = 0;
+					if ( ( m_stoploss_count == 2 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 4 && this->m_Strategy.nType >= 2 ) ) {
+						this->m_Strategy.mMA1_margin += 0.002;
+						this->m_Strategy.mMA2_margin += 0.002;
+						this->m_Strategy.mMA3_margin += 0.002;
 					}
 					else
-						tradable_time = kline_close_time;
+						if ( ( m_stoploss_count == 4 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 8 && this->m_Strategy.nType >= 2 ) ) {
+							this->m_Strategy.mMA1_margin += 0.002;
+							this->m_Strategy.mMA2_margin += 0.002;
+							this->m_Strategy.mMA3_margin += 0.002;
+						}
+						else
+							if ( m_stoploss_count == 6 && this->m_Strategy.nType < 2 ) {
+								/*if ( kline_close_time == 0) {
+								tradable_time = m_current_tick_time + 60;
+								m_stoploss_count = 0;
+								}
+								else*/
+								tradable_time = kline_close_time;
+							}
+							else
+								if ( m_stoploss_count == 12 && this->m_Strategy.nType >= 2 ) {
+									if ( kline_close_time == 0) {
+										tradable_time = m_current_tick_time + 60;
+										//m_stoploss_count = 0;
+									}				
+								}
 				}
 		}
 	}
@@ -511,9 +540,21 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 
 void CAccount::update_kline_close_time ( int new_close_time ) {
 	if ( new_close_time > kline_close_time ) {
+		if ( kline_close_time > 0 ) {
+			this->m_Strategy.mMA1_margin = m_orig_MA1_margin;
+			this->m_Strategy.mMA2_margin = m_orig_MA2_margin;
+			this->m_Strategy.mMA3_margin = m_orig_MA3_margin;
+		}
 		kline_close_time = new_close_time;
 		m_stoploss_count = 0;
 	}
+	else
+		if ( m_stoploss_count >= 12 && this->m_Strategy.nType >= 2 && m_current_tick_time >= tradable_time ) {
+			m_stoploss_count = 0;
+			this->m_Strategy.mMA1_margin = m_orig_MA1_margin;
+			this->m_Strategy.mMA2_margin = m_orig_MA2_margin;
+			this->m_Strategy.mMA3_margin = m_orig_MA3_margin;
+		}
 }
 
 void CAccount::set_stoploss ( int en_stoploss, int en_trailing_stop, int stoploss ) {

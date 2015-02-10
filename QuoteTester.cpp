@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "QuoteTester.h"
-#include "QuoteTesterDlg.h"
+#include "QuoteTesterDlg_New_UI.h"
 #include "test_dlg.h"
 #include "psapi.h"
 
@@ -115,7 +115,7 @@ BOOL CQuoteTesterApp::InitInstance()
 	SetRegistryKey(_T("本機 AppWizard 所產生的應用程式"));
 
 	Close_OrderTester();
-	CQuoteTesterDlg dlg;
+	CQuoteTesterDlg_New_UI dlg;
 	m_pMainWnd = &dlg;
 	//g_hThread_Order = ::CreateThread( NULL, 0, ThreadProc1, this, 0, &g_hThreadID );
 	INT_PTR nResponse = dlg.DoModal();
