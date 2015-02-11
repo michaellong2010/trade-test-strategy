@@ -104,6 +104,8 @@ public:
 	double margin, free_margin, equity;
 	map< string, double > mMap_origin_margin, mMap_keep_margin, mMap_perpip_value;
 	int m_nlong_position, m_nshort_position;
+	map< string, int > mMap_open_interest;
+	BOOL isTimer_start;
 };
 
 class CAboutDlg : public CDialogEx

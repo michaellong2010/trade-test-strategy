@@ -413,7 +413,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		nQty, 0 );
 	m_pDialog->account_B.update_kline_close_time ( m_pDialog->mKline_stream1.kline_close_time );
 
-	double accountA_MA1, accountA_MA2, accountA_MA3, accountB_MA1, accountB_MA2, accountB_MA3;
+	double accountA_MA1, accountA_MA2, accountA_MA3, accountB_MA1 = 0, accountB_MA2 = 0, accountB_MA3 = 0;
 	double accountA_MA1_upper, accountA_MA1_lower, accountA_MA2_upper, accountA_MA2_lower, accountA_MA3_upper, accountA_MA3_lower;
 	double accountB_MA1_upper, accountB_MA1_lower, accountB_MA2_upper, accountB_MA2_lower, accountB_MA3_upper, accountB_MA3_lower;
 	double close_price = 0;
@@ -429,14 +429,14 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		accountA_MA3 = 0;
 	if ( m_pDialog->m_Strategy1.enable_MA_margin == TRUE ) {
 		//if ( m_pDialog->m_Strategy1.nType < 2 ) {
-			accountA_MA1_upper = accountA_MA1 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA1_lower = accountA_MA1 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA1_upper = accountA_MA1 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA1_lower = accountA_MA1 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 
-			accountA_MA2_upper = accountA_MA2 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA2_lower = accountA_MA2 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA2_upper = accountA_MA2 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA2_lower = accountA_MA2 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 
-			accountA_MA3_upper = accountA_MA3 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA3_lower = accountA_MA3 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA3_upper = accountA_MA3 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA3_lower = accountA_MA3 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 		/*}
 		else {
 		}*/
@@ -540,14 +540,14 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		accountB_MA3 = 0;
 	if ( m_pDialog->m_Strategy2.enable_MA_margin == TRUE ) {
 		//if ( m_pDialog->m_Strategy2.nType < 2 ) {
-			accountB_MA1_upper = accountB_MA1 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA1_lower = accountB_MA1 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA1_upper = accountB_MA1 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA1_lower = accountB_MA1 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 
-			accountB_MA2_upper = accountB_MA2 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA2_lower = accountB_MA2 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA2_upper = accountB_MA2 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA2_lower = accountB_MA2 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 
-			accountB_MA3_upper = accountB_MA3 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA3_lower = accountB_MA3 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA3_upper = accountB_MA3 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA3_lower = accountB_MA3 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 		/*}
 		else {
 		}*/
@@ -894,7 +894,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		nQty, 1 );
 	m_pDialog->account_B.update_kline_close_time ( m_pDialog->mKline_stream1.kline_close_time );
 
-	double accountA_MA1, accountA_MA2, accountA_MA3, accountB_MA1, accountB_MA2, accountB_MA3;
+	double accountA_MA1, accountA_MA2, accountA_MA3, accountB_MA1 = 0, accountB_MA2 = 0, accountB_MA3 = 0;
 	double accountA_MA1_upper, accountA_MA1_lower, accountA_MA2_upper, accountA_MA2_lower, accountA_MA3_upper, accountA_MA3_lower;
 	double accountB_MA1_upper, accountB_MA1_lower, accountB_MA2_upper, accountB_MA2_lower, accountB_MA3_upper, accountB_MA3_lower;
 	double close_price = 0;
@@ -910,14 +910,14 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		accountA_MA3 = 0;
 	if ( m_pDialog->m_Strategy1.enable_MA_margin == TRUE ) {
 		//if ( m_pDialog->m_Strategy1.nType < 2 ) {
-			accountA_MA1_upper = accountA_MA1 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA1_lower = accountA_MA1 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA1_upper = accountA_MA1 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA1_lower = accountA_MA1 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 
-			accountA_MA2_upper = accountA_MA2 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA2_lower = accountA_MA2 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA2_upper = accountA_MA2 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA2_lower = accountA_MA2 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 
-			accountA_MA3_upper = accountA_MA3 * ( 1 + m_pDialog->account_A.m_Strategy.mMA1_margin );
-			accountA_MA3_lower = accountA_MA3 * ( 1 - m_pDialog->account_A.m_Strategy.mMA1_margin );
+			accountA_MA3_upper = accountA_MA3 * ( 1 + m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
+			accountA_MA3_lower = accountA_MA3 * ( 1 - m_pDialog->account_A.m_Strategy.m_cur_MA1_margin );
 		/*}
 		else {
 		}*/
@@ -1021,14 +1021,14 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		accountB_MA3 = 0;
 	if ( m_pDialog->m_Strategy2.enable_MA_margin == TRUE ) {
 		//if ( m_pDialog->m_Strategy2.nType < 2 ) {
-			accountB_MA1_upper = accountB_MA1 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA1_lower = accountB_MA1 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA1_upper = accountB_MA1 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA1_lower = accountB_MA1 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 
-			accountB_MA2_upper = accountB_MA2 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA2_lower = accountB_MA2 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA2_upper = accountB_MA2 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA2_lower = accountB_MA2 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 
-			accountB_MA3_upper = accountB_MA3 * ( 1 + m_pDialog->account_B.m_Strategy.mMA1_margin );
-			accountB_MA3_lower = accountB_MA3 * ( 1 - m_pDialog->account_B.m_Strategy.mMA1_margin );
+			accountB_MA3_upper = accountB_MA3 * ( 1 + m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
+			accountB_MA3_lower = accountB_MA3 * ( 1 - m_pDialog->account_B.m_Strategy.m_cur_MA1_margin );
 		/*}
 		else {
 		}*/
@@ -2225,7 +2225,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 
 		/*20141227 added by michael*/
-		/*if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+		if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
 			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
 			TRACE ( "login first order account %s failed", caText );
 			OnBnClickedButton14 ( );
@@ -2239,7 +2239,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 			else {
 				account_A.bind_order_operator ( &m_Order_operator1 );
 				account_B.bind_order_operator ( &m_Order_operator2 );
-			}*/
+			}
 		//this->m_Order_operator1.SetUIVisibility ( SW_SHOW );
 		//this->m_Order_operator2.SetUIVisibility ( SW_SHOW );
 		//AfxMessageBox(_T("ªì©l¦¨¥\"));
@@ -2574,17 +2574,17 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 	char buf_str[100];
 	m_Strategy1.enable_MA_margin = enable_MA_margin;
 	if ( m_Strategy1.enable_MA_margin == 0 ) {
-		m_Strategy1.mMA1_margin = mMA1_margin = 0.0;
-		m_Strategy1.mMA2_margin = mMA2_margin = 0.0;
-		m_Strategy1.mMA3_margin = mMA3_margin = 0.0;
+		m_Strategy1.mMA1_margin = m_Strategy1.m_cur_MA1_margin = mMA1_margin = 0.0;
+		m_Strategy1.mMA2_margin = m_Strategy1.m_cur_MA2_margin = mMA2_margin = 0.0;
+		m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin = 0.0;
 	}
 	else {
-		m_Strategy1.mMA1_margin = mMA1_margin;
-		m_Strategy1.mMA2_margin = mMA2_margin;
+		m_Strategy1.mMA1_margin = m_Strategy1.m_cur_MA1_margin = mMA1_margin;
+		m_Strategy1.mMA2_margin = m_Strategy1.m_cur_MA2_margin = mMA2_margin;
 		if ( m_Strategy1.mMA3_period > 0 )
-			m_Strategy1.mMA3_margin = mMA3_margin;
+			m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin;
 		else
-			m_Strategy1.mMA3_margin = mMA3_margin = 0;
+			m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin = 0;
 	}
 	sprintf ( buf_str, "%lf/%lf/%lf", mMA1_margin, mMA2_margin, mMA3_margin );
 	strB += "; MA_margin: ";
@@ -2702,17 +2702,17 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 	char buf_str[100];
 	m_Strategy2.enable_MA_margin = enable_MA_margin;
 	if ( m_Strategy2.enable_MA_margin == 0 ) {
-		m_Strategy2.mMA1_margin = mMA1_margin = 0.0;
-		m_Strategy2.mMA2_margin = mMA2_margin = 0.0;
-		m_Strategy2.mMA3_margin = mMA3_margin = 0.0;
+		m_Strategy2.mMA1_margin = m_Strategy2.m_cur_MA1_margin = mMA1_margin = 0.0;
+		m_Strategy2.mMA2_margin = m_Strategy2.m_cur_MA2_margin = mMA2_margin = 0.0;
+		m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin = 0.0;
 	}
 	else {
-		m_Strategy2.mMA1_margin = mMA1_margin;
-		m_Strategy2.mMA2_margin = mMA2_margin;
+		m_Strategy2.mMA1_margin = m_Strategy2.m_cur_MA1_margin = mMA1_margin;
+		m_Strategy2.mMA2_margin = m_Strategy2.m_cur_MA2_margin = mMA2_margin;
 		if ( m_Strategy2.mMA3_period > 0 )
-			m_Strategy2.mMA3_margin = mMA3_margin;
+			m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin;
 		else
-			m_Strategy2.mMA3_margin = mMA3_margin = 0;
+			m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin = 0;
 	}
 	sprintf ( buf_str, "%lf/%lf/%lf", mMA1_margin, mMA2_margin, mMA3_margin );
 	strB += "; MA_margin: ";
@@ -2913,13 +2913,13 @@ void CQuoteTesterDlg_New_UI::load_account_strategy ( TStrategy_info account_stra
 			pButton->SetCheck ( 1 );
 
 		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA1_margin );
-		strA.Empty (); strA.Format ( "%lf", mMA1_margin );
+		strA.Empty (); strA.Format ( "%lf", account_strategy.mMA1_margin );
 		pEdit->SetWindowText ( strA );
 		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA2_margin );
-		strA.Empty (); strA.Format ( "%lf", mMA2_margin );
+		strA.Empty (); strA.Format ( "%lf", account_strategy.mMA2_margin );
 		pEdit->SetWindowText ( strA );
 		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA3_margin );
-		strA.Empty (); strA.Format ( "%lf", mMA3_margin );
+		strA.Empty (); strA.Format ( "%lf", account_strategy.mMA3_margin );
 		pEdit->SetWindowText ( strA );
 
 		pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK2 );
@@ -2985,6 +2985,7 @@ void CQuoteTesterDlg_New_UI::OnCbnSelchangeCombo2()
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck8()
 {
 	// TODO: Add your control notification handler code here
+	UpdateData( TRUE );
 	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK8 );
 	if ( pButton->GetCheck() == BST_CHECKED ) {
 		m_Strategy1.m_simulation_only = m_Strategy2.m_simulation_only = TRUE;

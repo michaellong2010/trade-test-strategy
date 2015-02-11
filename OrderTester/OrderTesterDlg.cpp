@@ -104,6 +104,15 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 						else
 							base_margin =  equity;
 						sync_lots = porder_info->lots;
+						if ( mMap_open_interest.count ( symbol ) ) {
+							if ( mMap_open_interest [ symbol ] > 0 )
+								m_nlong_position = mMap_open_interest [ symbol ];
+							else
+								m_nshort_position = mMap_open_interest [ symbol ];
+						}
+						else {
+							m_nlong_position = m_nshort_position = 0;
+						}
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_STOCKNO )->m_hWnd, porder_info->ticker_symbol );
 
 						( ( CComboBox * ) m_FutureDlg.GetDlgItem ( IDC_COMBO_ORDERTYPE ) )->SetCurSel( 0 );
@@ -180,9 +189,11 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 									}
 								new_free_margin = free_margin + ticker_margin * sync_lots;
 							}
-						sprintf ( str1.GetBufferSetLength( 100 ), "%d",  porder_info->lots );
-						//sprintf ( str1.GetBufferSetLength( 100 ), "%d",  sync_lots );
+						//sprintf ( str1.GetBufferSetLength( 100 ), "%d",  porder_info->lots );
+						sprintf ( str1.GetBufferSetLength( 100 ), "%d",  sync_lots );
 						::SetWindowText ( m_FutureDlg.GetDlgItem ( IDC_EDIT_QTY )->m_hWnd, str1 );
+						if ( porder_info->lots != sync_lots )
+							TRACE ( "lots: %d, sync_lots: %d\n", porder_info->lots, sync_lots );
 						//if ( base_margin > 0 && new_free_margin > 0 && 100 * ( new_free_margin / base_margin ) > 30.0 )
 						m_FutureDlg.OnBnClickedButtonSendfutureorder ( );
 					}
@@ -200,15 +211,18 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 					if ( message == WM_REFRESH_OPEN_INTEREST ) {
 						strMsg = ( BSTR ) wParam;
 						Items = DivideByComma ( strMsg );
+						symbol = Items [ 2 ].GetString ( );
 						if ( Items.size ( ) > 1 ) {
 							if ( Items [ 3 ] == "B" ) {
 								m_nlong_position = _ttoi( Items [ 4 ] );
 								m_nshort_position = 0;
+								mMap_open_interest [ symbol ] = m_nlong_position;
 							}
 							else
 								if ( Items [ 3 ] == "S" ) {
 									m_nshort_position = _ttoi( Items [ 4 ] );
 									m_nlong_position = 0;
+									mMap_open_interest [ symbol ] = m_nshort_position * -1;
 								}
 								else {
 									m_nlong_position = m_nshort_position = 0;
@@ -256,6 +270,7 @@ COrderTesterDlg::COrderTesterDlg(CWnd* pParent /*=NULL*/)
 	m_nlong_position = m_nshort_position = 0;
 	g_hEvent_FutureRight_Ready = ::CreateEvent ( NULL, FALSE, FALSE, NULL );
 	g_hEvent_OpenInterest_Ready = ::CreateEvent ( NULL, FALSE, FALSE, NULL );
+	isTimer_start = FALSE;
 }
 
 COrderTesterDlg::~COrderTesterDlg ( )
@@ -688,7 +703,9 @@ void COrderTesterDlg::OnBnClickedButtonInit()
 					dwWaitResult = ::WaitForSingleObject ( g_hEvent_OpenInterest_Ready, 10000 );
 				if ( g_hEvent_Account_Ready )
 					::SetEvent ( g_hEvent_Account_Ready );
-				::SetTimer ( this->m_hWnd, 1993, 15000, TimerProc1 );
+				if ( isTimer_start == FALSE )
+					::SetTimer ( this->m_hWnd, 1993, 15000, TimerProc1 );
+				isTimer_start = TRUE;
 			}
 			else
 				MessageBox(_T("READ CERT FALE"));

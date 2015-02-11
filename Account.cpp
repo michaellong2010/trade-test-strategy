@@ -279,7 +279,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				m_order.exit_reason = position_type;
 			pList_close_order->insert ( pList_close_order->end(), m_order );
 			/*20150106 added by michael*/
-			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) ) {
+			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) && m_Strategy.m_simulation_only == FALSE ) {
 				m_order.close_price = final_close;
 				pCapitalOrder = ( CCapitalOrder * ) m_pOrder_operator;
 				cds.cbData = sizeof ( TOrder_info );
@@ -328,23 +328,27 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				margin = margin + profit_loss;
 				*itr1 = m_order;
 
-				if ( profit_loss < 0 /* && m_stoploss_count < 6 */ ) {
-					if ( m_stoploss_count == 0 ) {
+				if ( ( profit_loss + trading_fee ) < 0 /* && m_stoploss_count < 6 */ ) {
+					/*if ( m_stoploss_count == 0 ) {
 						m_orig_MA1_margin = this->m_Strategy.mMA1_margin;
 						m_orig_MA2_margin = this->m_Strategy.mMA2_margin;
 						m_orig_MA3_margin = this->m_Strategy.mMA3_margin;
-					}
+					}*/
 					m_stoploss_count++;
 					if ( ( m_stoploss_count == 2 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 4 && this->m_Strategy.nType >= 2 ) ) {
-						this->m_Strategy.mMA1_margin += 0.002;
-						this->m_Strategy.mMA2_margin += 0.002;
-						this->m_Strategy.mMA3_margin += 0.002;
+						if ( m_Strategy.enable_MA_margin ) {
+							this->m_Strategy.m_cur_MA1_margin += 0.002;
+							this->m_Strategy.m_cur_MA2_margin += 0.002;
+							this->m_Strategy.m_cur_MA3_margin += 0.002;
+						}
 					}
 					else
 						if ( ( m_stoploss_count == 4 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 8 && this->m_Strategy.nType >= 2 ) ) {
-							this->m_Strategy.mMA1_margin += 0.002;
-							this->m_Strategy.mMA2_margin += 0.002;
-							this->m_Strategy.mMA3_margin += 0.002;
+							if ( m_Strategy.enable_MA_margin ) {
+								this->m_Strategy.m_cur_MA1_margin += 0.002;
+								this->m_Strategy.m_cur_MA2_margin += 0.002;
+								this->m_Strategy.m_cur_MA3_margin += 0.002;
+							}
 						}
 						else
 							if ( m_stoploss_count == 6 && this->m_Strategy.nType < 2 ) {
@@ -433,7 +437,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			pList_open_order->insert ( pList_open_order->end(), m_order );
 			
 			/*20150106 added by michael*/
-			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) ) {
+			if ( m_pOrder_operator && m_pOrder_operator->IsKindOf ( RUNTIME_CLASS ( CCapitalOrder ) ) && m_Strategy.m_simulation_only == FALSE ) {
 				m_order.open_price = final_close;
 				pCapitalOrder = ( CCapitalOrder * ) m_pOrder_operator;
 				cds.cbData = sizeof ( TOrder_info );
@@ -540,20 +544,18 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 
 void CAccount::update_kline_close_time ( int new_close_time ) {
 	if ( new_close_time > kline_close_time ) {
-		if ( kline_close_time > 0 ) {
-			this->m_Strategy.mMA1_margin = m_orig_MA1_margin;
-			this->m_Strategy.mMA2_margin = m_orig_MA2_margin;
-			this->m_Strategy.mMA3_margin = m_orig_MA3_margin;
-		}
+		m_Strategy.m_cur_MA1_margin = this->m_Strategy.mMA1_margin;
+		m_Strategy.m_cur_MA2_margin = this->m_Strategy.mMA2_margin;
+		m_Strategy.m_cur_MA3_margin = this->m_Strategy.mMA3_margin;
 		kline_close_time = new_close_time;
 		m_stoploss_count = 0;
 	}
 	else
 		if ( m_stoploss_count >= 12 && this->m_Strategy.nType >= 2 && m_current_tick_time >= tradable_time ) {
 			m_stoploss_count = 0;
-			this->m_Strategy.mMA1_margin = m_orig_MA1_margin;
-			this->m_Strategy.mMA2_margin = m_orig_MA2_margin;
-			this->m_Strategy.mMA3_margin = m_orig_MA3_margin;
+			m_Strategy.m_cur_MA1_margin = this->m_Strategy.mMA1_margin;
+			m_Strategy.m_cur_MA2_margin = this->m_Strategy.mMA2_margin;
+			m_Strategy.m_cur_MA3_margin = this->m_Strategy.mMA3_margin;
 		}
 }
 

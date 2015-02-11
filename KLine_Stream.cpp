@@ -82,6 +82,9 @@ CKLineStream::~CKLineStream() {
 	for ( map<string, list<double>*>::iterator itr1 = mMap_MA3.begin(); itr1 != mMap_MA3.end(); itr1++ )
 		delete (*itr1).second;
 
+	for ( map < string, TAskBidWeight *>::iterator itr1 = mMap_askbid_weight.begin(); itr1 != mMap_askbid_weight.end(); itr1++ )
+		delete (*itr1).second;
+	 
 	if ( txt_out.is_open() ) {
 		txt_out.flush();
 		txt_out.close();
@@ -337,6 +340,7 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 				if ( !mMap_askbid_weight.count ( m_Strategy.symbol ) ) {
 					pAskBd_Weight = new TAskBidWeight;
 					mMap_askbid_weight [ m_Strategy.symbol ] = pAskBd_Weight;
+					memset ( pAskBd_Weight, 0, sizeof ( TAskBidWeight ) );
 				}
 				else {
 					pAskBd_Weight = mMap_askbid_weight [ m_Strategy.symbol ];

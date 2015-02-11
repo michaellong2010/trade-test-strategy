@@ -147,7 +147,7 @@ BOOL CALLBACK EnumChildProc( HWND hwnd, LPARAM lParam )
 		if ( pCWnd && pCWnd->GetDlgCtrlID () == IDC_LIST_REPORTS )
 			::EnableWindow ( hwnd, TRUE );
 		else
-			::EnableWindow ( hwnd, TRUE );
+			::EnableWindow ( hwnd, FALSE );
 		return TRUE;
 	}
 	else
