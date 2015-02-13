@@ -49,6 +49,7 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	m_simulation_only = FALSE;
 	m_Strategy1.isConfigure = FALSE;
 	m_Strategy2.isConfigure = FALSE;
+	m_Strategy1.m_simulation_only = m_Strategy2.m_simulation_only = FALSE;
 }
 
 CQuoteTesterDlg_New_UI::~CQuoteTesterDlg_New_UI()
@@ -562,41 +563,41 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper && close_price > accountB_MA3_upper ) { //account_B hold long position
 			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-					position_type = Long_position;
+					position_type1 = Long_position;
 			}
 			else
-				position_type = Long_position;
+				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower && close_price < accountB_MA3_lower ) { //account_B hold short position
 				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-						position_type = Short_position;
+						position_type1 = Short_position;
 				}
 				else
-					position_type = Short_position;
+					position_type1 = Short_position;
 			}
 			else {
-				position_type = Close_all_position;
+				position_type1 = Close_all_position;
 			}
 	}
 	else {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper ) { //account_B hold long position
 			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-					position_type = Long_position;
+					position_type1 = Long_position;
 			}
 			else
-				position_type = Long_position;
+				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower ) { //account_B hold short position
 				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-						position_type = Short_position;
+						position_type1 = Short_position;
 				}
 				else
-					position_type = Short_position;
+					position_type1 = Short_position;
 			}
 			else
 				if ( close_price < accountB_MA1 && close_price > accountB_MA2 ) { //account_B exit long position
@@ -604,13 +605,13 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 					if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
 						if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 							if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-								position_type = Short_position;
+								position_type1 = Short_position;
 						}
 						else
-							position_type = Short_position;
+							position_type1 = Short_position;
 					}
 					else
-						position_type = Close_all_position;
+						position_type1 = Close_all_position;
 				}
 				else
 					if ( close_price > accountB_MA1 && close_price < accountB_MA2 ) { //account_B exit short position
@@ -618,13 +619,13 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 						if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
 							if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-									position_type = Long_position;
+									position_type1 = Long_position;
 							}
 							else
-								position_type = Long_position;
+								position_type1 = Long_position;
 						}
 						else
-							position_type = Close_all_position;
+							position_type1 = Close_all_position;
 						//else
 						//position_type1 = Short_position;
 						//position_type = Close_long_position;
@@ -637,7 +638,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 0, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_B.refresh_portfolio( false );
 #else
@@ -1043,41 +1044,41 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper && close_price > accountB_MA3_upper ) { //account_B hold long position
 			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-					position_type = Long_position;
+					position_type1 = Long_position;
 			}
 			else
-				position_type = Long_position;
+				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower && close_price < accountB_MA3_lower ) { //account_B hold short position
 				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-						position_type = Short_position;
+						position_type1 = Short_position;
 				}
 				else
-					position_type = Short_position;
+					position_type1 = Short_position;
 			}
 			else {
-				position_type = Close_all_position;
+				position_type1 = Close_all_position;
 			}
 	}
 	else {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper ) { //account_B hold long position
 			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-					position_type = Long_position;
+					position_type1 = Long_position;
 			}
 			else
-				position_type = Long_position;
+				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower ) { //account_B hold short position
 				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-						position_type = Short_position;
+						position_type1 = Short_position;
 				}
 				else
-					position_type = Short_position;
+					position_type1 = Short_position;
 			}
 			else
 				if ( close_price < accountB_MA1 && close_price > accountB_MA2 ) { //account_B exit long position
@@ -1085,13 +1086,13 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
 						if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 							if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-								position_type = Short_position;
+								position_type1 = Short_position;
 						}
 						else
-							position_type = Short_position;
+							position_type1 = Short_position;
 					}
 					else
-						position_type = Close_all_position;
+						position_type1 = Close_all_position;
 				}
 				else
 					if ( close_price > accountB_MA1 && close_price < accountB_MA2 ) { //account_B exit short position
@@ -1099,13 +1100,13 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
 							if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
 								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-									position_type = Long_position;
+									position_type1 = Long_position;
 							}
 							else
-								position_type = Long_position;
+								position_type1 = Long_position;
 						}
 						else
-							position_type = Close_all_position;
+							position_type1 = Close_all_position;
 						//else
 						//position_type1 = Short_position;
 						//position_type = Close_long_position;
@@ -1118,7 +1119,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 0, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_B.refresh_portfolio( false );
 	return;
@@ -2579,12 +2580,13 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin = 0.0;
 	}
 	else {
-		m_Strategy1.mMA1_margin = m_Strategy1.m_cur_MA1_margin = mMA1_margin;
-		m_Strategy1.mMA2_margin = m_Strategy1.m_cur_MA2_margin = mMA2_margin;
+		m_Strategy1.mMA1_margin = mMA1_margin;
+		m_Strategy1.mMA2_margin = mMA2_margin;
+		m_Strategy1.m_cur_MA1_margin = m_Strategy1.m_cur_MA2_margin = m_Strategy1.m_cur_MA3_margin = 0;
 		if ( m_Strategy1.mMA3_period > 0 )
-			m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin;
+			m_Strategy1.mMA3_margin = mMA3_margin;
 		else
-			m_Strategy1.mMA3_margin = m_Strategy1.m_cur_MA3_margin = mMA3_margin = 0;
+			m_Strategy1.mMA3_margin = mMA3_margin = 0;
 	}
 	sprintf ( buf_str, "%lf/%lf/%lf", mMA1_margin, mMA2_margin, mMA3_margin );
 	strB += "; MA_margin: ";
@@ -2707,12 +2709,13 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin = 0.0;
 	}
 	else {
-		m_Strategy2.mMA1_margin = m_Strategy2.m_cur_MA1_margin = mMA1_margin;
-		m_Strategy2.mMA2_margin = m_Strategy2.m_cur_MA2_margin = mMA2_margin;
+		m_Strategy2.mMA1_margin = mMA1_margin;
+		m_Strategy2.mMA2_margin = mMA2_margin;
+		m_Strategy2.m_cur_MA1_margin = m_Strategy2.m_cur_MA2_margin = m_Strategy2.m_cur_MA3_margin = 0;
 		if ( m_Strategy2.mMA3_period > 0 )
-			m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin;
+			m_Strategy2.mMA3_margin = mMA3_margin;
 		else
-			m_Strategy2.mMA3_margin = m_Strategy2.m_cur_MA3_margin = mMA3_margin = 0;
+			m_Strategy2.mMA3_margin = mMA3_margin = 0;
 	}
 	sprintf ( buf_str, "%lf/%lf/%lf", mMA1_margin, mMA2_margin, mMA3_margin );
 	strB += "; MA_margin: ";

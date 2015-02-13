@@ -96,8 +96,9 @@ CCapitalOrder::CCapitalOrder() {
 	
 	if( !CreateProcess( NULL,   // No module name (use command line)
 		//argv[1],        // Command line
-		//_T ( "\"J:\\2014 VC project\\Trade_Test\\Debug\\OrderTester.exe\"" ) ,
-		_T ( "\"C:\\20131111-CapitalApi\\20131111\\報價 API_2.2.6\\C++範例 ( VS2010 )\\Trade_Test\\Debug\\OrderTester.exe\"" ) ,
+		_T ( "\"J:\\2014 VC project\\Trade_Test\\Debug\\OrderTester.exe\"" ) ,
+		//_T ( "\"C:\\20131111-CapitalApi\\20131111\\報價 API_2.2.6\\C++範例 ( VS2010 )\\Trade_Test\\Debug\\OrderTester.exe\"" ) ,
+		//_T ( "\"D:\\vc_project\\knight\\OrderTester.exe\"" ) ,
 		NULL,           // Process handle not inheritable
 		NULL,           // Thread handle not inheritable
 		FALSE,          // Set handle inheritance to FALSE

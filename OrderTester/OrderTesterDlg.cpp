@@ -89,7 +89,7 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 				}
 				else
 					if ( cds.dwData == ORDER_COPYDATA ) {
-						strMsg.Format(_T("send order to capital at time: %d: %d: %d "), ti.wMinute, ti.wSecond, ti.wMilliseconds );
+						strMsg.Format(_T("send order to capital at time: %d: %d: %d: %d "), ti.wHour, ti.wMinute, ti.wSecond, ti.wMilliseconds );
 						AddReport ( strMsg );
 						porder_info = ( TOrder_info * ) cds.lpData;
 						symbol = porder_info->ticker_symbol;
@@ -211,8 +211,8 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 					if ( message == WM_REFRESH_OPEN_INTEREST ) {
 						strMsg = ( BSTR ) wParam;
 						Items = DivideByComma ( strMsg );
-						symbol = Items [ 2 ].GetString ( );
 						if ( Items.size ( ) > 1 ) {
+							symbol = Items [ 2 ].GetString ( );
 							if ( Items [ 3 ] == "B" ) {
 								m_nlong_position = _ttoi( Items [ 4 ] );
 								m_nshort_position = 0;
@@ -227,6 +227,9 @@ LRESULT COrderTesterDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 								else {
 									m_nlong_position = m_nshort_position = 0;
 								}
+						}
+						else {
+							mMap_open_interest.clear ();
 						}
 						return TRUE;
 					}
