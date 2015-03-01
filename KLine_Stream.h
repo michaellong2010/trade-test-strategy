@@ -149,4 +149,7 @@ public:
 	list<double> *pList_MA1, *pList_MA2, *pList_MA3;
 	map < string, TAskBidWeight *> mMap_askbid_weight;
 	TAskBidWeight *pAskBd_Weight;
+	int mEscapeTradingDays;
+	void set_escape_trading_day ( int days );
+	int mTradingDate;
 };

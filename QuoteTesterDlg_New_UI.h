@@ -131,4 +131,5 @@ public:
 	int m_cur_setting_strategy;
 	BOOL m_simulation_only;
 	afx_msg void OnBnClickedCheck8();
+	int mEscapeTradingDays;
 };

@@ -136,7 +136,7 @@ CAccount::~CAccount() {
 	}
 }
 
-int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day )
+int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day, int nDate )
 {
 #if 1
 	map< string, list<TOrder_info>* >::iterator itr;
@@ -174,9 +174,29 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	m_current_tick_time = 60 * m_tick_hour + m_tick_min;*/
 	CCapitalOrder *pCapitalOrder = NULL;
 	COPYDATASTRUCT cds;
+
+	bool is_tick_tradable = true;
+	/*reject re-entry tick due to re-lauch or re-connect*/
+	/*if ( pList_open_order->size ( ) > 0 ) {
+		for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); itr1++ ) {
+			m_order = *itr1;
+		}
+	}
+	else
+		if ( pList_close_order->size ( ) > 0 ) {
+			for ( itr1 = pList_close_order->begin(); itr1 != pList_close_order->end(); itr1++ ) {
+				m_order = *itr1;
+			}
+		}*/
 	for ( itr1 = pList_open_order->begin(); itr1 != pList_open_order->end(); ) {
 		m_order = *itr1;
-		if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
+		if ( ( nDate > m_order.open_date ) || ( nTime > m_order.open_time && nDate == m_order.open_date ) || ( nTime == m_order.open_time && nDate == m_order.open_date && m_order.entry_tick <= nPtr ) ) {
+		if ( ( ( m_order.entry_tick == nPtr && nDate == m_order.open_date ) || nDate > m_order.open_date ) && m_order.open_price == 0 ) {
+		//if ( m_order.entry_tick == nPtr && m_order.open_price == 0 ) {
+			if ( nDate > m_order.open_date ) {
+				m_order.open_date = nDate;
+				m_order.entry_tick = nPtr;
+			}
 			m_order.open_price = final_close;
 			/*if ( m_order.position_type == Long_position ) {
 				//m_order.open_price = nAsk / 100;
@@ -296,6 +316,11 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			*itr1 = m_order;
 			itr1++;
 		}
+		}
+		else {
+			itr1++;
+			is_tick_tradable = false;
+		}
 	}
 
 	/*fill with the close price*/
@@ -328,7 +353,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				margin = margin + profit_loss;
 				*itr1 = m_order;
 
-				if ( ( profit_loss + trading_fee ) < 0 /* && m_stoploss_count < 6 */ ) {
+				if ( ( profit_loss + trading_fee ) <= 0 /* && m_stoploss_count < 6 */ ) {
 					/*if ( m_stoploss_count == 0 ) {
 						m_orig_MA1_margin = this->m_Strategy.mMA1_margin;
 						m_orig_MA2_margin = this->m_Strategy.mMA2_margin;
@@ -381,7 +406,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	/*create new order with position_type*/
 	boolean tradable = true;
 	double m_factor = 0, m_MA1;
-	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) && m_current_tick_time >= tradable_time ) {
+	if ( pList_open_order->size() == 0 && ( position_type == Long_position || position_type == Short_position ) && m_current_tick_time >= tradable_time && is_tick_tradable == true ) {
 		new_free_margin = free_margin - ticker_margin;
 
 		if ( new_free_margin > 0 && 100 * ( new_free_margin / margin ) > 30.0 ) {
@@ -425,6 +450,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			m_order.entry_tick = nPtr + 1;
 			m_order.open_price = m_order.close_price = 0;
 			m_order.exit_tick = -1;
+			m_order.open_date = nDate;
+			m_order.open_time = nTime;
 			m_order.MA10_15min = MA10_15min;
 			m_order.MA22_15min = MA22_15min;
 			m_order.MA10_day = MA10_day;
@@ -476,7 +503,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 	txt_portfolio_fs << "equity: " << equity << "\n";
 
 	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
-					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "lots" << ", " << "position_type: " << \
+					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "open_date" << ", " << "lots" << ", " << "position_type: " << \
 					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << ", " << "MA10_min" << ", " << "MA22_min" << ", " << "MA10_day" << ", " << "MA22_day" << \
 					", " << "stoploss: " << "\n";
 #endif
@@ -519,7 +546,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 #if 1
 				txt_portfolio_fs << "\n============" << m_order.ticker_symbol <<  " open order===========\n";
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
-					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
+					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.open_date << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << ", " << m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
 					", " << m_order.stoploss << "\n";
 #endif
@@ -535,7 +562,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 #if 1
 
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
-					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
+					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.open_date << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << ", "<< m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
 					", " << m_order.stoploss << "\n";
 #endif

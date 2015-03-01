@@ -20,7 +20,7 @@ enum Order_Type { OP_BUY = 0, OP_SHORT, OP_BUYLIMIT, OP_SHORTLIMIT, OP_BUYSTOP, 
 
 struct TOrder_info {
 	int order_type, position_type;
-	int lots, open_time;
+	int lots, open_time, open_date;
 	int entry_tick, exit_tick;
 	double open_price, close_price;
 	double max_profit, max_loss, profit_loss;
@@ -65,7 +65,7 @@ public:
 	~CAccount();
 
 	/*place a order with market price¡Astage into pending status at tick==nPtr and deal at next tick*/
-	int Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day );
+	int Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, int nAsk, int nClose, int nQty, int is_BackFill, int position_type, double MA10_15min, double MA22_15min, double MA10_day, double MA22_day, int nDate );
 	map< string, list<TOrder_info>* > mMap_open_order, mMap_close_order;
 	map< string, double > mMap_origin_margin, mMap_keep_margin, mMap_perpip_value;
 

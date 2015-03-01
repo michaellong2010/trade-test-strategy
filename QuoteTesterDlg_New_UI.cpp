@@ -50,6 +50,7 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	m_Strategy1.isConfigure = FALSE;
 	m_Strategy2.isConfigure = FALSE;
 	m_Strategy1.m_simulation_only = m_Strategy2.m_simulation_only = FALSE;
+	mEscapeTradingDays = 0;
 }
 
 CQuoteTesterDlg_New_UI::~CQuoteTesterDlg_New_UI()
@@ -110,6 +111,7 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST, m_listReports);
 	DDX_Check(pDX, IDC_CHECK7, m_en_open_interest);
 	DDX_Check(pDX, IDC_CHECK8, m_simulation_only);
+	DDX_Text(pDX, IDC_EDIT_DaysAfter_Last_TradingDay, mEscapeTradingDays);
 }
 
 BEGIN_MESSAGE_MAP(CQuoteTesterDlg_New_UI, CDialogEx)
@@ -527,7 +529,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 0, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2, m_pDialog->mKline_stream.mTradingDate );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_A.refresh_portfolio( false );
 
@@ -638,7 +640,7 @@ void _stdcall OnNotifyTicksGet( short sMarketNo, short sStockidx, int nPtr, int 
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 0, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2, m_pDialog->mKline_stream1.mTradingDate );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_B.refresh_portfolio( false );
 #else
@@ -1008,7 +1010,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 1, position_type, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2, m_pDialog->mKline_stream.mTradingDate );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_A.refresh_portfolio( false );
 
@@ -1119,7 +1121,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		nBid,
 		nAsk,
 		nClose,
-		nQty, 0, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2 );
+		nQty, 1, position_type1, accountA_MA1, accountA_MA2, accountB_MA1, accountB_MA2, m_pDialog->mKline_stream1.mTradingDate );
 	if ( ! ( nPtr % 200 ) )
 		m_pDialog->account_B.refresh_portfolio( false );
 	return;
@@ -2178,6 +2180,11 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 	this->account_B.m_Strategy = m_Strategy2;
 	this->account_A.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
 	this->account_B.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
+	if ( mEscapeTradingDays > 0 ) {
+		mKline_stream.set_escape_trading_day ( mEscapeTradingDays );
+		mKline_stream1.set_escape_trading_day ( mEscapeTradingDays );
+	}
+
 
 	int  nCode = 0;
 	//t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);

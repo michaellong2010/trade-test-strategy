@@ -33,6 +33,7 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 	_mkdir ( path_bufA.GetString() );
 	int n = days_difference ( 1, 1, 2012, 31, 12, 2012 );
 	n = days_difference ( 30, 12, 2012, 31, 12, 2012 );
+	mEscapeTradingDays = 0;
 }
 
 CKLineStream::~CKLineStream() {
@@ -89,6 +90,11 @@ CKLineStream::~CKLineStream() {
 		txt_out.flush();
 		txt_out.close();
 	}
+}
+
+void CKLineStream::set_escape_trading_day ( int days )
+{
+	mEscapeTradingDays = days;
 }
 
 bool CKLineStream::isCanChangeStrategy ( TStrategy_info &strategy )
@@ -412,16 +418,19 @@ int CKLineStream::Push_KLine_Data( char * caStockNo, char * caData ) {
 	::GetLocalTime ( &ti );
 	current_date = 10000 * ti.wYear + 100 * ti.wMonth + ti.wDay;
 	if ( ti.wDayOfWeek == 0 ) {
-		current_date = previous_nDay_date ( current_date, 2 );
+		current_date = previous_nDay_date ( current_date, 2 + mEscapeTradingDays );
 	}
 	else
 		if ( ti.wDayOfWeek == 6 ) {
-			current_date = previous_nDay_date ( current_date, 1 );
+			current_date = previous_nDay_date ( current_date, 1 + mEscapeTradingDays );
 		}
 		else
 			if ( ti.wDayOfWeek == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) {
-				current_date = previous_nDay_date ( current_date, 3 );
+				current_date = previous_nDay_date ( current_date, 3 + mEscapeTradingDays );
 			}
+			else
+				if ( mEscapeTradingDays > 0 )
+					current_date = previous_nDay_date ( current_date, mEscapeTradingDays );
 	int day, month, year;
 	for ( vector<string>::iterator itr = mData_Element.begin(); itr != mData_Element.end(); ) {
 	   m_get_str = (*itr).c_str();
@@ -781,16 +790,19 @@ void CKLineStream::load_KLine_from_archive ( const char * ticker_symbol ) {
 	::GetLocalTime ( &ti );
 	current_date = ti.wYear * 10000 + ti.wMonth * 100 + ti.wDay;
 	if ( ti.wDayOfWeek == 0 ) {
-		current_date = previous_nDay_date ( current_date, 2 );
+		current_date = previous_nDay_date ( current_date, 2 + mEscapeTradingDays );
 	}
 	else
 		if ( ti.wDayOfWeek == 6 ) {
-			current_date = previous_nDay_date ( current_date, 1 );
+			current_date = previous_nDay_date ( current_date, 1 + mEscapeTradingDays );
 		}
 		else
 			if ( ti.wDayOfWeek == 1 && server_escape_seconds < ( ( 8 * 60 + 30 ) * 60 ) ) {
-				current_date = previous_nDay_date ( current_date, 3 );
+				current_date = previous_nDay_date ( current_date, 3 + mEscapeTradingDays );
 			}
+			else
+				if ( mEscapeTradingDays > 0 )
+					current_date = previous_nDay_date ( current_date, mEscapeTradingDays );
 	cur_tid = GetCurrentThreadId();
 	txt_out_filename = path_bufA.GetString();
 	txt_out_filename =  txt_out_filename + "TX00_txt";
@@ -1128,6 +1140,8 @@ TICK 編號:0 時間:90003 買價:-999999 賣價:-999999 成交價:3255 量:66
 	list <double>::reverse_iterator itr9;
 			if ( m_tick.m_nPtr == 0 ) {
 				mMap_intraday_open_time.insert (pair<string, int>(symbol, m_tick.m_nTime));
+				TRACE ( "trading date: %d", m_candlestick.mDate );
+				mTradingDate = m_candlestick.mDate;
 			}
 
 			switch ( nTimeFrame ) {
@@ -2218,7 +2232,7 @@ int previous_nDay_date ( int current_date,  int days ) {
 			}
 			else {
 				previous_month -= 1;
-				previous_day = month_days [ previous_month ];
+				previous_day = month_days [ previous_month - 1 ];
 			}
 		}
 		else {
