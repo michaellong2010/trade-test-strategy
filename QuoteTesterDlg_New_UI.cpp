@@ -2145,12 +2145,12 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 				else
 					if ( mKline_stream.isCanChangeStrategy ( m_Strategy1 ) == false ) {
 						mKline_stream.reset( m_Strategy1 );
-						AfxMessageBox( _T( "can't change accountA different timeframe in a same syme symbol" ) );
+						AfxMessageBox( _T( "can't change accountA different timeframe in a same symbol" ) );
 						return;				
 					}
 					else
 						if ( mKline_stream1.isCanChangeStrategy ( m_Strategy2 ) == false ) {
-							AfxMessageBox( _T( "can't change accountB different timeframe in a same syme symbol" ) );
+							AfxMessageBox( _T( "can't change accountB different timeframe in a same symbol" ) );
 							return;				
 						}
 	GetDlgItem(IDC_BUTTON13)->EnableWindow( FALSE );
@@ -2174,7 +2174,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 	pButton->EnableWindow ( FALSE );
 	pButton1->EnableWindow ( FALSE );
 	IDC_EDIT_Stoploss*/
-	for ( int i = IDC_EDIT_MA1_margin; i <= IDC_BUTTON16; i++ )
+	for ( int i = IDC_EDIT_MA1_period; i <= IDC_BUTTON16; i++ )
 		GetDlgItem(i)->EnableWindow( FALSE );
 	this->account_A.m_Strategy = m_Strategy1;
 	this->account_B.m_Strategy = m_Strategy2;
@@ -2287,7 +2287,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton14()
 	pWnd->EnableWindow( FALSE );
 	//GetDlgItem(IDC_CHECK1)->EnableWindow( TRUE );
 	//m_ComboBox1_strategy.EnableWindow ( TRUE );
-	for ( int i = IDC_EDIT_MA1_margin; i <= IDC_BUTTON16; i++ )
+	for ( int i = IDC_EDIT_MA1_period; i <= IDC_BUTTON16; i++ )
 		GetDlgItem(i)->EnableWindow( TRUE );
 	
 	TerminateThread( t_hnd, (DWORD) 0 );
@@ -2587,14 +2587,26 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 			m_Strategy1.mMA1_period = mMA2_period;
 			m_Strategy1.mMA2_period = mMA1_period;
 		}
-		if ( mMA3_period < m_Strategy1.mMA2_period ) {
-			m_Strategy1.mMA2_period = mMA3_period;
-			m_Strategy1.mMA3_period = mMA1_period;
+		else {
+			m_Strategy1.mMA1_period = mMA1_period;
+			m_Strategy1.mMA2_period = mMA2_period;
 		}
+		if ( mMA3_period < m_Strategy1.mMA2_period ) {
+			m_Strategy1.mMA3_period = m_Strategy1.mMA2_period;
+			//m_Strategy1.mMA2_period = mMA3_period;
+			if ( mMA3_period < m_Strategy1.mMA1_period) {
+				m_Strategy1.mMA2_period = m_Strategy1.mMA1_period;
+				m_Strategy1.mMA1_period = mMA3_period;
+			}
+			else
+				m_Strategy1.mMA2_period = mMA3_period;
+		}
+		else
+			m_Strategy1.mMA3_period = mMA3_period;
 
 		if ( m_Strategy1.mMA1_period == 0 ) {
 			if ( m_Strategy1.mMA2_period == 0 ) {
-				m_Strategy1.mMA1_period = m_Strategy1.mMA3_period;
+				m_Strategy1.mMA1_period = m_Strategy1.mMA2_period = m_Strategy1.mMA3_period;
 				m_Strategy1.mMA3_period = 0;
 			}
 			else {
@@ -2603,8 +2615,15 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 				m_Strategy1.mMA3_period = 0;
 			}
 		}
+		else
+			if ( m_Strategy1.mMA1_period == m_Strategy1.mMA2_period ) {
+				m_Strategy1.mMA2_period = m_Strategy1.mMA3_period;
+				m_Strategy1.mMA3_period = 0;
+			}
+			if ( m_Strategy1.mMA2_period == m_Strategy1.mMA3_period )
+				m_Strategy1.mMA3_period = 0;
 	}
-	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d", m_Strategy1.mMA1_period, m_Strategy1.mMA2_period, m_Strategy1.mMA3_period );
+	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d; ", m_Strategy1.mMA1_period, m_Strategy1.mMA2_period, m_Strategy1.mMA3_period );
 	strB += buf_str;
 	m_Strategy1.symbol = strA.GetString ();
 	strB += "symbol: ";
@@ -2686,6 +2705,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 {
 	// TODO: Add your control notification handler code here
+	char buf_str[100];
 	UpdateData( TRUE );
 	// TODO: Add your control notification handler code here
 	CComboBox   *pComboBox   =   (CComboBox *)GetDlgItem( IDC_COMBO_KLine );
@@ -2713,33 +2733,83 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 	  case 0: //15min
 		  m_Strategy2.time_frame = 1;
 		  m_Strategy2.n_sticks = 3;
-		  m_Strategy2.mMA1_period = 30;
+		  /*m_Strategy2.mMA1_period = 30;
 		  m_Strategy2.mMA2_period = 60;
 		  m_Strategy2.mMA3_period = 100;
-		  strB += "KLine: 15min; MA: 30, 60, 100; ";
+		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
 		  break;
 	  case 1: //1hr
 		  m_Strategy2.time_frame = 2;
 		  m_Strategy2.n_sticks = 2;
-		  m_Strategy2.mMA1_period = 10;
+		  /*m_Strategy2.mMA1_period = 10;
 		  m_Strategy2.mMA2_period = 22;
 		  m_Strategy2.mMA3_period = 0;
-		  strB += "KLine: 1hr; MA: 10, 22; ";
+		  strB += "KLine: 1hr; MA: 10, 22; ";*/
 		  break;
 	  case 2: //day
 		  m_Strategy2.time_frame = 4;
 		  m_Strategy2.n_sticks = 1;
-		  m_Strategy2.mMA1_period = 10;
+		  /*m_Strategy2.mMA1_period = 10;
 		  m_Strategy2.mMA2_period = 22;
 		  m_Strategy2.mMA3_period = 0;
-		  strB += "KLine: day; MA: 10, 22; ";
+		  strB += "KLine: day; MA: 10, 22; ";*/
 		  break;
 	}
+	if ( mMA1_period == 0 && mMA2_period == 0 && mMA3_period == 0 ) {
+		//AfxMessageBox( _T( "±b¸¹2µ¦²¤Must at least one MA period not equal zero!" ) );
+		m_Strategy2.isConfigure = FALSE;
+		MessageBox( "Fail setting accountB strategy¡G must at least one MA period not equal zero!", "±b¸¹2µ¦²¤", MB_OK );
+		return;
+	}
+	else {
+		if ( mMA2_period < mMA1_period ) {
+			m_Strategy2.mMA1_period = mMA2_period;
+			m_Strategy2.mMA2_period = mMA1_period;
+		}
+		else {
+			m_Strategy2.mMA1_period = mMA1_period;
+			m_Strategy2.mMA2_period = mMA2_period;
+		}
+		if ( mMA3_period < m_Strategy2.mMA2_period ) {
+			m_Strategy2.mMA3_period = m_Strategy2.mMA2_period;
+			//m_Strategy2.mMA2_period = mMA3_period;
+			if ( mMA3_period < m_Strategy2.mMA1_period) {
+				m_Strategy2.mMA2_period = m_Strategy2.mMA1_period;
+				m_Strategy2.mMA1_period = mMA3_period;
+			}
+			else
+				m_Strategy2.mMA2_period = mMA3_period;
+		}
+		else
+			m_Strategy2.mMA3_period = mMA3_period;
+
+		if ( m_Strategy2.mMA1_period == 0 ) {
+			if ( m_Strategy2.mMA2_period == 0 ) {
+				m_Strategy2.mMA1_period = m_Strategy2.mMA2_period = m_Strategy2.mMA3_period;
+				m_Strategy2.mMA3_period = 0;
+			}
+			else {
+				m_Strategy2.mMA1_period = m_Strategy2.mMA2_period;
+				m_Strategy2.mMA2_period = m_Strategy2.mMA3_period;
+				m_Strategy2.mMA3_period = 0;
+			}
+		}
+		else
+			if ( m_Strategy2.mMA1_period == m_Strategy2.mMA2_period ) {
+				m_Strategy2.mMA2_period = m_Strategy2.mMA3_period;
+				m_Strategy2.mMA3_period = 0;
+			}
+			else
+				if ( m_Strategy2.mMA2_period == m_Strategy2.mMA3_period )
+					m_Strategy2.mMA3_period = 0;
+	}
+	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d; ", m_Strategy2.mMA1_period, m_Strategy2.mMA2_period, m_Strategy2.mMA3_period );
+	strB += buf_str;
 	m_Strategy2.symbol = strA.GetString ();
 	strB += "symbol: ";
 	strB += m_Strategy2.symbol.c_str ( );
 
-	char buf_str[100];
+	//char buf_str[100];
 	m_Strategy2.enable_MA_margin = enable_MA_margin;
 	if ( m_Strategy2.enable_MA_margin == 0 ) {
 		m_Strategy2.mMA1_margin = m_Strategy2.m_cur_MA1_margin = mMA1_margin = 0.0;
@@ -2961,6 +3031,16 @@ void CQuoteTesterDlg_New_UI::load_account_strategy ( TStrategy_info account_stra
 		pEdit->SetWindowText ( strA );
 		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA3_margin );
 		strA.Empty (); strA.Format ( "%lf", account_strategy.mMA3_margin );
+		pEdit->SetWindowText ( strA );
+
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA1_period );
+		strA.Empty (); strA.Format ( "%d", account_strategy.mMA1_period );
+		pEdit->SetWindowText ( strA );
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA2_period );
+		strA.Empty (); strA.Format ( "%d", account_strategy.mMA2_period );
+		pEdit->SetWindowText ( strA );
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA3_period );
+		strA.Empty (); strA.Format ( "%d", account_strategy.mMA3_period );
 		pEdit->SetWindowText ( strA );
 
 		pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK2 );

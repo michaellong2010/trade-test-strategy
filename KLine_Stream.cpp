@@ -302,6 +302,8 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 	mMap_MA2.clear ();
 	MA1_list_ready = MA2_list_ready = false;*/
 			if ( this->m_Strategy.mMA1_period > 0 ) {
+				sprintf( str_buf, "_MA%d", m_Strategy.mMA1_period );
+				m_str_symbol = m_str_symbol1 + str_buf;
 				if ( !mMap_MA1.count ( m_str_symbol ) ) {
 					pList_MA1 = new list<double>;
 					mMap_MA1.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA1 ) );
@@ -316,6 +318,8 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 				pList_MA1 = NULL;
 			}
 			if ( this->m_Strategy.mMA2_period > 0 ) {
+				sprintf( str_buf, "_MA%d", m_Strategy.mMA2_period );
+				m_str_symbol = m_str_symbol1 + str_buf;
 				if ( !mMap_MA2.count ( m_str_symbol ) ) {
 					pList_MA2 = new list<double>;
 					mMap_MA2.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA2 ) );
@@ -329,6 +333,8 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 			else
 				pList_MA2 = NULL;
 			if ( this->m_Strategy.mMA3_period > 0 ) {
+				sprintf( str_buf, "_MA%d", m_Strategy.mMA3_period );
+				m_str_symbol = m_str_symbol1 + str_buf;
 				if ( !mMap_MA3.count ( m_str_symbol ) ) {
 					pList_MA3 = new list<double>;
 					mMap_MA3.insert( pair<string, list<double>*> ( m_str_symbol, pList_MA3 ) );
@@ -1341,7 +1347,8 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 										  }
 									  }
 									  
-									  mMap_MA1_ready [ m_str_symbol ] = MA1_list_ready = true;
+									  sprintf( str_buf, "_MA%d", mMA1_period );
+									  mMap_MA1_ready [ m_str_symbol + str_buf ] = MA1_list_ready = true;
 							  }
 							  else
 								  if ( MA1_list_ready == true /*&& is_BackFill == 0*/ ) {
@@ -1434,6 +1441,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 										  }
 									  }
 									  
+									  sprintf( str_buf, "_MA%d", mMA2_period );
 									  mMap_MA2_ready [ m_str_symbol ] = MA2_list_ready = true;
 							  }
 							  else
@@ -1528,6 +1536,7 @@ TICK 絪腹:0 丁:90003 禦基:-999999 芥基:-999999 Θユ基:3255 秖:66
 												  }
 											  }
 
+											  sprintf( str_buf, "_MA%d", mMA3_period );
 											  mMap_MA3_ready [ m_str_symbol ] = MA3_list_ready = true;
 									  }
 									  else
