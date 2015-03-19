@@ -84,12 +84,12 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	/*MA period range¡G 8~16, 17~35, 36~70*/
-	/*DDX_Text( pDX, IDC_EDIT_MA1_period, mMA1_period );
-	DDV_MinMaxInt( pDX, mMA1_period, 8, 16);
+	DDX_Text( pDX, IDC_EDIT_MA1_period, mMA1_period );
+	DDV_MinMaxInt( pDX, mMA1_period, 0, 120);
 	DDX_Text( pDX, IDC_EDIT_MA2_period, mMA2_period );
-	DDV_MinMaxInt( pDX, mMA2_period, 17, 35);
+	DDV_MinMaxInt( pDX, mMA2_period, 0, 120);
 	DDX_Text( pDX, IDC_EDIT_MA3_period, mMA3_period );
-	DDV_MinMaxInt( pDX, mMA3_period, 36, 70);*/
+	DDV_MinMaxInt( pDX, mMA3_period, 0, 120);
 
 	DDX_Check( pDX, IDC_CHECK1, enable_MA_margin );
 	DDX_Text( pDX, IDC_EDIT_MA1_margin, mMA1_margin );
@@ -2526,6 +2526,7 @@ void CQuoteTesterDlg_New_UI::OnSize(UINT nType, int cx, int cy)
 
 void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 {
+	char buf_str[100];
 	UpdateData( TRUE );
 	// TODO: Add your control notification handler code here
 	CComboBox   *pComboBox   =   (CComboBox *)GetDlgItem( IDC_COMBO_KLine );
@@ -2553,33 +2554,63 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 	  case 0: //15min
 		  m_Strategy1.time_frame = 1;
 		  m_Strategy1.n_sticks = 3;
-		  m_Strategy1.mMA1_period = 30;
+		  /*m_Strategy1.mMA1_period = 30;
 		  m_Strategy1.mMA2_period = 60;
 		  m_Strategy1.mMA3_period = 100;
-		  strB += "KLine: 15min; MA: 30, 60, 100; ";
+		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
 		  break;
 	  case 1: //1hr
 		  m_Strategy1.time_frame = 2;
 		  m_Strategy1.n_sticks = 2;
-		  m_Strategy1.mMA1_period = 10;
+		  /*m_Strategy1.mMA1_period = 10;
 		  m_Strategy1.mMA2_period = 22;
 		  m_Strategy1.mMA3_period = 0;
-		  strB += "KLine: 1hr; MA: 10, 22; ";
+		  strB += "KLine: 1hr; MA: 10, 22; ";*/
 		  break;
 	  case 2: //day
 		  m_Strategy1.time_frame = 4;
 		  m_Strategy1.n_sticks = 1;
-		  m_Strategy1.mMA1_period = 10;
+		  /*m_Strategy1.mMA1_period = 10;
 		  m_Strategy1.mMA2_period = 22;
 		  m_Strategy1.mMA3_period = 0;
-		  strB += "KLine: day; MA: 10, 22; ";
+		  strB += "KLine: day; MA: 10, 22; ";*/
 		  break;
 	}
+	if ( mMA1_period == 0 && mMA2_period == 0 && mMA3_period == 0 ) {
+		//AfxMessageBox( _T( "±b¸¹1µ¦²¤Must at least one MA period not equal zero!" ) );
+		m_Strategy1.isConfigure = FALSE;
+		MessageBox( "Fail setting accountA strategy¡G must at least one MA period not equal zero!", "±b¸¹1µ¦²¤", MB_OK );
+		return;
+	}
+	else {
+		if ( mMA2_period < mMA1_period ) {
+			m_Strategy1.mMA1_period = mMA2_period;
+			m_Strategy1.mMA2_period = mMA1_period;
+		}
+		if ( mMA3_period < m_Strategy1.mMA2_period ) {
+			m_Strategy1.mMA2_period = mMA3_period;
+			m_Strategy1.mMA3_period = mMA1_period;
+		}
+
+		if ( m_Strategy1.mMA1_period == 0 ) {
+			if ( m_Strategy1.mMA2_period == 0 ) {
+				m_Strategy1.mMA1_period = m_Strategy1.mMA3_period;
+				m_Strategy1.mMA3_period = 0;
+			}
+			else {
+				m_Strategy1.mMA1_period = m_Strategy1.mMA2_period;
+				m_Strategy1.mMA2_period = m_Strategy1.mMA3_period;
+				m_Strategy1.mMA3_period = 0;
+			}
+		}
+	}
+	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d", m_Strategy1.mMA1_period, m_Strategy1.mMA2_period, m_Strategy1.mMA3_period );
+	strB += buf_str;
 	m_Strategy1.symbol = strA.GetString ();
 	strB += "symbol: ";
 	strB += m_Strategy1.symbol.c_str ( );
 
-	char buf_str[100];
+	//char buf_str[100];
 	m_Strategy1.enable_MA_margin = enable_MA_margin;
 	if ( m_Strategy1.enable_MA_margin == 0 ) {
 		m_Strategy1.mMA1_margin = m_Strategy1.m_cur_MA1_margin = mMA1_margin = 0.0;
