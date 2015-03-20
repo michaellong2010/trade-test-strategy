@@ -2089,6 +2089,8 @@ DWORD WINAPI do_quote(LPVOID dlg) {
 				g_hThreads_KLine,     // array of thread handles
 				TRUE,          // wait until all are signaled
 				INFINITE);
+			pDialog->mKline_stream1.setting_MA ( pDialog->m_Strategy2.mMA1_period, pDialog->m_Strategy2.mMA2_period, pDialog->m_Strategy2.mMA2_period );
+			pDialog->mKline_stream1 = pDialog->mKline_stream;
 		}		
 	    pDialog->GetDlgItem(IDC_BUTTON14)->EnableWindow( TRUE );
 		pDialog->OnBnClickedButton5();
@@ -2138,11 +2140,11 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 				return;
 			}
 			else
-				if ( m_Strategy2.nType == m_Strategy1.nType ) {
+				/*if ( m_Strategy2.nType == m_Strategy1.nType ) {
 					AfxMessageBox( _T( "accountA & accountB should operate in different time frame" ) );
 					return;
 				}
-				else
+				else*/
 					if ( mKline_stream.isCanChangeStrategy ( m_Strategy1 ) == false ) {
 						mKline_stream.reset( m_Strategy1 );
 						AfxMessageBox( _T( "can't change accountA different timeframe in a same symbol" ) );
@@ -2189,7 +2191,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 	int  nCode = 0;
 	//t_hnd = ::CreateThread(0, 0, do_quote, this, NULL, &t_id);
 	t_hnd = ::CreateThread( NULL, 0, do_quote, this, 0, &t_id );
-	::CloseHandle ( t_hnd );
+	//::CloseHandle ( t_hnd );
 	//::SuspendThread ( t_hnd );
 	/*20141221 added by michael
 	one capital account correspod to one capital order thread*/
@@ -2291,7 +2293,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton14()
 		GetDlgItem(i)->EnableWindow( TRUE );
 	
 	TerminateThread( t_hnd, (DWORD) 0 );
-	//CloseHandle(t_hnd);
+	CloseHandle(t_hnd);
 	//t_hnd = NULL;
 	//OnBnClickedButton3();
 }

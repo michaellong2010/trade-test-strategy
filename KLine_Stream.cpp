@@ -34,12 +34,14 @@ CKLineStream::CKLineStream( int time_frame, int n_sticks, bool need_store_tick )
 	int n = days_difference ( 1, 1, 2012, 31, 12, 2012 );
 	n = days_difference ( 30, 12, 2012, 31, 12, 2012 );
 	mEscapeTradingDays = 0;
+	is_ref_KLine = false;
 }
 
 CKLineStream::~CKLineStream() {
 	int nSize;
 	fstream *p_fs;
 
+	if ( is_ref_KLine == false ) {
 	for (map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.begin();  itr != mMap_stock_kline.end(); itr++) {
 		nSize = sizeof((*itr).first);
 		nSize = sizeof((*itr).second);
@@ -56,6 +58,7 @@ CKLineStream::~CKLineStream() {
 		delete ((*itr1).second->p_fs);
 		if ( nSize == 4 )
 			delete (*itr1).second;
+	}
 	}
 
 	for ( map<string, list<TICK>*>::iterator itr = mMap_stock_ticks.begin(); itr != mMap_stock_ticks.end(); itr++ ) {
@@ -119,6 +122,7 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 	TKLineData_FileInfo *pKLine_file_info = NULL, *pKLine_file_info1 = NULL;
 	m_Strategy = strategy;
 
+	if ( this->is_ref_KLine == false ) {
 	if ( nTimeFrame != m_Strategy.time_frame || m_Strategy.n_sticks != n_collapse_sticks ) {
 		for (map<string, list<TCandleStick>*>::iterator itr = mMap_stock_kline.begin();  itr != mMap_stock_kline.end(); itr++) {
 			nSize = sizeof((*itr).first);
@@ -229,6 +233,14 @@ void CKLineStream::reset ( TStrategy_info &strategy )
 	}
 	mMap_kline_ready.clear ();
 	mMap_KLine_open_time.clear ();
+	}
+	else {
+		mMap_kline_ready.clear ();
+		mMap_KLine_open_time.clear ();
+		file_stream_info.clear ();
+		mMap_stock_kline.clear ();
+		is_ref_KLine = false;
+	}
 	//mMap_intraday_open_time.clear ();
 
 	n_collapse_sticks = m_Strategy.n_sticks;	
@@ -2252,4 +2264,19 @@ int previous_nDay_date ( int current_date,  int days ) {
 	previous_date = previous_year * 10000 + previous_month * 100 + previous_day;
 
 	return previous_date;
+}
+
+CKLineStream & CKLineStream::operator= ( CKLineStream &Ref_KLineStream )
+{
+	if ( store_tick_file == false ) {
+		this->mMap_stock_kline = Ref_KLineStream.mMap_stock_kline;
+		//this->mMap_stock_kline.clear ();
+		this->file_stream_info = Ref_KLineStream.file_stream_info;
+		//this->file_stream_info.clear ();
+		this->mMap_kline_ready = Ref_KLineStream.mMap_kline_ready;
+		this->mMap_KLine_open_time = Ref_KLineStream.mMap_KLine_open_time;
+		//this->mMap_intraday_open_time = Ref_KLineStream.mMap_intraday_open_time;
+		is_ref_KLine = true;
+	}
+	return *this;
 }

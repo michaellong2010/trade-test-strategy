@@ -152,4 +152,7 @@ public:
 	int mEscapeTradingDays;
 	void set_escape_trading_day ( int days );
 	int mTradingDate;
+
+	CKLineStream &operator= ( CKLineStream &Ref_KLineStream );
+	bool is_ref_KLine;
 };

@@ -162,7 +162,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 
 	final_close = (double) nClose / 100;
 	/*close opposite position in open order*/
-	double new_free_margin, ticker_margin, pip_value, profit_loss, keep_margin, trading_fee = 100;
+	static double new_free_margin = 0;
+	double /*new_free_margin,*/ ticker_margin, pip_value, profit_loss, keep_margin, trading_fee = 100;
 	boolean m_touch_stoploss = false;
 	pip_value = mMap_perpip_value [ symbol ];
 	ticker_margin = mMap_origin_margin [ symbol ];
@@ -254,6 +255,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			}*/
 			m_order.open_time = nTime;
 			m_order.profit_loss = m_order.max_profit = m_order.max_loss = 0;
+			free_margin = new_free_margin; 
 		}
 		else {
 			if ( m_order.position_type == Long_position )
@@ -468,7 +470,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 			}
 			m_order.lots = 1;
 
-			free_margin = new_free_margin;
+			//free_margin = new_free_margin;
 			pList_open_order->insert ( pList_open_order->end(), m_order );
 			
 			/*20150106 added by michael*/
