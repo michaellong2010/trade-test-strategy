@@ -234,12 +234,27 @@ BOOL CQuoteTesterDlg_New_UI::OnInitDialog()
 		NULL);             // unnamed mutex
 /*20141003 added by michael*/
 	m_ComboBox1_strategy.SubclassDlgItem ( IDC_COMBO1, this );
-	m_ComboBox1_strategy.AddString ( _T("¦hªÅ¤O¹D & ¤£¯d­Ü") );
+	/*m_ComboBox1_strategy.AddString ( _T("¦hªÅ¤O¹D & ¤£¯d­Ü") );
 	m_ComboBox1_strategy.AddString ( _T("¦hªÅ¤O¹D & ¯d­Ü") );
 	m_ComboBox1_strategy.AddString ( _T("§¡½u & ¤£¯d­Ü") );
-	m_ComboBox1_strategy.AddString ( _T("§¡½u & ¯d­Ü") );
+	m_ComboBox1_strategy.AddString ( _T("§¡½u & ¯d­Ü") );*/
+/*µ¦²¤1	15min	60/100
+µ¦²¤2	1hrs	10/22
+µ¦²¤3	4hrs(¤é½u)	10/22
+µ¦²¤4	15min	100
+µ¦²¤5	1hrs	22
+µ¦²¤6	1hrs	22+0.3% / 22-0.3%*/
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤1; 15min; 60/100") );
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤2; 1hrs; 10/22") );
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤3; 4hrs(¤é½u); 10/22") );
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤4; 15min; 100") );
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤5; 1hrs; 22") );
+	m_ComboBox1_strategy.AddString ( _T("µ¦²¤6; 1hrs; 22+0.3% / 22-0.3%") );
+	SetDropDownHeight ( &m_ComboBox1_strategy, 6 );
 	m_ComboBox1_strategy.SetCurSel(0);
 	AdjustDropDownWidth ( IDC_COMBO1 );
+	SendMessage ( WM_COMMAND, MAKEWPARAM ( m_ComboBox1_strategy.GetDlgCtrlID(), CBN_SELCHANGE ), LPARAM( ( HWND ) m_ComboBox1_strategy.m_hWnd ) );
+	//SendMessage ( WM_COMMAND, MAKEWPARAM ( m_boxTFAccount.GetDlgCtrlID(), CBN_SELCHANGE ), LPARAM( ( HWND ) m_boxTFAccount.m_hWnd ) );
 
 	//creation.
 	CRect rect;
@@ -2412,6 +2427,71 @@ void CQuoteTesterDlg_New_UI::OnCbnSelchangeCombo1()
 	CString str(str_buf);
 	AfxMessageBox( str );*/
 	TRACE ( "%d\n",  m_ComboBox1_strategy.GetCurSel() );
+/*µ¦²¤1	15min	60/100
+µ¦²¤2	1hrs	10/22
+µ¦²¤3	4hrs(¤é½u)	10/22
+µ¦²¤4	15min	100
+µ¦²¤5	1hrs	22
+µ¦²¤6	1hrs	22+0.3% / 22-0.3%*/
+	CComboBox *pComboBox_TimeFrame   =   (CComboBox *)GetDlgItem(IDC_COMBO_KLine);
+	CEdit *pEdit;
+	CString strA;
+	CButton *pButton;
+	pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK1 );
+	switch ( m_ComboBox1_strategy.GetCurSel() ) {
+		case 0:
+			pComboBox_TimeFrame->SetCurSel ( 0 );
+			mMA1_period = 60;
+			mMA2_period = 100;
+			mMA3_period = 0;
+			break;
+		case 1:
+			pComboBox_TimeFrame->SetCurSel ( 1 );
+			mMA1_period = 10;
+			mMA2_period = 22;
+			mMA3_period = 0;
+			break;
+		case 2:
+			pComboBox_TimeFrame->SetCurSel ( 2 );
+			mMA1_period = 10;
+			mMA2_period = 22;
+			mMA3_period = 0;
+			break;
+		case 3:
+			pComboBox_TimeFrame->SetCurSel ( 0 );
+			mMA1_period = 100;
+			mMA2_period = 0;
+			mMA3_period = 0;
+			break;
+		case 4:
+			pComboBox_TimeFrame->SetCurSel ( 1 );
+			mMA1_period = 22;
+			mMA2_period = 0;
+			mMA3_period = 0;
+			enable_MA_margin = FALSE;
+			break;
+		case 5:
+			pComboBox_TimeFrame->SetCurSel ( 1 );
+			mMA1_period = 22;
+			mMA2_period = 0;
+			mMA3_period = 0;
+			enable_MA_margin = TRUE;
+			break;
+	}
+	pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA1_period );
+	strA.Empty (); strA.Format ( "%d", mMA1_period );
+	pEdit->SetWindowText ( strA );
+	pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA2_period );
+	strA.Empty (); strA.Format ( "%d", mMA2_period );
+	pEdit->SetWindowText ( strA );
+	pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA3_period );
+	strA.Empty (); strA.Format ( "%d", mMA3_period );
+	pEdit->SetWindowText ( strA );
+
+	if ( enable_MA_margin == FALSE )
+		pButton->SetCheck ( 0 );
+	else
+		pButton->SetCheck ( 1 );
 }
 
 /*auto adjust combobox*/
