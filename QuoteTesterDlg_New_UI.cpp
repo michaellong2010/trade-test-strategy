@@ -12,7 +12,10 @@
 #define new DEBUG_NEW
 #endif
 #define WM_RUN_IN_UI_THREAD (WM_USER + 2)
-
+#define Connection_EnterMonitor 0
+#define Connection_GetKLine 1
+#define Connection_RequestTicks 2
+#define Connection_ForceDisConn 3
 
 // CQuoteTesterDlg_New_UI 對話方塊
 IMPLEMENT_DYNAMIC(CQuoteTesterDlg_New_UI, CDialog)
@@ -51,6 +54,10 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	m_Strategy2.isConfigure = FALSE;
 	m_Strategy1.m_simulation_only = m_Strategy2.m_simulation_only = FALSE;
 	mEscapeTradingDays = 0;
+	need_reconnect = isTimer_start = FALSE;
+	m_cur_connection_phase = Connection_EnterMonitor;
+	mTrailingTriggerPoints = 50;
+	mTrailingPercent = 70;
 }
 
 CQuoteTesterDlg_New_UI::~CQuoteTesterDlg_New_UI()
@@ -112,6 +119,10 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK7, m_en_open_interest);
 	DDX_Check(pDX, IDC_CHECK8, m_simulation_only);
 	DDX_Text(pDX, IDC_EDIT_DaysAfter_Last_TradingDay, mEscapeTradingDays);
+	DDX_Text( pDX, IDC_EDIT_TrailingTriggerPoints, mTrailingTriggerPoints );
+	DDV_MinMaxInt( pDX, mTrailingTriggerPoints, 30, 100 );
+	DDX_Text( pDX, IDC_EDIT_TrailingPercent, mTrailingPercent );
+	DDV_MinMaxInt( pDX, mTrailingPercent, 10, 90 );
 }
 
 BEGIN_MESSAGE_MAP(CQuoteTesterDlg_New_UI, CDialogEx)
@@ -147,6 +158,7 @@ BEGIN_MESSAGE_MAP(CQuoteTesterDlg_New_UI, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK2, &CQuoteTesterDlg_New_UI::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK3, &CQuoteTesterDlg_New_UI::OnBnClickedCheck3)
 	ON_BN_CLICKED(IDC_CHECK4, &CQuoteTesterDlg_New_UI::OnBnClickedCheck4)
+	ON_BN_CLICKED(IDC_CHECK6, &CQuoteTesterDlg_New_UI::OnBnClickedCheck6)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON15, &CQuoteTesterDlg_New_UI::OnBnClickedButton15)
 	ON_BN_CLICKED(IDC_BUTTON16, &CQuoteTesterDlg_New_UI::OnBnClickedButton16)
@@ -263,6 +275,7 @@ BOOL CQuoteTesterDlg_New_UI::OnInitDialog()
 	this->MoveWindow ( &rect );
 	rect.top = rect.bottom - 25;
 	m_bar. Create (WS_CHILD | WS_BORDER | WS_VISIBLE, rect, this, IDC_STATUSBAR);
+	::SetWindowText ( m_pDialog->m_bar.m_hWnd, "Disconnect!" );
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
@@ -302,6 +315,28 @@ HCURSOR CQuoteTesterDlg_New_UI::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+VOID CALLBACK TimerProc2( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
+{
+	CString strMsg;
+
+	strMsg.Format ( "Reconnect after %d s", m_pDialog->m_timer_countdown );
+	m_pDialog->m_timer_countdown--;
+	::SetWindowText ( m_pDialog->GetDlgItem ( IDC_STATUSBAR )->m_hWnd, strMsg );
+	if ( m_pDialog->m_timer_countdown == 0 ) {
+		::KillTimer ( m_pDialog->m_hWnd, 1995 );
+		switch ( m_pDialog->m_cur_connection_phase ) {
+          case Connection_EnterMonitor:
+			  m_pDialog->OnBnClickedButton2 ( );
+			  break;
+		  case Connection_RequestTicks:
+			  m_pDialog->OnBnClickedButton5 ( );
+		      break;
+		}
+		m_pDialog->isTimer_start = FALSE;
+		m_pDialog->LoginOrderAccount ( m_pDialog->m_login_id.c_str ( ), m_pDialog->m_login_pass.c_str ( ) );
+	}
+}
+
 /*******************************************************
 CALLBACK
 *********************************************************/
@@ -309,12 +344,28 @@ void _stdcall OnConnect( int nKind, int nErrorCode)
 {
 	//if( nKind == SK_SUBJECT_CONNECTION_CONNECTED)
 		//AfxMessageBox(_T("CONNECTED"));
+	CString strMsg;
 	TRACE("Run in UI thread: %x\n", GetCurrentThreadId());
 	TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
-	if( nKind == SK_SUBJECT_CONNECTION_DISCONNECT)
-		AfxMessageBox(_T("DISCONNECT"));
+	if( nKind == SK_SUBJECT_CONNECTION_DISCONNECT) {
+		//AfxMessageBox(_T("DISCONNECT"));
+		::SetWindowText ( m_pDialog->m_bar.m_hWnd, "Disconnect!" );
+		if ( m_pDialog->need_reconnect == TRUE ) {
+			if ( m_pDialog->isTimer_start == FALSE ) {
+				m_pDialog->isTimer_start = TRUE;
+				m_pDialog->m_timer_countdown = 5;
+				::SetTimer ( m_pDialog->m_hWnd, 1995, 1000, TimerProc2 );
+			}
+		}
+	}
+	else
+		if( nKind == SK_SUBJECT_CONNECTION_CONNECTED ) {
+			::SetWindowText ( m_pDialog->m_bar.m_hWnd, "Connect!" );
+			::SetWindowText ( m_pDialog->GetDlgItem ( IDC_STATUSBAR )->m_hWnd, strMsg );
+		}
 
-	CString strMsg;
+	//CString strMsg;
+	strMsg.Empty ( );
 	strMsg.Format(_T("Connect  nKind：%d nErrorCode：%d"),nKind,nErrorCode);
 
 	BSTR bstrMsg = strMsg.AllocSysString();
@@ -1673,6 +1724,8 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton2()
 	/*Make run in UI thread*/
 	//ResetEvent(Wait_Connection_Event);
 	//ResetEvent(Wait_ProductsReady_Event);
+	need_reconnect = FALSE;
+	m_cur_connection_phase = Connection_EnterMonitor;
 	int nCOde = SKQuoteLib_EnterMonitor();
 
 	CString strMsg;
@@ -1689,7 +1742,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton2()
 void CQuoteTesterDlg_New_UI::OnBnClickedButton3()
 {
 	// TODO: Add your control notification handler code here
-	short sPageNo = 1;
+	short sPageNo = 50;
 	SKQuoteLib_RequestTicks(&sPageNo, ( char * ) m_Strategy1.symbol.c_str() );
 	SKQuoteLib_LeaveMonitor();
 }
@@ -1819,6 +1872,8 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton5()
 	
 	//SKQuoteLib_RequestTicks(&sPageNo,caText);
 	//SKQuoteLib_RequestTicks(&sPageNo, "1402");
+	need_reconnect = TRUE;
+	m_cur_connection_phase = Connection_RequestTicks;
 	SKQuoteLib_RequestTicks(&sPageNo, ( char * ) m_Strategy1.symbol.c_str() );
 }
 
@@ -1968,6 +2023,8 @@ DWORD WINAPI ThreadProc_KLine ( LPVOID lpParam ) {
 	if ( pDialog->mKline_stream.get_KLine_ready( pDialog->m_Strategy1.symbol.c_str() ) == false ) {
 		pDialog->mKline_stream.load_KLine_from_archive( pDialog->m_Strategy1.symbol.c_str() );
 		dwWaitResult = ::WaitForSingleObject ( g_hEvent_KLine, INFINITE );
+		pDialog->need_reconnect = FALSE;
+		pDialog->m_cur_connection_phase = Connection_GetKLine;
 		SKQuoteLib_GetKLine( ( char * ) pDialog->m_Strategy1.symbol.c_str(), pDialog->m_Strategy1.time_frame );
 		::SetEvent ( g_hEvent_KLine );
 	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
@@ -1998,6 +2055,8 @@ DWORD WINAPI ThreadProc_KLine1 ( LPVOID lpParam ) {
 	if ( pDialog->mKline_stream1.get_KLine_ready( pDialog->m_Strategy2.symbol.c_str() ) == false ) {
 		pDialog->mKline_stream1.load_KLine_from_archive( pDialog->m_Strategy2.symbol.c_str() );
 		dwWaitResult = ::WaitForSingleObject ( g_hEvent_KLine, INFINITE );
+		pDialog->need_reconnect = FALSE;
+		pDialog->m_cur_connection_phase = Connection_GetKLine;
 		SKQuoteLib_GetKLine( ( char * ) pDialog->m_Strategy2.symbol.c_str(), pDialog->m_Strategy2.time_frame );
 		::SetEvent ( g_hEvent_KLine );
 	/*SKQuoteLib_AttchServerTimeCallBack( (UINT_PTR)OnNotifyServerTime );
@@ -2195,8 +2254,8 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 		GetDlgItem(i)->EnableWindow( FALSE );
 	this->account_A.m_Strategy = m_Strategy1;
 	this->account_B.m_Strategy = m_Strategy2;
-	this->account_A.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
-	this->account_B.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss );
+	this->account_A.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss, mTrailingTriggerPoints, mTrailingPercent );
+	this->account_B.set_stoploss ( m_en_stoploss, m_en_trailing_stop, m_stoploss, mTrailingTriggerPoints, mTrailingPercent );
 	if ( mEscapeTradingDays > 0 ) {
 		mKline_stream.set_escape_trading_day ( mEscapeTradingDays );
 		mKline_stream1.set_escape_trading_day ( mEscapeTradingDays );
@@ -2228,6 +2287,8 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 	CStringA strTempB(strPassword);
 	const CHAR* caPass = (LPCSTR)strTempB;
 
+	m_login_id = caText;
+	m_login_pass = caPass;
 	nCode = SKQuoteLib_Initialize(caText,caPass);
 //nCode = SKQuoteLib_Initialize("S122811334", "swat9110");
 	//this->m_Order_operator1.LoginAccount ( caText, caPass );
@@ -2250,7 +2311,8 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 		nCode = SKQuoteLib_AttachProductsReadyCallBack( (UINT_PTR) OnNotifyProductsReady);
 
 		/*20141227 added by michael*/
-		if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+		LoginOrderAccount ( caText, caPass );
+		/*if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
 			::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
 			TRACE ( "login first order account %s failed", caText );
 			OnBnClickedButton14 ( );
@@ -2264,7 +2326,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 			else {
 				account_A.bind_order_operator ( &m_Order_operator1 );
 				account_B.bind_order_operator ( &m_Order_operator2 );
-			}
+			}*/
 		//this->m_Order_operator1.SetUIVisibility ( SW_SHOW );
 		//this->m_Order_operator2.SetUIVisibility ( SW_SHOW );
 		//AfxMessageBox(_T("初始成功"));
@@ -2292,11 +2354,31 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 	TRACE("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
+void CQuoteTesterDlg_New_UI::LoginOrderAccount ( const char *caText, const char *caPass )
+{
+	if ( this->m_Order_operator1.LoginAccount ( caText, caPass ) ) {
+		::MessageBox ( NULL, "login first order account failed", "kkk", MB_OK );
+		TRACE ( "login first order account %s failed", caText );
+		OnBnClickedButton14 ( );
+	}
+	else
+		if ( this->m_Order_operator2.LoginAccount ( caText, caPass ) ) {
+			::MessageBox ( NULL, "login second order account failed", "kkk", MB_OK );
+			TRACE ( "login second order account %s failed", caText );
+			OnBnClickedButton14 ( );
+		}
+		else {
+			account_A.bind_order_operator ( &m_Order_operator1 );
+			account_B.bind_order_operator ( &m_Order_operator2 );
+		}
+}
 
 void CQuoteTesterDlg_New_UI::OnBnClickedButton14()
 {
 	CWnd *pWnd;
 
+	need_reconnect = FALSE;
+	m_cur_connection_phase = Connection_ForceDisConn;
 	this->OnBnClickedButton3();
 	pWnd = GetDlgItem(IDC_BUTTON13);
 	pWnd->EnableWindow( TRUE );
@@ -2537,20 +2619,20 @@ void CQuoteTesterDlg_New_UI::AdjustDropDownWidth(int nID)
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck2()
 {
 	// TODO: Add your control notification handler code here
-	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	/*CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
 	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
 	if ( pButton1->GetCheck() == BST_UNCHECKED ) 
-		pButton->SetCheck ( 0 );
+		pButton->SetCheck ( 0 );*/
 	UpdateData( TRUE );
 }
 
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck3()
 {
 	// TODO: Add your control notification handler code here
-	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	/*CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
 	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
 	if ( pButton->GetCheck() == BST_CHECKED ) 
-		pButton1->SetCheck ( 1 );
+		pButton1->SetCheck ( 1 );*/
 	/*else
 		if ( pButton->GetCheck() == BST_UNCHECKED ) 
 			pButton->SetCheck ( 1 );*/
@@ -2558,6 +2640,12 @@ void CQuoteTesterDlg_New_UI::OnBnClickedCheck3()
 }
 
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck4()
+{
+	// TODO: Add your control notification handler code here
+	UpdateData( TRUE );
+}
+
+void CQuoteTesterDlg_New_UI::OnBnClickedCheck6()
 {
 	// TODO: Add your control notification handler code here
 	UpdateData( TRUE );

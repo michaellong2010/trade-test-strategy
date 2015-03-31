@@ -112,6 +112,7 @@ public:
 	afx_msg void OnBnClickedCheck2();
 	afx_msg void OnBnClickedCheck3();
 	afx_msg void OnBnClickedCheck4();
+	afx_msg void OnBnClickedCheck6();
 
 	CCapitalOrder m_Order_operator1, m_Order_operator2;
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -132,4 +133,9 @@ public:
 	BOOL m_simulation_only;
 	afx_msg void OnBnClickedCheck8();
 	int mEscapeTradingDays;
+	BOOL need_reconnect, isTimer_start;
+	int m_cur_connection_phase, m_timer_countdown;
+	void LoginOrderAccount ( const char *ID, const char *Pass );
+	string m_login_id, m_login_pass;
+	int mTrailingTriggerPoints, mTrailingPercent;
 };

@@ -15,6 +15,7 @@ using namespace std;
 #define Close_short_position 3
 #define Close_all_position 4
 #define Close_stoploss_position 5
+#define Close_stopprofit_position 6
 
 enum Order_Type { OP_BUY = 0, OP_SHORT, OP_BUYLIMIT, OP_SHORTLIMIT, OP_BUYSTOP, OP_SHORTSTOP };
 
@@ -27,7 +28,7 @@ struct TOrder_info {
 	char ticker_symbol [ 15 ];
 	int exit_reason;
 	double MA10_15min, MA22_15min, MA10_day, MA22_day;
-	double stoploss;
+	double stoploss, stopprofit;
 
 	TOrder_info() {
 		entry_tick = exit_tick = -1;
@@ -60,6 +61,7 @@ private:
 	int m_nPtr;
 	int kline_close_time, m_stoploss_count, tradable_time;
 	int nTimeFrame;
+	double m_trailing_percent, m_trailing_trigger_points;
 public:
 	CAccount( string account_name, int time_frame );
 	~CAccount();
@@ -73,7 +75,7 @@ public:
 	ofstream txt_portfolio_fs;
 	void refresh_portfolio( bool exit_trading );
 	void update_kline_close_time ( int new_close_time );
-	void set_stoploss ( int, int, int );
+	void set_stoploss ( int, int, int, int, int );
 
 	/*20150106 added by michael*/
 	static int m_Account_count;
