@@ -137,5 +137,5 @@ public:
 	int m_cur_connection_phase, m_timer_countdown;
 	void LoginOrderAccount ( const char *ID, const char *Pass );
 	string m_login_id, m_login_pass;
-	int mTrailingTriggerPoints, mTrailingPercent;
+	int mTrailingTriggerPoints, mTrailingPercent, m_gapThreshold;
 };

@@ -58,6 +58,7 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	m_cur_connection_phase = Connection_EnterMonitor;
 	mTrailingTriggerPoints = 50;
 	mTrailingPercent = 70;
+	m_gapThreshold = 20;
 }
 
 CQuoteTesterDlg_New_UI::~CQuoteTesterDlg_New_UI()
@@ -123,6 +124,9 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt( pDX, mTrailingTriggerPoints, 30, 100 );
 	DDX_Text( pDX, IDC_EDIT_TrailingPercent, mTrailingPercent );
 	DDV_MinMaxInt( pDX, mTrailingPercent, 10, 90 );
+	DDX_Text( pDX, IDC_EDIT_gapThreshold, m_gapThreshold );
+	DDV_MinMaxInt( pDX, m_gapThreshold, 10, 30 );
+	
 }
 
 BEGIN_MESSAGE_MAP(CQuoteTesterDlg_New_UI, CDialogEx)
@@ -966,7 +970,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	double accountA_MA1, accountA_MA2, accountA_MA3, accountB_MA1 = 0, accountB_MA2 = 0, accountB_MA3 = 0;
 	double accountA_MA1_upper, accountA_MA1_lower, accountA_MA2_upper, accountA_MA2_lower, accountA_MA3_upper, accountA_MA3_lower;
 	double accountB_MA1_upper, accountB_MA1_lower, accountB_MA2_upper, accountB_MA2_lower, accountB_MA3_upper, accountB_MA3_lower;
-	double close_price = 0;
+	double close_price = 0, gap_MA1, gap_MA2, gap_MA3;
 	TAskBidWeight *pAskBd_Weight;
 
 	close_price = nClose / 100;
@@ -997,23 +1001,32 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		accountA_MA3_upper = accountA_MA3_lower = accountA_MA3;
 	}
 
+	gap_MA1 = fabs ( close_price - accountA_MA1 );
+	gap_MA2 = fabs ( close_price - accountA_MA2 );
+	gap_MA3 = fabs ( close_price - accountA_MA3 );
 	if ( m_pDialog->mKline_stream.pList_MA3 != NULL ) {
 		if ( close_price > accountA_MA1_upper && close_price > accountA_MA2_upper && close_price > accountA_MA3_upper ) { //account_A hold long position
-			if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+			if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+				if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						position_type = Long_position;
+				}
+				else
 					position_type = Long_position;
 			}
-			else
-				position_type = Long_position;
 		}
 		else
 			if ( close_price < accountA_MA1_lower && close_price < accountA_MA2_lower && close_price < accountA_MA3_lower ) { //account_A hold short position
-				if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
-						position_type = Short_position;
+				if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+					if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+						if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+							if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+								position_type = Short_position;
+						}
+						else
+							position_type = Short_position;
+					}
 				}
-				else
-					position_type = Short_position;
 			}
 			else {
 				position_type = Close_all_position;
@@ -1021,32 +1034,38 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	}
 	else {
 		if ( close_price > accountA_MA1_upper && close_price > accountA_MA2_upper ) { //account_A hold long position
-			if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+			if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+				if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						position_type = Long_position;
+				}
+				else
 					position_type = Long_position;
 			}
-			else
-				position_type = Long_position;
 		}
 		else
 			if ( close_price < accountA_MA1_lower && close_price < accountA_MA2_lower ) { //account_A hold short position
-				if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+				if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+					if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+						if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+							position_type = Short_position;
+					}
+					else
 						position_type = Short_position;
 				}
-				else
-					position_type = Short_position;
 			}
 			else
 				if ( close_price < accountA_MA1 && close_price > accountA_MA2 ) { //account_A exit long position
 					//position_type = Close_all_position;
 					if ( m_pDialog->m_Strategy1.m_en_trade_MA_ambigous == TRUE ) {
-						if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-							if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+							if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+									position_type = Short_position;
+							}
+							else
 								position_type = Short_position;
 						}
-						else
-							position_type = Short_position;
 					}
 					else
 						position_type = Close_all_position;
@@ -1055,12 +1074,14 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					if ( close_price > accountA_MA1 && close_price < accountA_MA2 ) { //account_A exit short position
 						//position_type = Close_all_position;
 						if ( m_pDialog->m_Strategy1.m_en_trade_MA_ambigous == TRUE ) {
-							if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
-								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+							if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
+								if ( m_pDialog->m_Strategy1.m_bid_ask_weight_ratio == TRUE ) {
+									if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+										position_type = Long_position;
+								}
+								else
 									position_type = Long_position;
 							}
-							else
-								position_type = Long_position;
 						}
 						else
 							position_type = Close_all_position;
@@ -1108,23 +1129,30 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 		accountB_MA3_upper = accountB_MA3_lower = accountB_MA3;
 	}
 
+	gap_MA1 = fabs ( close_price - accountB_MA1 );
+	gap_MA2 = fabs ( close_price - accountB_MA2 );
+	gap_MA3 = fabs ( close_price - accountB_MA3 );
 	if ( m_pDialog->mKline_stream1.pList_MA3 != NULL ) {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper && close_price > accountB_MA3_upper ) { //account_B hold long position
-			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+			if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						position_type1 = Long_position;
+				}
+				else
 					position_type1 = Long_position;
 			}
-			else
-				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower && close_price < accountB_MA3_lower ) { //account_B hold short position
-				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+				if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+					if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+						if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+							position_type1 = Short_position;
+					}
+					else
 						position_type1 = Short_position;
 				}
-				else
-					position_type1 = Short_position;
 			}
 			else {
 				position_type1 = Close_all_position;
@@ -1132,32 +1160,38 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	}
 	else {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper ) { //account_B hold long position
-			if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-				if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+			if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						position_type1 = Long_position;
+				}
+				else
 					position_type1 = Long_position;
 			}
-			else
-				position_type1 = Long_position;
 		}
 		else
 			if ( close_price < accountB_MA1_lower && close_price < accountB_MA2_lower ) { //account_B hold short position
-				if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-					if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+				if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+					if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+						if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+							position_type1 = Short_position;
+					}
+					else
 						position_type1 = Short_position;
 				}
-				else
-					position_type1 = Short_position;
 			}
 			else
 				if ( close_price < accountB_MA1 && close_price > accountB_MA2 ) { //account_B exit long position
 					//position_type = Close_all_position;
 					if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
-						if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-							if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+						if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+							if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) < 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+									position_type1 = Short_position;
+							}
+							else
 								position_type1 = Short_position;
 						}
-						else
-							position_type1 = Short_position;
 					}
 					else
 						position_type1 = Close_all_position;
@@ -1166,12 +1200,14 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 					if ( close_price > accountB_MA1 && close_price < accountB_MA2 ) { //account_B exit short position
 						//position_type = Close_all_position;
 						if ( m_pDialog->m_Strategy2.m_en_trade_MA_ambigous == TRUE ) {
-							if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
-								if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+							if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
+								if ( m_pDialog->m_Strategy2.m_bid_ask_weight_ratio == TRUE ) {
+									if ( ( pAskBd_Weight->ask_vol / pAskBd_Weight->bid_vol ) > 1 && ( pAskBd_Weight->ask_vol + pAskBd_Weight->bid_vol ) > 100 )
+										position_type1 = Long_position;
+								}
+								else
 									position_type1 = Long_position;
 							}
-							else
-								position_type1 = Long_position;
 						}
 						else
 							position_type1 = Close_all_position;
@@ -2629,13 +2665,23 @@ void CQuoteTesterDlg_New_UI::OnBnClickedCheck2()
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck3()
 {
 	// TODO: Add your control notification handler code here
-	/*CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
-	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
+	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	/*CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK2 );
 	if ( pButton->GetCheck() == BST_CHECKED ) 
 		pButton1->SetCheck ( 1 );*/
 	/*else
-		if ( pButton->GetCheck() == BST_UNCHECKED ) 
+		if ( pButton->GetCheck() == BST_UNCHECKED )
 			pButton->SetCheck ( 1 );*/
+
+	if ( pButton->GetCheck() == BST_CHECKED ) {
+		this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints )->EnableWindow ( TRUE );
+		this->GetDlgItem ( IDC_EDIT_TrailingPercent )->EnableWindow ( TRUE );
+	}
+	else
+		if ( pButton->GetCheck() == BST_UNCHECKED ) {
+			this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints )->EnableWindow ( FALSE );
+			this->GetDlgItem ( IDC_EDIT_TrailingPercent )->EnableWindow ( FALSE );
+		}
 	UpdateData( TRUE );
 }
 
@@ -2648,6 +2694,18 @@ void CQuoteTesterDlg_New_UI::OnBnClickedCheck4()
 void CQuoteTesterDlg_New_UI::OnBnClickedCheck6()
 {
 	// TODO: Add your control notification handler code here
+	CButton *pButton = (CButton *) GetDlgItem ( IDC_CHECK3 );
+	CButton *pButton1 = (CButton *) GetDlgItem ( IDC_CHECK6 );
+	if ( pButton1->GetCheck() == BST_CHECKED ) {
+		pButton->SetCheck ( 1 );
+		this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints )->EnableWindow ( TRUE );
+		this->GetDlgItem ( IDC_EDIT_TrailingPercent )->EnableWindow ( TRUE );
+		this->GetDlgItem ( IDC_EDIT_gapThreshold )->EnableWindow ( TRUE );
+	}
+	else
+		if ( pButton1->GetCheck() == BST_UNCHECKED ) {
+			this->GetDlgItem ( IDC_EDIT_gapThreshold )->EnableWindow ( FALSE );
+		}
 	UpdateData( TRUE );
 }
 
@@ -2728,6 +2786,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		  m_Strategy1.mMA2_period = 60;
 		  m_Strategy1.mMA3_period = 100;
 		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
+		  strB += "KLine: 15min; ";
 		  break;
 	  case 1: //1hr
 		  m_Strategy1.time_frame = 2;
@@ -2736,6 +2795,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		  m_Strategy1.mMA2_period = 22;
 		  m_Strategy1.mMA3_period = 0;
 		  strB += "KLine: 1hr; MA: 10, 22; ";*/
+		  strB += "KLine: 1hr; ";
 		  break;
 	  case 2: //day
 		  m_Strategy1.time_frame = 4;
@@ -2744,6 +2804,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		  m_Strategy1.mMA2_period = 22;
 		  m_Strategy1.mMA3_period = 0;
 		  strB += "KLine: day; MA: 10, 22; ";*/
+		  strB += "KLine: day; ";
 		  break;
 	}
 	if ( mMA1_period == 0 && mMA2_period == 0 && mMA3_period == 0 ) {
@@ -2793,7 +2854,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 			if ( m_Strategy1.mMA2_period == m_Strategy1.mMA3_period )
 				m_Strategy1.mMA3_period = 0;
 	}
-	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d; ", m_Strategy1.mMA1_period, m_Strategy1.mMA2_period, m_Strategy1.mMA3_period );
+	sprintf ( buf_str, "MA: %d, %d, %d; ", m_Strategy1.mMA1_period, m_Strategy1.mMA2_period, m_Strategy1.mMA3_period );
 	strB += buf_str;
 	m_Strategy1.symbol = strA.GetString ();
 	strB += "symbol: ";
@@ -2831,11 +2892,14 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 	}
 
 	m_Strategy1.m_en_trailing_stop = m_en_trailing_stop;
+	m_Strategy1.mTrailingTriggerPoints = mTrailingTriggerPoints;
+	m_Strategy1.mTrailingPercent = mTrailingPercent;
 	if ( m_Strategy1.m_en_trailing_stop == 0 ) {
 		strB += "; trailing_stop: FALSE; ";
 	}
 	else {
-		strB += "; trailing_stop: TRUE; ";
+		sprintf ( buf_str, "; trailing_stop: TRUE, %d, %d; ", mTrailingTriggerPoints, mTrailingPercent );
+		strB += buf_str;
 	}
 
 	m_Strategy1.m_en_trade_MA_ambigous = m_en_trade_MA_ambigous;
@@ -2853,6 +2917,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 	else {
 		strB += "gap: TRUE; ";
 	}
+	m_Strategy1.m_gapThreshold = m_gapThreshold;
 
     m_Strategy1.m_bid_ask_weight_ratio = m_bid_ask_weight_ratio;
 	if ( m_Strategy1.m_bid_ask_weight_ratio == FALSE ) {
@@ -2907,6 +2972,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		  m_Strategy2.mMA2_period = 60;
 		  m_Strategy2.mMA3_period = 100;
 		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
+		  strB += "KLine: 15min; ";
 		  break;
 	  case 1: //1hr
 		  m_Strategy2.time_frame = 2;
@@ -2915,6 +2981,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		  m_Strategy2.mMA2_period = 22;
 		  m_Strategy2.mMA3_period = 0;
 		  strB += "KLine: 1hr; MA: 10, 22; ";*/
+		  strB += "KLine: 1hr; ";
 		  break;
 	  case 2: //day
 		  m_Strategy2.time_frame = 4;
@@ -2923,6 +2990,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		  m_Strategy2.mMA2_period = 22;
 		  m_Strategy2.mMA3_period = 0;
 		  strB += "KLine: day; MA: 10, 22; ";*/
+		  strB += "KLine: day; ";
 		  break;
 	}
 	if ( mMA1_period == 0 && mMA2_period == 0 && mMA3_period == 0 ) {
@@ -2973,7 +3041,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 				if ( m_Strategy2.mMA2_period == m_Strategy2.mMA3_period )
 					m_Strategy2.mMA3_period = 0;
 	}
-	sprintf ( buf_str, "KLine: day; MA: %d, %d, %d; ", m_Strategy2.mMA1_period, m_Strategy2.mMA2_period, m_Strategy2.mMA3_period );
+	sprintf ( buf_str, "MA: %d, %d, %d; ", m_Strategy2.mMA1_period, m_Strategy2.mMA2_period, m_Strategy2.mMA3_period );
 	strB += buf_str;
 	m_Strategy2.symbol = strA.GetString ();
 	strB += "symbol: ";
@@ -3011,11 +3079,14 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 	}
 
 	m_Strategy2.m_en_trailing_stop = m_en_trailing_stop;
+	m_Strategy2.mTrailingTriggerPoints = mTrailingTriggerPoints;
+	m_Strategy2.mTrailingPercent = mTrailingPercent;
 	if ( m_Strategy2.m_en_trailing_stop == 0 ) {
 		strB += "; trailing_stop: FALSE; ";
 	}
 	else {
-		strB += "; trailing_stop: TRUE; ";
+		sprintf ( buf_str, "; trailing_stop: TRUE, %d, %d; ", mTrailingTriggerPoints, mTrailingPercent );
+		strB += buf_str;
 	}
 
 	m_Strategy2.m_en_trade_MA_ambigous = m_en_trade_MA_ambigous;
@@ -3033,6 +3104,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 	else {
 		strB += "gap: TRUE; ";
 	}
+	m_Strategy2.m_gapThreshold = m_gapThreshold;
 
     m_Strategy2.m_bid_ask_weight_ratio = m_bid_ask_weight_ratio;
 	if ( m_Strategy2.m_bid_ask_weight_ratio == FALSE ) {
@@ -3220,10 +3292,16 @@ void CQuoteTesterDlg_New_UI::load_account_strategy ( TStrategy_info account_stra
 			pButton->SetCheck ( 1 );
 
 		pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK3 );
-		if ( account_strategy.m_en_trailing_stop == FALSE )
+		if ( account_strategy.m_en_trailing_stop == FALSE ) {
 			pButton->SetCheck ( 0 );
-		else
+			this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints )->EnableWindow ( FALSE );
+			this->GetDlgItem ( IDC_EDIT_TrailingPercent )->EnableWindow ( FALSE );
+		}
+		else {
 			pButton->SetCheck ( 1 );
+			this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints )->EnableWindow ( TRUE );
+			this->GetDlgItem ( IDC_EDIT_TrailingPercent )->EnableWindow ( TRUE );
+		}
 
 		pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK4 );
 		if ( account_strategy.m_en_trade_MA_ambigous == FALSE )
@@ -3251,6 +3329,18 @@ void CQuoteTesterDlg_New_UI::load_account_strategy ( TStrategy_info account_stra
 
 		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_Stoploss );
 		strA.Empty (); strA.Format ( "%d", account_strategy.m_stoploss );
+		pEdit->SetWindowText ( strA );
+
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_TrailingTriggerPoints );
+		strA.Empty (); strA.Format ( "%d", account_strategy.mTrailingTriggerPoints );
+		pEdit->SetWindowText ( strA );
+
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_TrailingPercent );
+		strA.Empty (); strA.Format ( "%d", account_strategy.mTrailingPercent );
+		pEdit->SetWindowText ( strA );
+
+		pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_gapThreshold );
+		strA.Empty (); strA.Format ( "%d", account_strategy.m_gapThreshold );
 		pEdit->SetWindowText ( strA );
 	}
 }

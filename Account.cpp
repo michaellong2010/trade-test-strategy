@@ -547,7 +547,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 	txt_portfolio_fs << "ticker_symbol" << ", " << "open_price" << ", " << "close_price" << \
 					", " << "entry_tick" << ", " << "exit_tick" << ", " << "open_time" << ", " << "open_date" << ", " << "lots" << ", " << "position_type: " << \
 					", " << "profit_loss" << ", " << "max_loss" << ", " << "max_profit" << ", " << "MA10_min" << ", " << "MA22_min" << ", " << "MA10_day" << ", " << "MA22_day" << \
-					", " << "stoploss: " << "\n";
+					", " << "stoploss: " << ", " << "stopprofit" << "\n";
 #endif
 	if ( p_portfolio_fs != NULL && p_portfolio_fs->is_open() ) {
 		p_portfolio_fs->seekp ( 0, ios::beg );
@@ -590,7 +590,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.open_date << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit << ", " << m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
-					", " << m_order.stoploss << "\n";
+					", " << m_order.stoploss << ", " << m_order.stopprofit << "\n";
 #endif
 			}
 
@@ -606,7 +606,7 @@ void CAccount::refresh_portfolio(bool exit_trading) {
 				txt_portfolio_fs << m_order.ticker_symbol << ", " << m_order.open_price << ", " << m_order.close_price << \
 					", " << m_order.entry_tick << ", " << m_order.exit_tick << ", " <<  m_order.open_time << ", " << m_order.open_date << ", " << m_order.lots << ", " << "position_type: " << m_order.position_type << \
 					", " << m_order.profit_loss << ", " << m_order.max_loss << ", " << m_order.max_profit  << ", exit_reason: " << m_order.exit_reason << ", "<< m_order.MA10_15min << ", " << m_order.MA22_15min << ", " << m_order.MA10_day << ", " << m_order.MA22_day << \
-					", " << m_order.stoploss << "\n";
+					", " << m_order.stoploss << ", " << m_order.stopprofit << "\n";
 #endif
 			}
 #if 1

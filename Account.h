@@ -49,6 +49,7 @@ struct TStrategy_info {
 	int m_stoploss;
 	BOOL m_en_gap, m_bid_ask_weight_ratio, m_en_open_interest;
 	BOOL m_simulation_only;
+	int mTrailingTriggerPoints, mTrailingPercent, m_gapThreshold;
 };
 
 class CAccount {
