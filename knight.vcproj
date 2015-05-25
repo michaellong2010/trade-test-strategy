@@ -184,6 +184,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\FileEnumerator.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Functions.h"
 					>
 				</File>
@@ -252,6 +256,10 @@
 				>
 				<File
 					RelativePath=".\Account.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\FileEnumerator.cpp"
 					>
 				</File>
 				<File

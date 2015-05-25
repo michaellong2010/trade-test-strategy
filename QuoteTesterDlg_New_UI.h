@@ -9,6 +9,7 @@
 #include <cmath>
 #include <math.h>
 #include "Order.h"
+#include "FileEnumerator.h"
 
 using namespace std; 
 #define WM_DATA WM_USER+1
@@ -138,4 +139,8 @@ public:
 	void LoginOrderAccount ( const char *ID, const char *Pass );
 	string m_login_id, m_login_pass;
 	int mTrailingTriggerPoints, mTrailingPercent, m_gapThreshold;
+
+	/*20150412 added by michael*/
+	CFilteredFileEnumerator fileEnum;
+	void BackTest ();
 };

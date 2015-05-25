@@ -17,6 +17,12 @@
 #define Connection_RequestTicks 2
 #define Connection_ForceDisConn 3
 
+// 0:15分鐘線;1:1小時線;2:完整日線;3:5分鐘;
+#define KLine_5min 0
+#define KLine_15min 1
+#define KLine_1hr 2
+#define KLine_day 3
+
 // CQuoteTesterDlg_New_UI 對話方塊
 IMPLEMENT_DYNAMIC(CQuoteTesterDlg_New_UI, CDialog)
 int m_nType = 0;
@@ -44,7 +50,7 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	mMA3_period = 39;
 	mMA1_margin = 0.003;
 	mMA2_margin = mMA3_margin = enable_MA_margin = 0;
-	m_stoploss = 15;
+	m_stoploss = 25;//15;
 	m_en_stoploss = m_en_trailing_stop = m_en_trade_MA_ambigous = 0;
 	m_en_gap = FALSE;
 	m_bid_ask_weight_ratio = FALSE;
@@ -56,9 +62,9 @@ CQuoteTesterDlg_New_UI::CQuoteTesterDlg_New_UI(CWnd* pParent /*=NULL*/)
 	mEscapeTradingDays = 0;
 	need_reconnect = isTimer_start = FALSE;
 	m_cur_connection_phase = Connection_EnterMonitor;
-	mTrailingTriggerPoints = 50;
+	mTrailingTriggerPoints = 35;//50;
 	mTrailingPercent = 70;
-	m_gapThreshold = 20;
+	m_gapThreshold = 23;//20;
 }
 
 CQuoteTesterDlg_New_UI::~CQuoteTesterDlg_New_UI()
@@ -93,11 +99,11 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	/*MA period range： 8~16, 17~35, 36~70*/
 	DDX_Text( pDX, IDC_EDIT_MA1_period, mMA1_period );
-	DDV_MinMaxInt( pDX, mMA1_period, 0, 120);
+	DDV_MinMaxInt( pDX, mMA1_period, 0, 360);
 	DDX_Text( pDX, IDC_EDIT_MA2_period, mMA2_period );
-	DDV_MinMaxInt( pDX, mMA2_period, 0, 120);
+	DDV_MinMaxInt( pDX, mMA2_period, 0, 360);
 	DDX_Text( pDX, IDC_EDIT_MA3_period, mMA3_period );
-	DDV_MinMaxInt( pDX, mMA3_period, 0, 120);
+	DDV_MinMaxInt( pDX, mMA3_period, 0, 360);
 
 	DDX_Check( pDX, IDC_CHECK1, enable_MA_margin );
 	DDX_Text( pDX, IDC_EDIT_MA1_margin, mMA1_margin );
@@ -125,7 +131,7 @@ void CQuoteTesterDlg_New_UI::DoDataExchange(CDataExchange* pDX)
 	DDX_Text( pDX, IDC_EDIT_TrailingPercent, mTrailingPercent );
 	DDV_MinMaxInt( pDX, mTrailingPercent, 10, 90 );
 	DDX_Text( pDX, IDC_EDIT_gapThreshold, m_gapThreshold );
-	DDV_MinMaxInt( pDX, m_gapThreshold, 10, 30 );
+	DDV_MinMaxInt( pDX, m_gapThreshold, 0, 30 );
 	
 }
 
@@ -196,7 +202,7 @@ BOOL CQuoteTesterDlg_New_UI::OnInitDialog()
 	pComboBox->AddString(_T("15分鐘線"));
 	pComboBox->AddString(_T("1小時線"));
 	pComboBox->AddString(_T("完整日線"));*/
-	SetDropDownHeight ( pComboBox, 3 );
+	SetDropDownHeight ( pComboBox, 4 );
 
 	pComboBox->SetCurSel(0);
 
@@ -266,7 +272,9 @@ BOOL CQuoteTesterDlg_New_UI::OnInitDialog()
 	m_ComboBox1_strategy.AddString ( _T("策略4; 15min; 100") );
 	m_ComboBox1_strategy.AddString ( _T("策略5; 1hrs; 22") );
 	m_ComboBox1_strategy.AddString ( _T("策略6; 1hrs; 22+0.3% / 22-0.3%") );
-	SetDropDownHeight ( &m_ComboBox1_strategy, 6 );
+	m_ComboBox1_strategy.AddString ( _T("策略7; 5min; 日內A") );
+	m_ComboBox1_strategy.AddString ( _T("策略8; 5min; 日內B") );
+	SetDropDownHeight ( &m_ComboBox1_strategy, 8 );
 	m_ComboBox1_strategy.SetCurSel(0);
 	AdjustDropDownWidth ( IDC_COMBO1 );
 	SendMessage ( WM_COMMAND, MAKEWPARAM ( m_ComboBox1_strategy.GetDlgCtrlID(), CBN_SELCHANGE ), LPARAM( ( HWND ) m_ComboBox1_strategy.m_hWnd ) );
@@ -972,6 +980,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	double accountB_MA1_upper, accountB_MA1_lower, accountB_MA2_upper, accountB_MA2_lower, accountB_MA3_upper, accountB_MA3_lower;
 	double close_price = 0, gap_MA1, gap_MA2, gap_MA3;
 	TAskBidWeight *pAskBd_Weight;
+	list<TCandleStick> *pList_KLineData;
+	TCandleStick *m_pTick_candlestick;
 
 	close_price = nClose / 100;
 	pAskBd_Weight = m_pDialog->mKline_stream.pAskBd_Weight;
@@ -1004,6 +1014,25 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	gap_MA1 = fabs ( close_price - accountA_MA1 );
 	gap_MA2 = fabs ( close_price - accountA_MA2 );
 	gap_MA3 = fabs ( close_price - accountA_MA3 );
+	if ( m_pDialog->m_Strategy1.m_nStrategy == 6 ) {
+		if ( m_tick_hour < 9 ) {
+			pList_KLineData = m_pDialog->mKline_stream.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
+			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
+			if ( nClose > ( m_pTick_candlestick->mOpen + 30 ) || nClose < ( m_pTick_candlestick->mOpen - 30 ) ) {
+				m_pDialog->m_Strategy1.m_nStrategy = 7;
+				m_pDialog->mKline_stream.isCanChangeStrategy ( m_pDialog->m_Strategy1 );
+				m_pDialog->account_A.m_Strategy = m_Strategy1;
+				m_pDialog->account_B.m_Strategy = m_Strategy2;
+			}
+		}
+		else {
+		}
+		goto place_accountA_order1;
+	}
+	else
+		if ( m_pDialog->m_Strategy1.m_nStrategy == 7 ) {
+			goto place_accountA_order1;
+		}
 	if ( m_pDialog->mKline_stream.pList_MA3 != NULL ) {
 		if ( close_price > accountA_MA1_upper && close_price > accountA_MA2_upper && close_price > accountA_MA3_upper ) { //account_A hold long position
 			if ( m_pDialog->account_A.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_A.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_A.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_A.m_Strategy.m_gapThreshold ) ) ) {
@@ -1090,6 +1119,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						//position_type = Close_long_position;
 					}
 	}
+place_accountA_order1:
 	if ( ( m_pDialog->m_Strategy1.m_en_open_interest == FALSE ) && nTime > 134400)
 		position_type = Close_all_position;
 	m_pDialog->account_A.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
@@ -1132,6 +1162,13 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	gap_MA1 = fabs ( close_price - accountB_MA1 );
 	gap_MA2 = fabs ( close_price - accountB_MA2 );
 	gap_MA3 = fabs ( close_price - accountB_MA3 );
+	if ( m_pDialog->m_Strategy2.m_nStrategy == 6 ) {
+		goto place_accountA_order2;
+	}
+	else
+		if ( m_pDialog->m_Strategy2.m_nStrategy == 7 ) {
+			goto place_accountA_order2;
+		}
 	if ( m_pDialog->mKline_stream1.pList_MA3 != NULL ) {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper && close_price > accountB_MA3_upper ) { //account_B hold long position
 			if ( m_pDialog->account_B.m_Strategy.m_en_gap == FALSE || ( m_pDialog->account_B.m_Strategy.m_en_gap == TRUE && ( gap_MA1 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA2 < m_pDialog->account_B.m_Strategy.m_gapThreshold && gap_MA3 < m_pDialog->account_B.m_Strategy.m_gapThreshold ) ) ) {
@@ -1216,6 +1253,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						//position_type = Close_long_position;
 					}
 	}
+place_accountA_order2:
 	if ( ( m_pDialog->m_Strategy2.m_en_open_interest == FALSE ) && nTime > 134400)
 		position_type = Close_all_position;
 	m_pDialog->account_B.Place_Open_Order ( m_pDialog->mMap_stockidx_stockNo[ sStockidx ], nPtr,
@@ -2256,7 +2294,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton13()
 				}
 				else*/
 					if ( mKline_stream.isCanChangeStrategy ( m_Strategy1 ) == false ) {
-						mKline_stream.reset( m_Strategy1 );
+						//mKline_stream.reset( m_Strategy1 );
 						AfxMessageBox( _T( "can't change accountA different timeframe in a same symbol" ) );
 						return;				
 					}
@@ -2558,42 +2596,48 @@ void CQuoteTesterDlg_New_UI::OnCbnSelchangeCombo1()
 	pButton = ( CButton * ) this->GetDlgItem ( IDC_CHECK1 );
 	switch ( m_ComboBox1_strategy.GetCurSel() ) {
 		case 0:
-			pComboBox_TimeFrame->SetCurSel ( 0 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_15min );
 			mMA1_period = 60;
 			mMA2_period = 100;
 			mMA3_period = 0;
 			break;
 		case 1:
-			pComboBox_TimeFrame->SetCurSel ( 1 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_1hr );
 			mMA1_period = 10;
 			mMA2_period = 22;
 			mMA3_period = 0;
 			break;
 		case 2:
-			pComboBox_TimeFrame->SetCurSel ( 2 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_day );
 			mMA1_period = 10;
 			mMA2_period = 22;
 			mMA3_period = 0;
 			break;
 		case 3:
-			pComboBox_TimeFrame->SetCurSel ( 0 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_15min );
 			mMA1_period = 100;
 			mMA2_period = 0;
 			mMA3_period = 0;
 			break;
 		case 4:
-			pComboBox_TimeFrame->SetCurSel ( 1 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_1hr );
 			mMA1_period = 22;
 			mMA2_period = 0;
 			mMA3_period = 0;
 			enable_MA_margin = FALSE;
 			break;
 		case 5:
-			pComboBox_TimeFrame->SetCurSel ( 1 );
+			pComboBox_TimeFrame->SetCurSel ( KLine_1hr );
 			mMA1_period = 22;
 			mMA2_period = 0;
 			mMA3_period = 0;
 			enable_MA_margin = TRUE;
+			break;
+		case 6:
+			pComboBox_TimeFrame->SetCurSel ( KLine_5min );
+			break;
+		case 7:
+			pComboBox_TimeFrame->SetCurSel ( KLine_5min );
 			break;
 	}
 	pEdit = ( CEdit * ) this->GetDlgItem ( IDC_EDIT_MA1_period );
@@ -2776,10 +2820,16 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 	pButton = (CButton *) GetDlgItem ( IDC_CHECK6 );
 	//m_en_gap
 
+	m_Strategy1.m_nStrategy = m_ComboBox1_strategy.GetCurSel();
 	m_Strategy1.nType = nType;
 	strB = "帳號1策略 ";
 	switch ( m_Strategy1.nType ) {
-	  case 0: //15min
+	  case 0:
+		  m_Strategy1.time_frame = 1;
+		  m_Strategy1.n_sticks = 1;
+		  strB += "KLine: 5min; ";
+		  break;
+	  case 1: //15min
 		  m_Strategy1.time_frame = 1;
 		  m_Strategy1.n_sticks = 3;
 		  /*m_Strategy1.mMA1_period = 30;
@@ -2788,7 +2838,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
 		  strB += "KLine: 15min; ";
 		  break;
-	  case 1: //1hr
+	  case 2: //1hr
 		  m_Strategy1.time_frame = 2;
 		  m_Strategy1.n_sticks = 2;
 		  /*m_Strategy1.mMA1_period = 10;
@@ -2797,7 +2847,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton15()
 		  strB += "KLine: 1hr; MA: 10, 22; ";*/
 		  strB += "KLine: 1hr; ";
 		  break;
-	  case 2: //day
+	  case 3: //day
 		  m_Strategy1.time_frame = 4;
 		  m_Strategy1.n_sticks = 1;
 		  /*m_Strategy1.mMA1_period = 10;
@@ -2962,10 +3012,16 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 	pButton = (CButton *) GetDlgItem ( IDC_CHECK6 );
 	//m_en_gap
 
+	m_Strategy2.m_nStrategy = m_ComboBox1_strategy.GetCurSel();
 	m_Strategy2.nType = nType;
 	strB = "帳號2策略 ";
 	switch ( m_Strategy2.nType ) {
-	  case 0: //15min
+	  case 0:
+		  m_Strategy2.time_frame = 1;
+		  m_Strategy2.n_sticks = 1;
+		  strB += "KLine: 5min; ";
+		  break;
+	  case 1: //15min
 		  m_Strategy2.time_frame = 1;
 		  m_Strategy2.n_sticks = 3;
 		  /*m_Strategy2.mMA1_period = 30;
@@ -2974,7 +3030,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		  strB += "KLine: 15min; MA: 30, 60, 100; ";*/
 		  strB += "KLine: 15min; ";
 		  break;
-	  case 1: //1hr
+	  case 2: //1hr
 		  m_Strategy2.time_frame = 2;
 		  m_Strategy2.n_sticks = 2;
 		  /*m_Strategy2.mMA1_period = 10;
@@ -2983,7 +3039,7 @@ void CQuoteTesterDlg_New_UI::OnBnClickedButton16()
 		  strB += "KLine: 1hr; MA: 10, 22; ";*/
 		  strB += "KLine: 1hr; ";
 		  break;
-	  case 2: //day
+	  case 3: //day
 		  m_Strategy2.time_frame = 4;
 		  m_Strategy2.n_sticks = 1;
 		  /*m_Strategy2.mMA1_period = 10;
@@ -3373,4 +3429,10 @@ void CQuoteTesterDlg_New_UI::OnBnClickedCheck8()
 	}
 	else
 		m_Strategy1.m_simulation_only = m_Strategy2.m_simulation_only = FALSE;
+}
+
+void CQuoteTesterDlg_New_UI::BackTest ()
+{
+	TCHAR szFolder[MAX_PATH] = {0};
+	strcpy ( szFolder, "J:\\2014 VC project\\Trade_Test\\report\\新資料夾\\2000~20011台指資料\\2000\\" );
 }
