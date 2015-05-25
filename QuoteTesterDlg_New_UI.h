@@ -9,7 +9,7 @@
 #include <cmath>
 #include <math.h>
 #include "Order.h"
-#include "FileEnumerator.h"
+//#include "FileEnumerator.h"
 
 using namespace std; 
 #define WM_DATA WM_USER+1
@@ -141,6 +141,6 @@ public:
 	int mTrailingTriggerPoints, mTrailingPercent, m_gapThreshold;
 
 	/*20150412 added by michael*/
-	CFilteredFileEnumerator fileEnum;
+	//CFilteredFileEnumerator fileEnum;
 	void BackTest ();
 };

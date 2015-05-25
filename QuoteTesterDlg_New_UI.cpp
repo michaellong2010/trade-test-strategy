@@ -982,6 +982,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	TAskBidWeight *pAskBd_Weight;
 	list<TCandleStick> *pList_KLineData;
 	TCandleStick *m_pTick_candlestick;
+	list<TCandleStick>::reverse_iterator ritr;
+	int i = 0;
 
 	close_price = nClose / 100;
 	pAskBd_Weight = m_pDialog->mKline_stream.pAskBd_Weight;
@@ -1015,17 +1017,33 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	gap_MA2 = fabs ( close_price - accountA_MA2 );
 	gap_MA3 = fabs ( close_price - accountA_MA3 );
 	if ( m_pDialog->m_Strategy1.m_nStrategy == 6 ) {
+		pList_KLineData = m_pDialog->mKline_stream.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
 		if ( m_tick_hour < 9 ) {
-			pList_KLineData = m_pDialog->mKline_stream.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
 			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
-			if ( nClose > ( m_pTick_candlestick->mOpen + 30 ) || nClose < ( m_pTick_candlestick->mOpen - 30 ) ) {
+			if ( close_price > ( m_pTick_candlestick->mOpen + 30 ) || close_price < ( m_pTick_candlestick->mOpen - 30 ) ) {
 				m_pDialog->m_Strategy1.m_nStrategy = 7;
 				m_pDialog->mKline_stream.isCanChangeStrategy ( m_pDialog->m_Strategy1 );
-				m_pDialog->account_A.m_Strategy = m_Strategy1;
-				m_pDialog->account_B.m_Strategy = m_Strategy2;
+				m_pDialog->account_A.m_Strategy = m_pDialog->m_Strategy1;
+				m_pDialog->account_B.m_Strategy = m_pDialog->m_Strategy2;
 			}
 		}
 		else {
+			ritr = pList_KLineData->rbegin();
+			ritr++;
+			for ( i = 0; ritr != pList_KLineData->rend(); ritr++, i++ ) {
+				if ( i < 3 ) {
+					m_pTick_candlestick = (TCandleStick *) &( *( ritr ) );
+					if ( close_price > m_pTick_candlestick->mHigh ) {
+						position_type = Long_position;
+					}
+					else
+						if ( close_price < m_pTick_candlestick->mLow ) {
+							position_type = Short_position;
+						}
+				}
+				else
+					break;
+			}
 		}
 		goto place_accountA_order1;
 	}

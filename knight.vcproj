@@ -259,10 +259,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\FileEnumerator.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\KLine_Stream.cpp"
 					>
 				</File>
