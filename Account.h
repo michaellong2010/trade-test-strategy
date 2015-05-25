@@ -89,4 +89,5 @@ public:
 	//double m_orig_MA1_margin, m_orig_MA2_margin, m_orig_MA3_margin;
 	int m_current_tick_time;
 	void reset( TStrategy_info &strategy );
+	int m_intraday_stoploss_count;
 };

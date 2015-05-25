@@ -104,7 +104,7 @@ CAccount::CAccount( string account_name, int time_frame ) {
 	}
 	m_en_trailing_stop = false;
 	m_trailing_stop_points = 100;
-	kline_close_time = m_stoploss_count = tradable_time = 0;
+	kline_close_time = m_stoploss_count = tradable_time = m_intraday_stoploss_count = 0;
 	nTimeFrame = time_frame;
 
 	m_Account_index = m_Account_count++;
@@ -402,7 +402,8 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 						m_orig_MA3_margin = this->m_Strategy.mMA3_margin;
 					}*/
 					m_stoploss_count++;
-					if ( ( m_stoploss_count == 2 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 4 && this->m_Strategy.nType >= 2 ) ) {
+					m_intraday_stoploss_count++;
+					if ( ( m_stoploss_count == 2 && this->m_Strategy.nType < 3 ) || ( m_stoploss_count == 4 && this->m_Strategy.nType >= 3 ) ) {
 						if ( m_Strategy.enable_MA_margin ) {
 							this->m_Strategy.m_cur_MA1_margin += 0.003;
 							this->m_Strategy.m_cur_MA2_margin += 0.003;
@@ -410,7 +411,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 						}
 					}
 					else
-						if ( ( m_stoploss_count == 4 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 8 && this->m_Strategy.nType >= 2 ) ) {
+						if ( ( m_stoploss_count == 4 && this->m_Strategy.nType < 3 ) || ( m_stoploss_count == 8 && this->m_Strategy.nType >= 3 ) ) {
 							if ( m_Strategy.enable_MA_margin ) {
 								this->m_Strategy.m_cur_MA1_margin += 0.002;
 								this->m_Strategy.m_cur_MA2_margin += 0.002;
@@ -418,7 +419,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 							}
 						}
 						else
-							if ( ( m_stoploss_count == 6 && this->m_Strategy.nType < 2 ) || ( m_stoploss_count == 12 && this->m_Strategy.nType >= 2 ) ) {
+							if ( ( m_stoploss_count == 6 && this->m_Strategy.nType < 3 ) || ( m_stoploss_count == 12 && this->m_Strategy.nType >= 3 ) ) {
 								if ( m_Strategy.enable_MA_margin ) {
 									this->m_Strategy.m_cur_MA1_margin += 0.002;
 									this->m_Strategy.m_cur_MA2_margin += 0.002;
@@ -444,6 +445,9 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 				}
 		}
 	}
+
+	if ( ( m_Strategy.m_nStrategy == 6 || m_Strategy.m_nStrategy == 7 ) && m_intraday_stoploss_count == 2)
+		return 0;
 
 	/*create new order with position_type*/
 	boolean tradable = true;

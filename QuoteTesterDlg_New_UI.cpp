@@ -1040,6 +1040,8 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 						if ( close_price < m_pTick_candlestick->mLow ) {
 							position_type = Short_position;
 						}
+						else {
+						}
 				}
 				else
 					break;
@@ -1049,6 +1051,15 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 	}
 	else
 		if ( m_pDialog->m_Strategy1.m_nStrategy == 7 ) {
+			pList_KLineData = m_pDialog->mKline_stream.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
+			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
+			if ( close_price > ( m_pTick_candlestick->mOpen + 30 ) ) {
+				position_type = Long_position;
+			}
+			else
+				if ( close_price < ( m_pTick_candlestick->mOpen - 30 ) ) {
+					position_type = Short_position;
+				}
 			goto place_accountA_order1;
 		}
 	if ( m_pDialog->mKline_stream.pList_MA3 != NULL ) {
