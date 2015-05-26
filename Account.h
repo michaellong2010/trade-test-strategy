@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include <direct.h>
 using namespace std;
+#define None_position -1
 #define Long_position 0
 #define Short_position 1
 #define Close_long_position 2

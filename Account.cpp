@@ -177,6 +177,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	m_current_tick_time = 60 * m_tick_hour + m_tick_min;*/
 	CCapitalOrder *pCapitalOrder = NULL;
 	COPYDATASTRUCT cds;
+	int cur_close_position = None_position;
 
 	bool is_tick_tradable = true;
 	/*reject re-entry tick due to re-lauch or re-connect*/
@@ -330,6 +331,7 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 		if ( ( m_order.exit_tick == -1 && m_order.position_type == Long_position && ( position_type == Short_position || position_type == Close_long_position || position_type == Close_all_position ) ) ||
 			( m_order.exit_tick == -1 && m_order.position_type == Short_position && ( position_type == Long_position || position_type == Close_short_position || position_type == Close_all_position ) ) || m_touch_stoploss == true ) {
 			m_order.exit_tick = nPtr + 1;
+			cur_close_position = m_order.position_type;
 			if ( m_touch_stoploss == true ) {
 				m_order.exit_reason = Close_stoploss_position;
 			}
@@ -447,7 +449,11 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	}
 
 	if ( ( m_Strategy.m_nStrategy == 6 || m_Strategy.m_nStrategy == 7 ) && m_intraday_stoploss_count == 2)
-		return 0;
+		return -1;
+	else
+		if ( ( cur_close_position != None_position ) && ( cur_close_position == position_type ) ) {
+			return -2;
+		}
 
 	/*create new order with position_type*/
 	boolean tradable = true;
