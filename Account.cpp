@@ -451,8 +451,9 @@ int CAccount::Place_Open_Order ( string symbol, int nPtr, int nTime,int nBid, in
 	if ( ( m_Strategy.m_nStrategy == 6 || m_Strategy.m_nStrategy == 7 ) && m_intraday_stoploss_count == 2)
 		return -1;
 	else
-		if ( ( cur_close_position != None_position ) && ( cur_close_position == position_type ) ) {
-			return -2;
+		if ( ( cur_close_position != None_position ) /* && ( cur_close_position == position_type ) */ ) {
+			if ( cur_close_position == position_type )
+				return -2;
 		}
 
 	/*create new order with position_type*/

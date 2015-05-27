@@ -1024,7 +1024,7 @@ void _stdcall OnNotifyHistoryTicksGet( short sMarketNo, short sStockidx, int nPt
 				m_pDialog->m_Strategy1.m_nStrategy = 7;
 				m_pDialog->mKline_stream.isCanChangeStrategy ( m_pDialog->m_Strategy1 );
 				m_pDialog->account_A.m_Strategy = m_pDialog->m_Strategy1;
-				m_pDialog->account_B.m_Strategy = m_pDialog->m_Strategy2;
+				//m_pDialog->account_B.m_Strategy = m_pDialog->m_Strategy2;
 			}
 		}
 		else {
@@ -1192,11 +1192,49 @@ place_accountA_order1:
 	gap_MA2 = fabs ( close_price - accountB_MA2 );
 	gap_MA3 = fabs ( close_price - accountB_MA3 );
 	if ( m_pDialog->m_Strategy2.m_nStrategy == 6 ) {
+		pList_KLineData = m_pDialog->mKline_stream1.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
+		if ( m_tick_hour < 9 ) {
+			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
+			if ( close_price > ( m_pTick_candlestick->mOpen + 30 ) || close_price < ( m_pTick_candlestick->mOpen - 30 ) ) {
+				m_pDialog->m_Strategy2.m_nStrategy = 7;
+				m_pDialog->mKline_stream1.isCanChangeStrategy ( m_pDialog->m_Strategy2 );
+				m_pDialog->account_B.m_Strategy = m_pDialog->m_Strategy2;
+			}
+		}
+		else {
+			ritr = pList_KLineData->rbegin();
+			ritr++;
+			for ( i = 0; ritr != pList_KLineData->rend(); ritr++, i++ ) {
+				if ( i < 3 ) {
+					m_pTick_candlestick = (TCandleStick *) &( *( ritr ) );
+					if ( close_price > m_pTick_candlestick->mHigh ) {
+						position_type = Long_position;
+					}
+					else
+						if ( close_price < m_pTick_candlestick->mLow ) {
+							position_type = Short_position;
+						}
+						else {
+						}
+				}
+				else
+					break;
+			}
+		}
 		goto place_accountA_order2;
 	}
 	else
-		if ( m_pDialog->m_Strategy2.m_nStrategy == 7 ) {
-			goto place_accountA_order2;
+		if ( m_pDialog->m_Strategy1.m_nStrategy == 7 ) {
+			pList_KLineData = m_pDialog->mKline_stream1.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
+			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
+			if ( close_price > ( m_pTick_candlestick->mOpen + 30 ) ) {
+				position_type = Long_position;
+			}
+			else
+				if ( close_price < ( m_pTick_candlestick->mOpen - 30 ) ) {
+					position_type = Short_position;
+				}
+				goto place_accountA_order2;
 		}
 	if ( m_pDialog->mKline_stream1.pList_MA3 != NULL ) {
 		if ( close_price > accountB_MA1_upper && close_price > accountB_MA2_upper && close_price > accountB_MA3_upper ) { //account_B hold long position
