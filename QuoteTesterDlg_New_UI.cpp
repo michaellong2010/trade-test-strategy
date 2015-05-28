@@ -1224,7 +1224,7 @@ place_accountA_order1:
 		goto place_accountA_order2;
 	}
 	else
-		if ( m_pDialog->m_Strategy1.m_nStrategy == 7 ) {
+		if ( m_pDialog->m_Strategy2.m_nStrategy == 7 ) {
 			pList_KLineData = m_pDialog->mKline_stream1.mMap_tick_compose_kline [ m_pDialog->mMap_stockidx_stockNo[ sStockidx ] ];
 			m_pTick_candlestick = (TCandleStick *) &( *( pList_KLineData->begin () ) );
 			if ( close_price > ( m_pTick_candlestick->mOpen + 30 ) ) {
